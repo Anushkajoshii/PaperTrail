@@ -5,8 +5,15 @@ from __future__ import annotations
 import re
 import unicodedata
 
-# Sentence ends: . ! ? and the Devanagari danda (।). Keeps decimals like 2.5 intact.
-_SENTENCE_END = re.compile(r"(?<=[!?।])\s+|(?<=[^\d\s]\.)\s+|\n+")
+# Sentence ends: ! ? and the Devanagari danda (।), or a full stop followed by a space and a capital
+# letter / Devanagari. Decimals ("2.5") have no space so stay intact; common abbreviations
+# ("Rs. 500", "No. 3") are protected explicitly.
+_SENTENCE_END = re.compile(
+    r"(?<=[!?।])\s+"
+    r"|(?<!\bRs\.)(?<!\brs\.)(?<!\bNo\.)(?<!\bno\.)(?<!\bMr\.)(?<!\bDr\.)(?<!\bvs\.)"
+    r"(?<=\.)\s+(?=[A-Z\u0900-\u097F\"'“(])"
+    r"|\n+"
+)
 _NON_WORD = re.compile(r"[^\w\s%₹]", re.UNICODE)
 _SPACES = re.compile(r"\s+")
 
