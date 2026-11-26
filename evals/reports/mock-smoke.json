@@ -1,0 +1,183 @@
+{
+  "split": "smoke",
+  "provider": "mock",
+  "models": {
+    "extract": "mock",
+    "judge": "mock"
+  },
+  "prompt_versions": {
+    "extract": "extract-v1",
+    "judge": "judge-v1"
+  },
+  "created_at": "2026-11-26T18:22:42+00:00",
+  "verdicts": {
+    "n": 15,
+    "accuracy": 0.8,
+    "macro_f1": 0.789,
+    "per_class": {
+      "supported": {
+        "precision": 0.8,
+        "recall": 1.0,
+        "f1": 0.889,
+        "support": 4
+      },
+      "contradicted": {
+        "precision": 1.0,
+        "recall": 0.5,
+        "f1": 0.667,
+        "support": 4
+      },
+      "misleading": {
+        "precision": 1.0,
+        "recall": 0.667,
+        "f1": 0.8,
+        "support": 3
+      },
+      "not_verifiable": {
+        "precision": 0.667,
+        "recall": 1.0,
+        "f1": 0.8,
+        "support": 4
+      }
+    },
+    "confusion": {
+      "labels": [
+        "supported",
+        "contradicted",
+        "misleading",
+        "not_verifiable"
+      ],
+      "matrix": [
+        [
+          4,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          2,
+          0,
+          2
+        ],
+        [
+          1,
+          0,
+          2,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          4
+        ]
+      ]
+    },
+    "by_language": {
+      "en": 0.7,
+      "hinglish": 1.0
+    },
+    "ece": 0.144,
+    "brier": 0.18,
+    "stance_accuracy": 0.643,
+    "citation_validity": 0.714,
+    "accusatory_rate": 0.0,
+    "errors": 0,
+    "latency_ms_p50": 0.1,
+    "latency_ms_p95": 0.5,
+    "mistakes": [
+      {
+        "id": "v013",
+        "gold": "contradicted",
+        "pred": "not_verifiable",
+        "confidence": 0.4
+      },
+      {
+        "id": "v016",
+        "gold": "contradicted",
+        "pred": "not_verifiable",
+        "confidence": 0.4
+      },
+      {
+        "id": "v022",
+        "gold": "misleading",
+        "pred": "supported",
+        "confidence": 0.82
+      }
+    ]
+  },
+  "extraction": {
+    "transcripts": 2,
+    "gold_claims": 6,
+    "recall": 1.0,
+    "recall_strict": 1.0,
+    "type_accuracy": 1.0,
+    "precision": 1.0,
+    "forbidden_extractions": 0,
+    "misses": []
+  },
+  "rulebook": {
+    "sentences": 9,
+    "micro_precision": 0.9,
+    "micro_recall": 0.9,
+    "micro_f1": 0.9,
+    "per_kind": {
+      "guaranteed_returns": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      },
+      "live_price_education": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      },
+      "misleading_performance": {
+        "precision": 0.5,
+        "recall": 1.0,
+        "f1": 0.667
+      },
+      "pressure_tactics": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      },
+      "tip_group_solicitation": {
+        "precision": 1.0,
+        "recall": 0.5,
+        "f1": 0.667
+      },
+      "unconfirmed_registration_claim": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      },
+      "unregistered_advice": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      }
+    },
+    "errors": [
+      {
+        "id": "r01",
+        "expected": [
+          "guaranteed_returns",
+          "tip_group_solicitation"
+        ],
+        "predicted": [
+          "guaranteed_returns",
+          "misleading_performance"
+        ],
+        "note": null
+      }
+    ]
+  },
+  "cost": {
+    "llm_calls": 15,
+    "total_tokens": 10396,
+    "total_usd": 0.0,
+    "usd_per_verdict": 0.0
+  }
+}

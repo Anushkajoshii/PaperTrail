@@ -1,0 +1,7 @@
+{
+  "verdicts.accuracy": 0.8,
+  "verdicts.macro_f1": 0.789,
+  "verdicts.stance_accuracy": 0.643,
+  "extraction.recall_strict": 1.0,
+  "rulebook.micro_f1": 0.9
+}

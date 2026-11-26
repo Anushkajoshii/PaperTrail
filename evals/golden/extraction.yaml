@@ -1,0 +1,127 @@
+# PaperTrail golden set v1: claim extraction (10 transcripts, 28 gold claims)
+#
+# Each transcript lists the claims a careful human would extract. A gold claim is matched when
+# an extracted quote contains `anchor` (case-insensitive) and has the same claim_type.
+# `not_claims` are phrases that must NOT be extracted (opinions, greetings, advice, questions).
+# Transcripts are SYNTHETIC, written to imitate common finfluencer styles; companies are fictional.
+
+transcripts:
+  - id: x01
+    split: smoke
+    language: hinglish
+    text: >-
+      Namaste doston, aaj ek multibagger ki baat karenge. Main SEBI registered advisor hoon.
+      KESTREL ka target ₹1500 hai, March tak pakka jayega. Pichle saal is stock ne 40% return
+      diya tha. Mere premium group mein guaranteed 5% har mahine milega. Like aur subscribe karo!
+    claims:
+      - {anchor: "SEBI registered advisor", claim_type: credential}
+      - {anchor: "target ₹1500", claim_type: stock_call}
+      - {anchor: "40% return", claim_type: past_performance}
+      - {anchor: "guaranteed 5%", claim_type: return_promise}
+    not_claims: ["subscribe", "Namaste doston"]
+
+  - id: x02
+    split: smoke
+    language: en
+    text: >-
+      Markets are crazy this week. The Demo 100 index closed above 30,000 for the first time on 3
+      March 2025. Kestrel Motors reported revenue of ₹1,200 crore in Q2 FY25. Personally I love
+      auto stocks. Always do your own research.
+    claims:
+      - {anchor: "closed above 30,000", claim_type: market_fact}
+      - {anchor: "revenue of ₹1,200 crore", claim_type: company_fact}
+    not_claims: ["love auto stocks", "do your own research"]
+
+  - id: x03
+    split: full
+    language: hi
+    text: >-
+      दोस्तों, इस शेयर ने पिछले साल 200% रिटर्न दिया। मेरे साथ जुड़ो, हर महीने 10% की गारंटी है।
+      आज मौसम बहुत अच्छा है।
+    claims:
+      - {anchor: "200% रिटर्न", claim_type: past_performance}
+      - {anchor: "10% की गारंटी", claim_type: return_promise}
+    not_claims: ["मौसम"]
+
+  - id: x04
+    split: full
+    language: en
+    text: >-
+      Quick update. Orion Bank's gross NPA fell to 2.1% in Q3 FY25. Their promoter holding is 52.4%.
+      Buy ORIONBANK with a target of ₹950 and stop loss ₹780. Do you think banks will rally?
+    claims:
+      - {anchor: "gross NPA fell to 2.1%", claim_type: company_fact}
+      - {anchor: "promoter holding is 52.4%", claim_type: company_fact}
+      - {anchor: "target of ₹950", claim_type: stock_call}
+    not_claims: ["banks will rally"]
+
+  - id: x05
+    split: full
+    language: hinglish
+    text: >-
+      Bhaiyon, Lotus Foods ne 2024 mein ₹12 per share dividend diya. Yeh investment bilkul
+      risk-free hai. Mere students ne last month 2 lakh kamaye. Link bio mein hai.
+    claims:
+      - {anchor: "₹12 per share dividend", claim_type: company_fact}
+      - {anchor: "bilkul risk-free", claim_type: return_promise}
+      - {anchor: "2 lakh kamaye", claim_type: past_performance}
+    not_claims: ["Link bio"]
+
+  - id: x06
+    split: full
+    language: en
+    text: >-
+      This fund has never had a losing year. Its expense ratio is zero. It returned 85% in 2023.
+      I am not your financial adviser, this is for educational purposes only.
+    claims:
+      - {anchor: "never had a losing year", claim_type: past_performance}
+      - {anchor: "expense ratio is zero", claim_type: other}
+      - {anchor: "85% in 2023", claim_type: past_performance}
+    not_claims: ["educational purposes"]
+
+  - id: x07
+    split: full
+    language: en
+    text: >-
+      The Demo 100 fell 8% in October 2024 and recovered 5% in November 2024. Sitara Pharma's net
+      profit was ₹450 crore in FY24. Honestly, nobody knows where markets go next.
+    claims:
+      - {anchor: "fell 8% in October 2024", claim_type: market_fact}
+      - {anchor: "net profit was ₹450 crore", claim_type: company_fact}
+    not_claims: ["nobody knows"]
+
+  - id: x08
+    split: full
+    language: hinglish
+    text: >-
+      Doston, Kestrel ka share 2024 mein 40% upar gaya. Abhi kharid lo, target ₹1100, warna
+      pachtaoge. Mera RA registration number INH000000001 hai. Aap sab ko Diwali ki shubhkamnayein.
+    claims:
+      - {anchor: "40% upar", claim_type: past_performance}
+      - {anchor: "target ₹1100", claim_type: stock_call}
+      - {anchor: "INH000000001", claim_type: credential}
+    not_claims: ["Diwali"]
+
+  - id: x09
+    split: full
+    language: en
+    text: >-
+      Lotus Foods revenue grew 9% to ₹2,180 crore in FY25. The IPO listed at a 12% premium in
+      September 2023. Our model portfolio beat the index by 20% in 2024. Let me know in the comments.
+    claims:
+      - {anchor: "grew 9% to ₹2,180 crore", claim_type: company_fact}
+      - {anchor: "12% premium", claim_type: past_performance}
+      - {anchor: "beat the index by 20%", claim_type: past_performance}
+    not_claims: ["comments"]
+
+  - id: x10
+    split: full
+    language: en
+    text: >-
+      Join my VIP Telegram channel for sure-shot calls with 92% accuracy. Kestrel Motors is debt-free.
+      Hi everyone, welcome back to the channel.
+    claims:
+      - {anchor: "92% accuracy", claim_type: past_performance}
+      - {anchor: "sure-shot calls", claim_type: return_promise}
+      - {anchor: "debt-free", claim_type: company_fact}
+    not_claims: ["welcome back"]

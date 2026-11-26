@@ -37,5 +37,7 @@ Being honest about limits is part of the product. The app shows this list too.
 17. **Offline mode is a demo, not an assessment.** Without a real AI model, verdicts come from
     simple number-matching rules against demo data. Accuracy is measured with real models
     (Parts 6 and 13).
-18. **It is not financial advice.** It never recommends buying or selling anything, and creator
+18. **The first test set is small and synthetic.** Golden set v1 has 40 claims about fictional
+    companies, labelled by one person. Real claims and a second annotator come in v2.
+19. **It is not financial advice.** It never recommends buying or selling anything, and creator
    comparisons are not recommendations.

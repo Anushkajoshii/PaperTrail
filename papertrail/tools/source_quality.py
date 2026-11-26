@@ -104,6 +104,11 @@ DOMAIN_TYPES: dict[str, SourceType] = {
 }
 
 
+def profile_for_type(source_type: SourceType) -> SourceProfile:
+    reliability, label = _TYPE_DEFAULTS[source_type]
+    return SourceProfile(source_type, reliability, label)
+
+
 def classify_source(url: str) -> SourceProfile:
     domain = registrable_domain(url)
     source_type = None
