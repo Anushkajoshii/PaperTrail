@@ -1,0 +1,61 @@
+{
+  "_comment": "DEMO DATA for offline mode only. Every URL uses the reserved .test domain so it can never be mistaken for a real source. Content is illustrative, not real market data. Live mode uses Tavily.",
+  "results": [
+    {
+      "keywords": ["tatamotors", "tata", "motors", "share", "price", "target"],
+      "url": "https://exchange.demo.test/quotes/TATAMOTORS",
+      "title": "TATAMOTORS share price history (demo exchange data)",
+      "content": "Demo data: TATAMOTORS traded between ₹650 and ₹1,000 over the last 12 months. The stock has not traded at ₹1500.",
+      "published_date": "2026-11-01"
+    },
+    {
+      "keywords": ["300%", "return", "last", "year", "stock", "multibagger"],
+      "url": "https://news.demo.test/markets/how-many-stocks-tripled",
+      "title": "How many stocks actually tripled last year? (demo news)",
+      "content": "Demo data: only a small number of listed companies returned more than 300% in the last calendar year, mostly small caps with high volatility.",
+      "published_date": "2026-01-15"
+    },
+    {
+      "keywords": ["guaranteed", "assured", "returns", "monthly", "risk-free", "telegram", "group", "tips"],
+      "url": "https://regulator.demo.test/investor-awareness/guaranteed-returns",
+      "title": "Beware of guaranteed returns (demo regulator notice)",
+      "content": "Demo data: investments in the securities market are subject to market risk. No one can guarantee fixed returns. Investors should be wary of unregistered persons offering assured returns through messaging groups.",
+      "published_date": "2025-06-10"
+    },
+    {
+      "keywords": ["sebi", "registered", "advisor", "adviser", "investment", "research", "analyst", "registration"],
+      "url": "https://regulator.demo.test/intermediaries/investment-advisers",
+      "title": "Registered investment advisers list (demo regulator data)",
+      "content": "Demo data: the official list of registered investment advisers and research analysts is published by the regulator. Check the registration number on the regulator's website before trusting an adviser.",
+      "published_date": "2026-11-20"
+    },
+    {
+      "keywords": ["nifty", "50", "all-time", "high", "26,277", "september", "2024", "index"],
+      "url": "https://exchange.demo.test/indices/nifty50-history",
+      "title": "Nifty 50 historical data (demo exchange data)",
+      "content": "Demo data: the Nifty 50 index reached an all-time high of 26,277 on 27 September 2024.",
+      "published_date": "2024-09-30"
+    },
+    {
+      "keywords": ["reliance", "net", "profit", "september", "quarter", "crore", "results"],
+      "url": "https://filings.demo.test/RELIANCE/q2-results",
+      "title": "RELIANCE quarterly results filing (demo filing)",
+      "content": "Demo data: RELIANCE reported a consolidated net profit of about ₹16,500 crore for the September quarter.",
+      "published_date": "2024-10-14"
+    },
+    {
+      "keywords": ["portfolio", "85%", "2023", "mutual", "fund", "returned", "beating"],
+      "url": "https://news.demo.test/funds/best-performing-funds-2023",
+      "title": "Best performing mutual funds of 2023 (demo news)",
+      "content": "Demo data: the best performing equity mutual funds returned between 40% and 60% in 2023.",
+      "published_date": "2024-01-05"
+    },
+    {
+      "keywords": ["youtube", "video", "channel"],
+      "url": "https://www.youtube.com/watch?v=demo",
+      "title": "A video repeating the claim (excluded: social media is not evidence)",
+      "content": "Demo data: this result should be filtered out because social media posts are claims, not evidence.",
+      "published_date": "2026-01-01"
+    }
+  ]
+}
