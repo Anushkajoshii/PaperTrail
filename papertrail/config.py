@@ -70,6 +70,19 @@ class Settings(BaseSettings):
     # Only names, registration numbers and validity are stored (never contact details).
     registry_snapshot_path: str = "data/sebi_registry/snapshot.json"
 
+    # --- API, storage and jobs (Part 7) --------------------------------------------------
+    # store: "sqlite" (local file, shared by API and worker) or "memory" (tests)
+    store_backend: str = "sqlite"
+    sqlite_path: str = "data/papertrail.db"
+    upload_dir: str = "data/uploads"
+    # queue: "inline" runs checks in the API process (simplest for dev);
+    #        "sqlite" hands them to the separate worker process (like SQS + worker Lambda)
+    queue_mode: str = "inline"
+    max_text_chars: int = 50_000
+    max_upload_bytes: int = 25_000_000
+    rate_limit_per_minute: int = 20
+    cors_origins: list[str] = ["http://localhost:5173"]
+
 
 @lru_cache
 def get_settings() -> Settings:
