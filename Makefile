@@ -1,4 +1,4 @@
-.PHONY: help install dev test lint format eval deploy destroy rulebook-docs demo
+.PHONY: help install dev test lint format eval eval-smoke deploy destroy rulebook-docs demo
 
 help: ## Show available commands
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-10s\033[0m %s\n", $$1, $$2}'
@@ -21,8 +21,11 @@ format: ## Auto-fix lint and formatting
 	uv run ruff check --fix .
 	uv run ruff format .
 
-eval: ## Run the evaluation suite (added in Part 5)
-	@echo "Eval runner arrives in Part 5."
+eval: ## Full eval with the configured LLM provider; report in evals/reports/
+	uv run python -m papertrail.evaluation --split full
+
+eval-smoke: ## 15-claim smoke eval + regression gate (what CI runs)
+	uv run python -m papertrail.evaluation --split smoke --baseline evals/baselines/mock-smoke.json
 
 deploy: ## Deploy to AWS with Terraform (Part 8; asks before creating anything)
 	@echo "Deployment arrives in Part 8. Nothing is created without your approval."

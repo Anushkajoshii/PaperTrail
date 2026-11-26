@@ -1,0 +1,276 @@
+{
+  "split": "full",
+  "provider": "mock",
+  "models": {
+    "extract": "mock",
+    "judge": "mock"
+  },
+  "prompt_versions": {
+    "extract": "extract-v1",
+    "judge": "judge-v1"
+  },
+  "created_at": "2026-11-26T18:22:41+00:00",
+  "verdicts": {
+    "n": 40,
+    "accuracy": 0.625,
+    "macro_f1": 0.567,
+    "per_class": {
+      "supported": {
+        "precision": 0.625,
+        "recall": 1.0,
+        "f1": 0.769,
+        "support": 10
+      },
+      "contradicted": {
+        "precision": 1.0,
+        "recall": 0.2,
+        "f1": 0.333,
+        "support": 10
+      },
+      "misleading": {
+        "precision": 1.0,
+        "recall": 0.333,
+        "f1": 0.5,
+        "support": 9
+      },
+      "not_verifiable": {
+        "precision": 0.526,
+        "recall": 0.909,
+        "f1": 0.667,
+        "support": 11
+      }
+    },
+    "confusion": {
+      "labels": [
+        "supported",
+        "contradicted",
+        "misleading",
+        "not_verifiable"
+      ],
+      "matrix": [
+        [
+          10,
+          0,
+          0,
+          0
+        ],
+        [
+          2,
+          2,
+          0,
+          6
+        ],
+        [
+          3,
+          0,
+          3,
+          3
+        ],
+        [
+          1,
+          0,
+          0,
+          10
+        ]
+      ]
+    },
+    "by_language": {
+      "en": 0.519,
+      "hi": 0.75,
+      "hinglish": 0.889
+    },
+    "ece": 0.125,
+    "brier": 0.223,
+    "stance_accuracy": 0.575,
+    "citation_validity": 0.611,
+    "accusatory_rate": 0.0,
+    "errors": 0,
+    "latency_ms_p50": 0.1,
+    "latency_ms_p95": 0.2,
+    "mistakes": [
+      {
+        "id": "v013",
+        "gold": "contradicted",
+        "pred": "not_verifiable",
+        "confidence": 0.4
+      },
+      {
+        "id": "v014",
+        "gold": "contradicted",
+        "pred": "not_verifiable",
+        "confidence": 0.4
+      },
+      {
+        "id": "v015",
+        "gold": "contradicted",
+        "pred": "supported",
+        "confidence": 0.77
+      },
+      {
+        "id": "v016",
+        "gold": "contradicted",
+        "pred": "not_verifiable",
+        "confidence": 0.4
+      },
+      {
+        "id": "v017",
+        "gold": "contradicted",
+        "pred": "not_verifiable",
+        "confidence": 0.4
+      },
+      {
+        "id": "v018",
+        "gold": "contradicted",
+        "pred": "not_verifiable",
+        "confidence": 0.4
+      },
+      {
+        "id": "v019",
+        "gold": "contradicted",
+        "pred": "not_verifiable",
+        "confidence": 0.4
+      },
+      {
+        "id": "v020",
+        "gold": "contradicted",
+        "pred": "supported",
+        "confidence": 0.76
+      },
+      {
+        "id": "v022",
+        "gold": "misleading",
+        "pred": "supported",
+        "confidence": 0.82
+      },
+      {
+        "id": "v023",
+        "gold": "misleading",
+        "pred": "supported",
+        "confidence": 0.74
+      },
+      {
+        "id": "v024",
+        "gold": "misleading",
+        "pred": "not_verifiable",
+        "confidence": 0.4
+      },
+      {
+        "id": "v026",
+        "gold": "misleading",
+        "pred": "supported",
+        "confidence": 0.8
+      },
+      {
+        "id": "v028",
+        "gold": "misleading",
+        "pred": "not_verifiable",
+        "confidence": 0.4
+      },
+      {
+        "id": "v029",
+        "gold": "misleading",
+        "pred": "not_verifiable",
+        "confidence": 0.4
+      },
+      {
+        "id": "v037",
+        "gold": "not_verifiable",
+        "pred": "supported",
+        "confidence": 0.64
+      }
+    ]
+  },
+  "extraction": {
+    "transcripts": 10,
+    "gold_claims": 28,
+    "recall": 0.893,
+    "recall_strict": 0.607,
+    "type_accuracy": 0.68,
+    "precision": 1.0,
+    "forbidden_extractions": 0,
+    "misses": [
+      "x06: never had a losing year",
+      "x06: expense ratio is zero",
+      "x10: debt-free"
+    ]
+  },
+  "rulebook": {
+    "sentences": 32,
+    "micro_precision": 0.87,
+    "micro_recall": 0.952,
+    "micro_f1": 0.909,
+    "per_kind": {
+      "guaranteed_returns": {
+        "precision": 0.8,
+        "recall": 1.0,
+        "f1": 0.889
+      },
+      "live_price_education": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      },
+      "misleading_performance": {
+        "precision": 0.75,
+        "recall": 1.0,
+        "f1": 0.857
+      },
+      "pressure_tactics": {
+        "precision": 0.8,
+        "recall": 1.0,
+        "f1": 0.889
+      },
+      "tip_group_solicitation": {
+        "precision": 1.0,
+        "recall": 0.667,
+        "f1": 0.8
+      },
+      "unconfirmed_registration_claim": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      },
+      "unregistered_advice": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      }
+    },
+    "errors": [
+      {
+        "id": "r01",
+        "expected": [
+          "guaranteed_returns",
+          "tip_group_solicitation"
+        ],
+        "predicted": [
+          "guaranteed_returns",
+          "misleading_performance"
+        ],
+        "note": null
+      },
+      {
+        "id": "r31",
+        "expected": [],
+        "predicted": [
+          "guaranteed_returns"
+        ],
+        "note": "negated guarantee: known false positive"
+      },
+      {
+        "id": "r32",
+        "expected": [],
+        "predicted": [
+          "pressure_tactics"
+        ],
+        "note": "neutral 'hurry': known false positive"
+      }
+    ]
+  },
+  "cost": {
+    "llm_calls": 47,
+    "total_tokens": 32638,
+    "total_usd": 0.0,
+    "usd_per_verdict": 0.0
+  }
+}
