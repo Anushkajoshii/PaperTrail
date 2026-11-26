@@ -7,13 +7,17 @@ license = { text = "MIT" }
 authors = [{ name = "Anushka Joshi" }]
 requires-python = ">=3.12"
 dependencies = [
+    "fastapi>=0.165.0",
     "httpx>=0.29.0",
     "langgraph>=1.2.24",
+    "mangum>=0.22.0",
     "pydantic>=2.9",
     "pydantic-settings>=2.6",
+    "python-multipart>=0.0.34",
     "pyyaml>=6.0.4",
     "rapidfuzz>=3.14.6",
     "trafilatura>=2.4.0",
+    "uvicorn[standard]>=0.54.0",
 ]
 
 [project.optional-dependencies]
@@ -48,4 +52,12 @@ select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
-filterwarnings = ["ignore::DeprecationWarning:urllib3.*", "ignore:SOCKS support:Warning"]
+filterwarnings = [
+    "ignore::DeprecationWarning:urllib3.*",
+    "ignore:SOCKS support:Warning",
+    "ignore:There is no current event loop:DeprecationWarning:mangum.*",
+]
+
+[tool.ruff.lint.flake8-bugbear]
+# FastAPI declares parameters this way; these calls are safe as defaults.
+extend-immutable-calls = ["fastapi.File", "fastapi.Form", "fastapi.Depends", "fastapi.Query"]

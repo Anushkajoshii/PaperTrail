@@ -1,4 +1,4 @@
-.PHONY: help install dev test lint format eval eval-smoke deploy destroy rulebook-docs demo
+.PHONY: help install dev worker openapi test lint format eval eval-smoke deploy destroy rulebook-docs demo
 
 help: ## Show available commands
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-10s\033[0m %s\n", $$1, $$2}'
@@ -7,8 +7,11 @@ install: ## Install dependencies and git hooks
 	uv sync --all-extras
 	uv run pre-commit install
 
-dev: ## Run the app locally (API added in Part 6)
-	@echo "Local API arrives in Part 6. For now: make test"
+dev: ## Run the API locally with auto-reload (checks run in-process): http://localhost:8000/docs
+	uv run uvicorn papertrail.api.main:app --reload --port 8000
+
+worker: ## Run the background worker (use with PAPERTRAIL_QUEUE_MODE=sqlite)
+	uv run python -m papertrail.worker
 
 test: ## Run unit tests with coverage
 	uv run pytest --cov=papertrail --cov-report=term-missing
@@ -38,3 +41,6 @@ rulebook-docs: ## Regenerate docs/SEBI_RULEBOOK.md from the rules and sources
 
 demo: ## Run a full offline check on a sample (FILE=examples/english_post.txt)
 	uv run python -m papertrail.agent.run $(or $(FILE),examples/hinglish_reel.txt)
+
+openapi: ## Regenerate docs/openapi.json from the API code
+	uv run python scripts/export_openapi.py docs/openapi.json

@@ -8,7 +8,7 @@ and gives a sourced verdict for each claim in plain language. It also checks whe
 registered with SEBI, and it flags statements that official SEBI rules and guidance treat as
 red flags, such as "guaranteed returns".
 
-> **Status:** 🚧 In progress. Parts 1–6 of 14 complete: the full fact-checking pipeline runs locally (claims → evidence → verdicts → SEBI rulebook). See the [roadmap](docs/ROADMAP.md).
+> **Status:** 🚧 In progress. Parts 1–7 of 14 complete: the full fact-checking pipeline runs locally (claims → evidence → verdicts → SEBI rulebook). See the [roadmap](docs/ROADMAP.md).
 > Live demo link: *coming after Part 10*.
 
 > **Not financial advice.** PaperTrail assesses *claims*, never *people*. A verdict of "no
@@ -69,6 +69,15 @@ make demo FILE=examples/english_post.txt    # English post
 The report shows each claim with its verdict, confidence and reasons, the evidence for and
 against, what could not be verified, and every SEBI rulebook flag with its official source.
 
+Run the API (interactive docs at http://localhost:8000/docs):
+
+```bash
+make dev                      # one process, checks run in the background
+docker compose up --build     # API + worker, like the cloud setup
+```
+
+See [docs/API.md](docs/API.md) for endpoints and examples.
+
 By default the AI runs in **mock mode**: deterministic and offline, so tests and CI need no
 API keys. Real providers (Bedrock, Anthropic, OpenAI-compatible, Ollama) are switched on through
 `.env`. See [.env.example](.env.example).
@@ -116,6 +125,7 @@ intent, cannot prove someone broke the law, and depends on the sources it can re
 - [Roadmap and progress](docs/ROADMAP.md)
 - [Plain-English guide and glossary](docs/PLAIN_ENGLISH.md)
 - [Development guide](docs/DEVELOPMENT.md)
+- [API reference](docs/API.md) and [OpenAPI spec](docs/openapi.json)
 - [Evaluation: golden sets, metrics, regression gate](docs/EVALUATION.md)
 - [SEBI rulebook: every check and its official source](docs/SEBI_RULEBOOK.md)
 - [Limitations](docs/LIMITATIONS.md)

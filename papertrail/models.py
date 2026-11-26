@@ -456,6 +456,7 @@ class Check(_Model):
     created_at: datetime = Field(default_factory=_now)
     updated_at: datetime = Field(default_factory=_now)
     status: CheckStatus = CheckStatus.QUEUED
+    status_detail: str | None = Field(default=None, description="Latest progress message.")
     input: CheckInput
     detected_language: Language | None = None
     transcript: str | None = None
