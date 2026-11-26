@@ -42,6 +42,9 @@ claim.* It does **not** mean "this is 100% proven false" or "this person lied".
 | **Investment Adviser (IA)** | A person or firm registered with SEBI to give personalised investment advice for a fee. |
 | **Research Analyst (RA)** | A person or firm registered with SEBI to publish research and stock recommendations. |
 | **Registered ≠ endorsed** | SEBI registration means someone met SEBI's eligibility requirements. It does **not** mean SEBI approves or guarantees their advice. |
+| **Registration number** | The number SEBI gives a registered adviser or analyst. Investment advisers' numbers start with **INA**, research analysts' with **INH**. You can check them on SEBI's website. |
+| **Prohibited activities** | SEBI's term (in its 2024 'finfluencer' rules) for two things registered firms must not be linked with: giving securities advice without registration, and making claims of returns or performance without SEBI's permission. |
+| **Our copy of SEBI's register** | A saved list of registered advisers and analysts (names and numbers only). It has a date, can be out of date, and "not found" in it never means "unregistered". |
 | **Red flag** | A statement that official SEBI rules or investor-awareness material warn about, such as "guaranteed returns". |
 | **Verified rule vs potential concern** | A *verified rule* is quoted from an official SEBI document we link to. A *potential concern* is something the AI noticed that **may** be relevant. It is clearly labelled as such and is never presented as a violation. |
 | **Claim Ledger** | A running record of a creator's past stock calls, re-checked against actual prices over time. |

@@ -8,7 +8,7 @@ and gives a sourced verdict for each claim in plain language. It also checks whe
 registered with SEBI, and it flags statements that official SEBI rules and guidance treat as
 red flags, such as "guaranteed returns".
 
-> **Status:** 🚧 In progress. Parts 1–3 of 14 complete (foundation, LLM layer, claim extraction, evidence tools). See the [roadmap](docs/ROADMAP.md).
+> **Status:** 🚧 In progress. Parts 1–4 of 14 complete (foundation, LLM layer, claim extraction, evidence tools, SEBI rulebook). See the [roadmap](docs/ROADMAP.md).
 > Live demo link: *coming after Part 10*.
 
 > **Not financial advice.** PaperTrail assesses *claims*, never *people*. A verdict of "no
@@ -110,6 +110,7 @@ intent, cannot prove someone broke the law, and depends on the sources it can re
 - [Roadmap and progress](docs/ROADMAP.md)
 - [Plain-English guide and glossary](docs/PLAIN_ENGLISH.md)
 - [Development guide](docs/DEVELOPMENT.md)
+- [SEBI rulebook: every check and its official source](docs/SEBI_RULEBOOK.md)
 - [Limitations](docs/LIMITATIONS.md)
 - [Architecture Decision Records](docs/adr/)
 

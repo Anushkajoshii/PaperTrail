@@ -20,6 +20,8 @@ build/
 *.db
 *.sqlite
 data/raw/
+# Local copy of SEBI's register (built by `registry import`; never committed)
+data/sebi_registry/
 data/uploads/
 
 # Node / web

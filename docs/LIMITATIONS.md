@@ -25,5 +25,12 @@ Being honest about limits is part of the product. The app shows this list too.
 11. **PDF documents are not read yet.** Many exchange filings are PDFs. Support is planned.
 12. **Offline demo mode uses sample data.** Without a search key, results come from a small set of
     clearly labelled demo sources on `.test` addresses, never real ones.
-13. **It is not financial advice.** It never recommends buying or selling anything, and creator
+13. **Pattern rules are not perfect.** A sentence like "there are no guarantees" can still trigger
+    the guaranteed-returns check, and a neutral "hurry" can trigger the pressure check. Each flag
+    shows the exact words, so you can judge for yourself.
+14. **The SEBI register copy is a snapshot.** Its date is shown with every result, and
+    automated refreshing is not switched on yet. Brand names often differ from registered names.
+15. **SEBI rules change.** Sources are re-checked periodically (each shows its "last checked"
+    date). The Research Analysts Regulations may have been amended after the version we read.
+16. **It is not financial advice.** It never recommends buying or selling anything, and creator
    comparisons are not recommendations.

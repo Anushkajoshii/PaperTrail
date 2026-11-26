@@ -12,3 +12,5 @@ New ADRs copy [000-template.md](000-template.md).
 | [005](005-per-step-model-selection.md) | A small model extracts, a stronger model judges | Accepted |
 | [006](006-untrusted-web-content.md) | Treat every fetched page as hostile (SSRF + prompt injection) | Accepted |
 | [007](007-transparent-source-quality.md) | Transparent, rule-based source quality scores | Accepted |
+| [008](008-sebi-rulebook.md) | SEBI rulebook: verified rules vs AI potential concerns | Accepted |
+| [009](009-sebi-register-snapshot.md) | SEBI register: minimal local snapshot, careful matching | Accepted |

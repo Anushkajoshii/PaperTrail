@@ -62,3 +62,12 @@ def test_staleness_check():
     assert stale_sources(date(2026, 11, 27)) == []
     later = date(2026, 11, 26) + timedelta(days=REVERIFY_AFTER_DAYS + 1)
     assert len(stale_sources(later)) == len(EXPECTED_IDS)
+
+
+def test_generated_rulebook_doc_is_up_to_date():
+    from pathlib import Path
+
+    from papertrail.rulebook.catalog_doc import render
+
+    doc = Path(__file__).parent.parent / "docs" / "SEBI_RULEBOOK.md"
+    assert doc.read_text() == render(), "Run: make rulebook-docs"

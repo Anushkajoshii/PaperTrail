@@ -36,6 +36,13 @@ papertrail/
     untrusted.py    #   Prompt-injection sanitising and data-tag wrapping
     source_quality.py  # Reliability / recency / relevance scores + plain labels
     data/           #   Offline demo search results (.test domains only)
+  rulebook/
+    data/sebi_sources.yaml  # Curated, verified official SEBI sources
+    sources.py      #   Load/validate the registry; staleness check
+    rules.py        #   Deterministic red-flag rules (EN/Hinglish/Hindi) + rule catalog
+    concerns.py     #   AI potential concerns with code-level guards; check_rulebook()
+    registry.py     #   SEBI register snapshot: parse, match, lookup (no contact data)
+    catalog_doc.py  #   Generates docs/SEBI_RULEBOOK.md
   api/ ledger/      # Filled in later parts
 examples/           # Synthetic sample transcripts
 tests/              # Unit tests (all offline)
@@ -76,6 +83,18 @@ Quick check of the fetcher on a real page (makes one network request):
 
 ```bash
 uv run python -c "from papertrail.tools.fetch import PageFetcher; p = PageFetcher().fetch('https://www.sebi.gov.in/'); print(p.title, len(p.text))"
+```
+
+## SEBI rulebook
+
+- Add or update a source in `papertrail/rulebook/data/sebi_sources.yaml` only after checking
+  it on sebi.gov.in. Set `verified_on` and an honest `verification_level`.
+- After changing rules or sources run `make rulebook-docs`. A test fails if the doc is stale.
+- Register snapshot (optional, local): save SEBI's public register pages from your browser, then
+
+```bash
+uv run python -m papertrail.rulebook.registry import ra_page1.html ra_page2.html --category research_analyst
+uv run python -m papertrail.rulebook.registry lookup "Creator Name"
 ```
 
 ## Conventions
