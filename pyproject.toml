@@ -7,9 +7,16 @@ license = { text = "MIT" }
 authors = [{ name = "Anushka Joshi" }]
 requires-python = ">=3.12"
 dependencies = [
+    "httpx>=0.29.0",
     "pydantic>=2.9",
     "pydantic-settings>=2.6",
+    "rapidfuzz>=3.14.6",
 ]
+
+[project.optional-dependencies]
+# Real LLM providers are optional: the default mock provider needs none of these.
+anthropic = ["anthropic>=2.14"]
+bedrock = ["anthropic[bedrock]>=2.14"]
 
 [dependency-groups]
 dev = [

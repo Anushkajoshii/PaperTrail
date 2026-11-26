@@ -4,7 +4,7 @@ help: ## Show available commands
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-10s\033[0m %s\n", $$1, $$2}'
 
 install: ## Install dependencies and git hooks
-	uv sync
+	uv sync --all-extras
 	uv run pre-commit install
 
 dev: ## Run the app locally (API added in Part 6)
