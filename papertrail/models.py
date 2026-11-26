@@ -251,6 +251,9 @@ class Explanation(_Model):
     could_not_verify: list[str] = Field(
         default_factory=list, description="Parts of the claim we could not check, and why."
     )
+    confidence_note: str | None = Field(
+        default=None, description="Plain-language reason for the confidence level."
+    )
 
 
 class Verdict(_Model):
@@ -432,6 +435,22 @@ class CheckInput(_Model):
         return self
 
 
+class CheckMetrics(_Model):
+    """How the check ran: cost, speed and versions (for transparency and evals)."""
+
+    llm_calls: int = 0
+    total_tokens: int = 0
+    cost_usd: float = 0.0
+    duration_ms: float = 0.0
+    agent_steps: int = 0
+    search_rounds: int = 0
+    pages_fetched: int = 0
+    prompt_versions: dict[str, str] = Field(default_factory=dict)
+    notes: list[str] = Field(
+        default_factory=list, description="Non-fatal issues, e.g. a site that blocked us."
+    )
+
+
 class Check(_Model):
     id: str = Field(default_factory=lambda: _new_id("chk"))
     created_at: datetime = Field(default_factory=_now)
@@ -446,6 +465,7 @@ class Check(_Model):
     red_flags: list[RedFlag] = Field(default_factory=list)
     regulatory_sources: list[RegulatorySource] = Field(default_factory=list)
     registration: SebiRegistration = Field(default_factory=SebiRegistration)
+    metrics: CheckMetrics = Field(default_factory=CheckMetrics)
     error: str | None = None
 
     @property

@@ -29,6 +29,10 @@ papertrail/
     prompts.py      #   Versioned prompts with injection-safe data tags
     extract.py      #   Claim extraction with grounding
     heuristics.py   #   Rule-based extractor (mock backend and eval baseline)
+    research.py     #   Search -> safe fetch -> passages -> quality-scored candidates
+    judge.py        #   Verdict rubric, citations, capped + explained confidence
+    graph.py        #   LangGraph agent: ingest..rulebook, evidence loop, step guard
+    run.py          #   CLI: full check with a readable report (make demo)
   tools/
     transcribe.py   #   Amazon Transcribe (en-IN/hi-IN) + .srt/.vtt/.txt files
     search.py       #   Tavily live search + offline demo fixture; social media excluded
@@ -71,6 +75,17 @@ uv run python -m papertrail.agent.extract examples/hinglish_reel.txt
 
 The output lists each claim (type, exact quote, tickers, why it is checkable), any claims dropped
 (with the reason), and the estimated cost.
+
+## Run a full check
+
+```bash
+make demo
+uv run python -m papertrail.agent.run examples/english_post.txt --json > check.json
+uv run python -m papertrail.agent.run https://example.com/article --creator-name "Name"
+```
+
+Agent limits: `PAPERTRAIL_MAX_AGENT_STEPS` (40), `PAPERTRAIL_MAX_SEARCH_ROUNDS` (2),
+`PAPERTRAIL_PAGES_TO_FETCH_PER_CLAIM` (2).
 
 ## Evidence tools
 

@@ -32,5 +32,10 @@ Being honest about limits is part of the product. The app shows this list too.
     automated refreshing is not switched on yet. Brand names often differ from registered names.
 15. **SEBI rules change.** Sources are re-checked periodically (each shows its "last checked"
     date). The Research Analysts Regulations may have been amended after the version we read.
-16. **It is not financial advice.** It never recommends buying or selling anything, and creator
+16. **Predictions are not judged yet.** Stock targets are "not verifiable" until their deadline;
+    the Claim Ledger (Part 12) re-checks them later.
+17. **Offline mode is a demo, not an assessment.** Without a real AI model, verdicts come from
+    simple number-matching rules against demo data. Accuracy is measured with real models
+    (Parts 6 and 13).
+18. **It is not financial advice.** It never recommends buying or selling anything, and creator
    comparisons are not recommendations.

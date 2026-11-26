@@ -46,8 +46,10 @@ class Settings(BaseSettings):
     ollama_base_url: str = "http://localhost:11434"
 
     # --- Agent -------------------------------------------------------------------------
-    # Safety guard for the agent's evidence loop (used from Part 5).
-    max_agent_steps: int = 8
+    # Safety guards for the agent (Part 5): total graph steps, and search rounds per claim.
+    max_agent_steps: int = 40
+    max_search_rounds: int = 2
+    pages_to_fetch_per_claim: int = 2
     # Upper bound on claims per check: keeps cost and latency predictable.
     max_claims_per_check: int = 25
 

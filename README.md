@@ -8,7 +8,7 @@ and gives a sourced verdict for each claim in plain language. It also checks whe
 registered with SEBI, and it flags statements that official SEBI rules and guidance treat as
 red flags, such as "guaranteed returns".
 
-> **Status:** 🚧 In progress. Parts 1–4 of 14 complete (foundation, LLM layer, claim extraction, evidence tools, SEBI rulebook). See the [roadmap](docs/ROADMAP.md).
+> **Status:** 🚧 In progress. Parts 1–5 of 14 complete: the full fact-checking pipeline runs locally (claims → evidence → verdicts → SEBI rulebook). See the [roadmap](docs/ROADMAP.md).
 > Live demo link: *coming after Part 10*.
 
 > **Not financial advice.** PaperTrail assesses *claims*, never *people*. A verdict of "no
@@ -59,11 +59,15 @@ make install   # uv sync + pre-commit hooks
 make test
 ```
 
-Try claim extraction on a sample (works offline):
+Run a complete check on a sample (works offline, about one second):
 
 ```bash
-uv run python -m papertrail.agent.extract examples/hinglish_reel.txt
+make demo                                   # Hinglish finfluencer reel
+make demo FILE=examples/english_post.txt    # English post
 ```
+
+The report shows each claim with its verdict, confidence and reasons, the evidence for and
+against, what could not be verified, and every SEBI rulebook flag with its official source.
 
 By default the AI runs in **mock mode**: deterministic and offline, so tests and CI need no
 API keys. Real providers (Bedrock, Anthropic, OpenAI-compatible, Ollama) are switched on through

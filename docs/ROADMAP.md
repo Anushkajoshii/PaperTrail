@@ -11,7 +11,7 @@ Legend: ✅ done · 🔄 in progress · ⬜ not started · ☁️ needs AWS (ask
 | 2 | LLM layer (pluggable + mock) and claim extraction | `part-2/llm-claims` | ✅ |
 | 3 | Evidence tools: transcription, search, safe fetch, source quality | `part-3/evidence` | ✅ |
 | 4 | SEBI Rulebook Intelligence and registry lookup | `part-4/sebi` | ✅ |
-| 5 | LangGraph agent and explainable judge | `part-5/agent` | ⬜ |
+| 5 | LangGraph agent and explainable judge | `part-5/agent` | ✅ |
 | 6 | Golden set v1, eval runner, CI smoke-eval gate | `part-6/evals` | ⬜ |
 | 7 | FastAPI, local worker, Docker Compose, API docs | `part-7/api` | ⬜ |
 | 8 | Web app: landing, guided input, progress, results, rulebook, glossary | `part-8/web` | ⬜ |
