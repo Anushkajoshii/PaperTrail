@@ -68,5 +68,8 @@ If anything goes wrong along the way, you get an error message, never half a res
 | **Grounding** | Checking that every claim the AI found really appears, word for word, in the video or post. Claims that can't be traced back to the exact words are thrown away. |
 | **Hinglish** | Hindi and English mixed together, often written in English letters ("yeh stock pakka double hoga"). PaperTrail understands English, Hindi and Hinglish. |
 | **Why checkable** | A one-line note on each claim saying what kind of public record could confirm or refute it. |
+| **Golden set** | A fixed list of practice examples with known correct answers, used to measure how often PaperTrail gets it right. |
+| **Accuracy / F1** | Accuracy is the share of answers that were right. F1 balances "didn't miss things" against "didn't raise false alarms". |
+| **Calibration** | Whether confidence can be trusted: if PaperTrail says "80% confident" on 10 claims, about 8 should be right. |
 | **Mock mode** | A test mode where the AI is replaced by fixed, predictable answers, so the app can run without internet or API keys. |
 | **Prompt injection** | A trick where a web page hides instructions meant for the AI ("ignore your rules…"). PaperTrail treats all fetched text as data, never as instructions. |

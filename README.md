@@ -8,7 +8,7 @@ and gives a sourced verdict for each claim in plain language. It also checks whe
 registered with SEBI, and it flags statements that official SEBI rules and guidance treat as
 red flags, such as "guaranteed returns".
 
-> **Status:** 🚧 In progress. Parts 1–5 of 14 complete: the full fact-checking pipeline runs locally (claims → evidence → verdicts → SEBI rulebook). See the [roadmap](docs/ROADMAP.md).
+> **Status:** 🚧 In progress. Parts 1–6 of 14 complete: the full fact-checking pipeline runs locally (claims → evidence → verdicts → SEBI rulebook). See the [roadmap](docs/ROADMAP.md).
 > Live demo link: *coming after Part 10*.
 
 > **Not financial advice.** PaperTrail assesses *claims*, never *people*. A verdict of "no
@@ -92,8 +92,10 @@ API keys. Real providers (Bedrock, Anthropic, OpenAI-compatible, Ollama) are swi
 
 ## Results
 
-*Filled in from real evaluation runs in Parts 6 and 13. No numbers are shown until they are
-measured.*
+*Real-model results will appear here once measured. No number is shown before it is measured.*
+How we evaluate, and what every metric means: [docs/EVALUATION.md](docs/EVALUATION.md). The
+offline regression baseline (rule-based mock, **not** model accuracy) is in
+[evals/reports/mock-full.md](evals/reports/mock-full.md).
 
 | Metric | Value |
 |---|---|
@@ -114,6 +116,7 @@ intent, cannot prove someone broke the law, and depends on the sources it can re
 - [Roadmap and progress](docs/ROADMAP.md)
 - [Plain-English guide and glossary](docs/PLAIN_ENGLISH.md)
 - [Development guide](docs/DEVELOPMENT.md)
+- [Evaluation: golden sets, metrics, regression gate](docs/EVALUATION.md)
 - [SEBI rulebook: every check and its official source](docs/SEBI_RULEBOOK.md)
 - [Limitations](docs/LIMITATIONS.md)
 - [Architecture Decision Records](docs/adr/)
