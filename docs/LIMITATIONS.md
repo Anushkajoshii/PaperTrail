@@ -16,5 +16,9 @@ Being honest about limits is part of the product. The app shows this list too.
 6. **Price data is unofficial.** The Claim Ledger uses free market data (yfinance), which can have
    gaps or adjustments.
 7. **It does not scrape social platforms.** You upload the clip or paste the text (see ADR-001).
-8. **It is not financial advice.** It never recommends buying or selling anything, and creator
+8. **Language detection is approximate.** Very short or unusual Hinglish can be labelled English.
+   This only affects hints given to the AI, not which claims are checked.
+9. **Exact quotes only.** If a creator's words were transcribed very differently, a real claim can
+   be dropped as "not found in transcript". We prefer missing a claim to inventing one.
+10. **It is not financial advice.** It never recommends buying or selling anything, and creator
    comparisons are not recommendations.

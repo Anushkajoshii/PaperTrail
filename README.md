@@ -8,7 +8,7 @@ and gives a sourced verdict for each claim in plain language. It also checks whe
 registered with SEBI, and it flags statements that official SEBI rules and guidance treat as
 red flags, such as "guaranteed returns".
 
-> **Status:** 🚧 In progress. Part 1 of 14 (foundation) complete. See the [roadmap](docs/ROADMAP.md).
+> **Status:** 🚧 In progress. Parts 1–2 of 14 complete (foundation, LLM layer, claim extraction). See the [roadmap](docs/ROADMAP.md).
 > Live demo link: *coming after Part 10*.
 
 > **Not financial advice.** PaperTrail assesses *claims*, never *people*. A verdict of "no
@@ -59,6 +59,12 @@ make install   # uv sync + pre-commit hooks
 make test
 ```
 
+Try claim extraction on a sample (works offline):
+
+```bash
+uv run python -m papertrail.agent.extract examples/hinglish_reel.txt
+```
+
 By default the AI runs in **mock mode**: deterministic and offline, so tests and CI need no
 API keys. Real providers (Bedrock, Anthropic, OpenAI-compatible, Ollama) are switched on through
 `.env`. See [.env.example](.env.example).
@@ -103,6 +109,7 @@ intent, cannot prove someone broke the law, and depends on the sources it can re
 
 - [Roadmap and progress](docs/ROADMAP.md)
 - [Plain-English guide and glossary](docs/PLAIN_ENGLISH.md)
+- [Development guide](docs/DEVELOPMENT.md)
 - [Limitations](docs/LIMITATIONS.md)
 - [Architecture Decision Records](docs/adr/)
 

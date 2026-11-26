@@ -198,6 +198,17 @@ class Claim(_Model):
         default=None, ge=0, description="Where in the video or audio the claim was made."
     )
     tickers: list[str] = Field(default_factory=list, description="NSE/BSE symbols mentioned.")
+    why_checkable: str | None = Field(
+        default=None, description="Plain-language reason this statement can be fact-checked."
+    )
+
+
+class TranscriptSegment(_Model):
+    """A timed piece of a transcript (from speech-to-text), used to timestamp claims."""
+
+    start_seconds: float = Field(ge=0)
+    end_seconds: float = Field(ge=0)
+    text: str
 
 
 class SourceQuality(_Model):
