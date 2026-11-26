@@ -34,6 +34,14 @@ class LLMError(RuntimeError):
     """The provider failed (network, auth, refusal, or output that never validated)."""
 
 
+class InvalidOutputError(LLMError):
+    """The model answered, but not with parseable JSON. Retried like a validation error."""
+
+    def __init__(self, message: str, raw_text: str = "") -> None:
+        super().__init__(message)
+        self.raw_text = raw_text
+
+
 @dataclass(frozen=True)
 class LLMRequest[T: BaseModel]:
     system: str
@@ -116,7 +124,16 @@ def generate_structured[T: BaseModel](
     last_error: Exception | None = None
     for attempt in range(1, max_attempts + 1):
         started = time.perf_counter()
-        raw = provider.complete(request, feedback=feedback)
+        try:
+            raw = provider.complete(request, feedback=feedback)
+        except InvalidOutputError as exc:
+            last_error = exc
+            feedback = (
+                "Your previous answer was not valid JSON. Answer again with only the JSON "
+                "object that matches the required schema."
+            )
+            log.warning("LLM returned unparseable output (attempt %d)", attempt)
+            continue
         usage = Usage(
             provider=provider.name,
             model=raw.model,
