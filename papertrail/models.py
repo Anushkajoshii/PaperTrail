@@ -55,7 +55,13 @@ def _now() -> datetime:
 
 
 class _Model(BaseModel):
-    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+    # In API responses, fields with defaults are always present, so mark them required in the
+    # OpenAPI output schema (gives the web app accurate TypeScript types).
+    model_config = ConfigDict(
+        extra="forbid",
+        str_strip_whitespace=True,
+        json_schema_serialization_defaults_required=True,
+    )
 
 
 # --------------------------------------------------------------------------------------------

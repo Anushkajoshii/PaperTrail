@@ -14,6 +14,7 @@ from papertrail.models import (
     CheckStatus,
     FlagBasis,
     Language,
+    RegulatorySource,
     VerdictLabel,
 )
 
@@ -54,16 +55,20 @@ class CreateCheckRequest(BaseModel):
     language_hint: Language | None = None
 
 
-class ErrorBody(BaseModel):
+class _Out(BaseModel):
+    model_config = ConfigDict(json_schema_serialization_defaults_required=True)
+
+
+class ErrorBody(_Out):
     code: str
     message: str
 
 
-class ErrorResponse(BaseModel):
+class ErrorResponse(_Out):
     error: ErrorBody
 
 
-class CheckAccepted(BaseModel):
+class CheckAccepted(_Out):
     id: str
     status: CheckStatus
     status_description: str
@@ -71,7 +76,7 @@ class CheckAccepted(BaseModel):
     poll_after_seconds: int = 2
 
 
-class CheckView(BaseModel):
+class CheckView(_Out):
     """A check plus plain-language helpers the UI shows next to it."""
 
     check: Check
@@ -93,7 +98,7 @@ class CheckView(BaseModel):
         )
 
 
-class CheckSummary(BaseModel):
+class CheckSummary(_Out):
     id: str
     created_at: datetime
     status: CheckStatus
@@ -118,7 +123,7 @@ class CheckSummary(BaseModel):
         )
 
 
-class CreatorView(BaseModel):
+class CreatorView(_Out):
     handle: str
     checks: int
     totals: dict[str, int]
@@ -129,12 +134,37 @@ class CreatorView(BaseModel):
     )
 
 
-class GlossaryTerm(BaseModel):
+class RuleSourceRef(_Out):
+    id: str
+    title: str
+    url: str
+    reference_number: str | None = None
+    published_on: str | None = None
+    verification_level: str
+
+
+class RuleEntry(_Out):
+    id: str
+    kind: str
+    title: str
+    what: str
+    why: str
+    takeaway: str
+    provision: str | None = None
+    sources: list[RuleSourceRef]
+
+
+class RulebookResponse(_Out):
+    rules: list[RuleEntry]
+    sources: list[RegulatorySource]
+
+
+class GlossaryTerm(_Out):
     term: str
     definition: str
 
 
-class Health(BaseModel):
+class Health(_Out):
     status: Literal["ok"] = "ok"
     version: str
     llm_provider: str

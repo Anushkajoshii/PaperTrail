@@ -161,7 +161,22 @@
           }
         },
         "required": [
-          "input"
+          "id",
+          "created_at",
+          "updated_at",
+          "status",
+          "status_detail",
+          "input",
+          "detected_language",
+          "transcript",
+          "claims",
+          "evidence",
+          "verdicts",
+          "red_flags",
+          "regulatory_sources",
+          "registration",
+          "metrics",
+          "error"
         ],
         "title": "Check",
         "type": "object"
@@ -193,7 +208,8 @@
           "id",
           "status",
           "status_description",
-          "status_url"
+          "status_url",
+          "poll_after_seconds"
         ],
         "title": "CheckAccepted",
         "type": "object"
@@ -278,7 +294,13 @@
           }
         },
         "required": [
-          "kind"
+          "kind",
+          "text",
+          "url",
+          "upload_key",
+          "creator_handle",
+          "creator_name",
+          "language_hint"
         ],
         "title": "CheckInput",
         "type": "object"
@@ -338,6 +360,17 @@
             "type": "integer"
           }
         },
+        "required": [
+          "llm_calls",
+          "total_tokens",
+          "cost_usd",
+          "duration_ms",
+          "agent_steps",
+          "search_rounds",
+          "pages_fetched",
+          "prompt_versions",
+          "notes"
+        ],
         "title": "CheckMetrics",
         "type": "object"
       },
@@ -510,9 +543,14 @@
           }
         },
         "required": [
+          "id",
           "text",
           "quote",
-          "claim_type"
+          "claim_type",
+          "language",
+          "timestamp_seconds",
+          "tickers",
+          "why_checkable"
         ],
         "title": "Claim",
         "type": "object"
@@ -649,7 +687,8 @@
           "handle",
           "checks",
           "totals",
-          "recent"
+          "recent",
+          "note"
         ],
         "title": "CreatorView",
         "type": "object"
@@ -747,9 +786,12 @@
           }
         },
         "required": [
+          "id",
           "claim_id",
           "url",
           "title",
+          "publisher",
+          "published_at",
           "source_type",
           "snippet",
           "stance",
@@ -798,7 +840,10 @@
           }
         },
         "required": [
-          "summary"
+          "summary",
+          "reasoning",
+          "could_not_verify",
+          "confidence_note"
         ],
         "title": "Explanation",
         "type": "object"
@@ -855,6 +900,7 @@
           }
         },
         "required": [
+          "status",
           "version",
           "llm_provider",
           "search_provider",
@@ -972,12 +1018,16 @@
           }
         },
         "required": [
+          "id",
           "kind",
           "basis",
           "detected_text",
+          "claim_id",
           "what_was_detected",
           "why_it_matters",
-          "investor_takeaway"
+          "investor_takeaway",
+          "rule_source_ids",
+          "relevant_provision"
         ],
         "title": "RedFlag",
         "type": "object"
@@ -1147,9 +1197,153 @@
           "title",
           "doc_type",
           "url",
-          "summary"
+          "reference_number",
+          "published_on",
+          "effective_from",
+          "amended_up_to",
+          "updated_on",
+          "summary",
+          "key_points",
+          "provisions",
+          "verified_on",
+          "verification_level",
+          "verification_note"
         ],
         "title": "RegulatorySource",
+        "type": "object"
+      },
+      "RuleEntry": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "provision": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Provision"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/RuleSourceRef"
+            },
+            "title": "Sources",
+            "type": "array"
+          },
+          "takeaway": {
+            "title": "Takeaway",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "what": {
+            "title": "What",
+            "type": "string"
+          },
+          "why": {
+            "title": "Why",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "title",
+          "what",
+          "why",
+          "takeaway",
+          "provision",
+          "sources"
+        ],
+        "title": "RuleEntry",
+        "type": "object"
+      },
+      "RuleSourceRef": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "published_on": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Published On"
+          },
+          "reference_number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reference Number"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "url": {
+            "title": "Url",
+            "type": "string"
+          },
+          "verification_level": {
+            "title": "Verification Level",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "url",
+          "reference_number",
+          "published_on",
+          "verification_level"
+        ],
+        "title": "RuleSourceRef",
+        "type": "object"
+      },
+      "RulebookResponse": {
+        "properties": {
+          "rules": {
+            "items": {
+              "$ref": "#/components/schemas/RuleEntry"
+            },
+            "title": "Rules",
+            "type": "array"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/RegulatorySource"
+            },
+            "title": "Sources",
+            "type": "array"
+          }
+        },
+        "required": [
+          "rules",
+          "sources"
+        ],
+        "title": "RulebookResponse",
         "type": "object"
       },
       "SebiDocType": {
@@ -1234,6 +1428,15 @@
             "default": "not_checked"
           }
         },
+        "required": [
+          "status",
+          "matched_name",
+          "registration_numbers",
+          "registry_snapshot_date",
+          "match_basis",
+          "source_url",
+          "note"
+        ],
         "title": "SebiRegistration",
         "type": "object"
       },
@@ -1341,7 +1544,10 @@
           "claim_id",
           "label",
           "confidence",
-          "explanation"
+          "explanation",
+          "supporting_evidence_ids",
+          "contradicting_evidence_ids",
+          "context_evidence_ids"
         ],
         "title": "Verdict",
         "type": "object"
@@ -1754,16 +1960,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "additionalProperties": true,
-                  "title": "Response Rulebook Rulebook Get",
-                  "type": "object"
+                  "$ref": "#/components/schemas/RulebookResponse"
                 }
               }
             },
             "description": "Successful Response"
           }
         },
-        "summary": "Every SEBI rulebook check and its sources",
+        "summary": "Every SEBI rulebook check and its verified official sources",
         "tags": [
           "reference"
         ]
