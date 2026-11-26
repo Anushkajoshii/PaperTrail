@@ -51,6 +51,18 @@ class Settings(BaseSettings):
     # Upper bound on claims per check: keeps cost and latency predictable.
     max_claims_per_check: int = 25
 
+    # --- Evidence tools ----------------------------------------------------------------
+    # "offline" uses a small built-in fixture so everything runs without keys; "tavily" is live.
+    search_provider: str = "offline"
+    tavily_api_key: SecretStr | None = None
+    search_max_results: int = 5
+    fetch_timeout_seconds: float = 15.0
+    fetch_max_bytes: int = 2_000_000
+    fetch_max_chars: int = 20_000
+    # S3 bucket for uploads and Amazon Transcribe output (created in Part 10).
+    media_bucket: str | None = None
+    transcribe_timeout_seconds: int = 900
+
 
 @lru_cache
 def get_settings() -> Settings:
