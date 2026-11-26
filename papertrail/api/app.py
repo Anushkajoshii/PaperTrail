@@ -61,8 +61,16 @@ log = logging.getLogger("papertrail.api")
 
 GLOSSARY_PATH = Path(__file__).resolve().parents[1] / "content" / "glossary.yaml"
 AUDIO_TYPES = {"mp3", "m4a", "wav", "flac", "ogg", "amr"}
+# Explicit descriptions keep the OpenAPI spec identical across Python versions.
+ERROR_DESCRIPTIONS = {
+    400: "Bad upload",
+    404: "Not found",
+    413: "Too large",
+    422: "Invalid request",
+    429: "Rate limited",
+}
 ERRORS: dict[int | str, dict] = {
-    code: {"model": ErrorResponse} for code in (400, 404, 413, 422, 429)
+    code: {"model": ErrorResponse, "description": text} for code, text in ERROR_DESCRIPTIONS.items()
 }
 
 

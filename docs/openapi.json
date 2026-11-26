@@ -1406,7 +1406,7 @@
                 }
               }
             },
-            "description": "Bad Request"
+            "description": "Bad upload"
           },
           "404": {
             "content": {
@@ -1416,7 +1416,7 @@
                 }
               }
             },
-            "description": "Not Found"
+            "description": "Not found"
           },
           "413": {
             "content": {
@@ -1426,7 +1426,7 @@
                 }
               }
             },
-            "description": "Request Entity Too Large"
+            "description": "Too large"
           },
           "422": {
             "content": {
@@ -1436,7 +1436,7 @@
                 }
               }
             },
-            "description": "Unprocessable Entity"
+            "description": "Invalid request"
           },
           "429": {
             "content": {
@@ -1446,7 +1446,7 @@
                 }
               }
             },
-            "description": "Too Many Requests"
+            "description": "Rate limited"
           }
         },
         "summary": "Check pasted text or an article link",
@@ -1487,7 +1487,7 @@
                 }
               }
             },
-            "description": "Bad Request"
+            "description": "Bad upload"
           },
           "404": {
             "content": {
@@ -1497,7 +1497,7 @@
                 }
               }
             },
-            "description": "Not Found"
+            "description": "Not found"
           },
           "413": {
             "content": {
@@ -1507,7 +1507,7 @@
                 }
               }
             },
-            "description": "Request Entity Too Large"
+            "description": "Too large"
           },
           "422": {
             "content": {
@@ -1517,7 +1517,7 @@
                 }
               }
             },
-            "description": "Unprocessable Entity"
+            "description": "Invalid request"
           },
           "429": {
             "content": {
@@ -1527,7 +1527,7 @@
                 }
               }
             },
-            "description": "Too Many Requests"
+            "description": "Rate limited"
           }
         },
         "summary": "Check an uploaded file (subtitles, transcript, audio, video)",
@@ -1569,7 +1569,7 @@
                 }
               }
             },
-            "description": "Bad Request"
+            "description": "Bad upload"
           },
           "404": {
             "content": {
@@ -1579,7 +1579,7 @@
                 }
               }
             },
-            "description": "Not Found"
+            "description": "Not found"
           },
           "413": {
             "content": {
@@ -1589,7 +1589,7 @@
                 }
               }
             },
-            "description": "Request Entity Too Large"
+            "description": "Too large"
           },
           "422": {
             "content": {
@@ -1599,7 +1599,7 @@
                 }
               }
             },
-            "description": "Unprocessable Entity"
+            "description": "Invalid request"
           },
           "429": {
             "content": {
@@ -1609,7 +1609,7 @@
                 }
               }
             },
-            "description": "Too Many Requests"
+            "description": "Rate limited"
           }
         },
         "summary": "Get a check: live progress while running, full results when done",
@@ -1651,7 +1651,7 @@
                 }
               }
             },
-            "description": "Bad Request"
+            "description": "Bad upload"
           },
           "404": {
             "content": {
@@ -1661,7 +1661,7 @@
                 }
               }
             },
-            "description": "Not Found"
+            "description": "Not found"
           },
           "413": {
             "content": {
@@ -1671,7 +1671,7 @@
                 }
               }
             },
-            "description": "Request Entity Too Large"
+            "description": "Too large"
           },
           "422": {
             "content": {
@@ -1681,7 +1681,7 @@
                 }
               }
             },
-            "description": "Unprocessable Entity"
+            "description": "Invalid request"
           },
           "429": {
             "content": {
@@ -1691,7 +1691,7 @@
                 }
               }
             },
-            "description": "Too Many Requests"
+            "description": "Rate limited"
           }
         },
         "summary": "Recent checks of a creator's content",
