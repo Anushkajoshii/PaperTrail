@@ -1,4 +1,4 @@
-.PHONY: help install dev worker test lint format eval eval-smoke deploy destroy rulebook-docs demo
+.PHONY: help install dev worker openapi test lint format eval eval-smoke deploy destroy rulebook-docs demo
 
 help: ## Show available commands
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-10s\033[0m %s\n", $$1, $$2}'
@@ -41,3 +41,6 @@ rulebook-docs: ## Regenerate docs/SEBI_RULEBOOK.md from the rules and sources
 
 demo: ## Run a full offline check on a sample (FILE=examples/english_post.txt)
 	uv run python -m papertrail.agent.run $(or $(FILE),examples/hinglish_reel.txt)
+
+openapi: ## Regenerate docs/openapi.json from the API code
+	uv run python scripts/export_openapi.py docs/openapi.json
