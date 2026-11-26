@@ -251,6 +251,9 @@ class Explanation(_Model):
     could_not_verify: list[str] = Field(
         default_factory=list, description="Parts of the claim we could not check, and why."
     )
+    confidence_note: str | None = Field(
+        default=None, description="Plain-language reason for the confidence level."
+    )
 
 
 class Verdict(_Model):
