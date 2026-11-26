@@ -47,7 +47,15 @@ papertrail/
     concerns.py     #   AI potential concerns with code-level guards; check_rulebook()
     registry.py     #   SEBI register snapshot: parse, match, lookup (no contact data)
     catalog_doc.py  #   Generates docs/SEBI_RULEBOOK.md
-  api/ ledger/      # Filled in later parts
+  api/
+    app.py          #   FastAPI app: routes, limits, errors, security headers
+    schemas.py      #   Request/response models (drive the OpenAPI docs)
+    main.py         #   uvicorn entry point
+    lambda_handler.py  # AWS Lambda entry point (Mangum)
+  store/            # CheckStore / JobQueue / UploadStorage (SQLite + disk locally)
+  worker.py         # Runs queued checks with live progress
+  content/glossary.yaml  # Plain-language terms for tooltips
+  ledger/           # Filled in a later part
 examples/           # Synthetic sample transcripts
 tests/              # Unit tests (all offline)
 docs/               # ADRs, roadmap, plain-English guide, limitations
@@ -75,6 +83,15 @@ uv run python -m papertrail.agent.extract examples/hinglish_reel.txt
 
 The output lists each claim (type, exact quote, tickers, why it is checkable), any claims dropped
 (with the reason), and the estimated cost.
+
+## Run the API
+
+```bash
+make dev                         # http://localhost:8000/docs (checks run in-process)
+PAPERTRAIL_QUEUE_MODE=sqlite make dev   # API only enqueues ...
+make worker                      # ... and this runs them
+docker compose up --build        # both, in containers
+```
 
 ## Run a full check
 

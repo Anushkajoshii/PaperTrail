@@ -17,3 +17,4 @@ New ADRs copy [000-template.md](000-template.md).
 | [010](010-langgraph-agent.md) | A LangGraph state machine with an evidence loop and a step guard | Accepted |
 | [011](011-explainable-confidence.md) | Confidence is capped by evidence quality and always explained | Accepted |
 | [012](012-evaluation-design.md) | Evaluation design: fixed-evidence judge evals, honest baselines, a CI gate | Accepted |
+| [013](013-async-api-and-adapters.md) | Asynchronous API with swappable store, queue and upload adapters | Accepted |
