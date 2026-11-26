@@ -1,0 +1,13 @@
+{
+  "_comment": "Realistic raw JSON shapes returned by different LLMs for claim extraction. Used to test that parsing is lenient where it should be and strict where it must be.",
+  "clean": {"claims": [{"text": "TATAMOTORS will reach Rs 1500 by March.", "quote": "TATAMOTORS ka target ₹1500 hai", "claim_type": "stock_call", "tickers": ["TATAMOTORS"], "why_checkable": "Share prices up to March can confirm it."}]},
+  "messy_types_and_tickers": {"claims": [
+    {"text": "A", "quote": "q1", "claim_type": "Stock Call", "tickers": "tatamotors.ns"},
+    {"text": "B", "quote": "q2", "claim_type": "return-promise", "tickers": ["NSE:RELIANCE", "  infy ", "not a ticker!"]},
+    {"text": "C", "quote": "q3", "claim_type": "prediction", "tickers": null},
+    {"text": "D", "quote": "q4", "claim_type": "PAST_PERFORMANCE", "tickers": [], "confidence": 0.9}
+  ]},
+  "extra_top_level_keys": {"claims": [], "notes": "no checkable claims", "language": "hinglish"},
+  "missing_quote": {"claims": [{"text": "Nifty hit 26000.", "claim_type": "market_fact"}]},
+  "claims_not_a_list": {"claims": {"text": "x", "quote": "x", "claim_type": "other"}}
+}

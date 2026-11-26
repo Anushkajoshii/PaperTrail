@@ -118,6 +118,7 @@ class ExtractionResult:
 # Helpers
 # ------------------------------------------------------------------------------------------
 
+_NUMBER = re.compile(r"\d+(?:[.,]\d+)*")
 GROUNDING_THRESHOLD = 90  # rapidfuzz partial_ratio, 0-100
 DUPLICATE_THRESHOLD = 90  # rapidfuzz token_set_ratio between claim texts
 
@@ -148,6 +149,10 @@ def is_grounded(quote: str, normalized_source: str) -> bool:
         return False
     if q in normalized_source:
         return True
+    # Fuzzy matching tolerates transcription noise, but never a changed number.
+    source_numbers = set(_NUMBER.findall(normalized_source))
+    if any(n not in source_numbers for n in _NUMBER.findall(q)):
+        return False
     return len(q) >= 12 and fuzz.partial_ratio(q, normalized_source) >= GROUNDING_THRESHOLD
 
 
@@ -172,9 +177,6 @@ def find_timestamp(quote: str, segments: list[TranscriptSegment]) -> float | Non
             return None
         pos = alignment.dest_start
     return next(t for off, t in reversed(starts) if off <= pos)
-
-
-_NUMBER = re.compile(r"\d+(?:[.,]\d+)*")
 
 
 def _is_duplicate(candidate: ExtractedClaim, kept: list[ExtractedClaim]) -> bool:

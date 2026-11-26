@@ -16,6 +16,7 @@ _SENTENCE_END = re.compile(
 )
 _NON_WORD = re.compile(r"[^\w\s%₹]", re.UNICODE)
 _SPACES = re.compile(r"\s+")
+_CURRENCY_WORD = re.compile(r"\b(?:rs\.?|inr|rupees?)(?=\s*\d|\s|$)")
 
 
 def split_sentences(text: str) -> list[str]:
@@ -25,6 +26,6 @@ def split_sentences(text: str) -> list[str]:
 def normalize_for_match(text: str) -> str:
     """Lowercase, unify unicode forms and quotes, drop punctuation, collapse whitespace."""
     text = unicodedata.normalize("NFKC", text).lower()
-    text = text.replace("rs.", "₹").replace("rs ", "₹ ").replace("inr", "₹")
+    text = _CURRENCY_WORD.sub("₹ ", text)
     text = _NON_WORD.sub(" ", text)
     return _SPACES.sub(" ", text).strip()

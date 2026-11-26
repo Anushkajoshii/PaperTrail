@@ -45,16 +45,16 @@ _RULES: list[tuple[ClaimType, re.Pattern[str]]] = [
         re.compile(r"\bnifty\b|\bsensex\b|bank nifty|all[- ]?time high|\bindex\b", re.IGNORECASE),
     ),
     (
+        ClaimType.COMPANY_FACT,
+        re.compile(r"revenue|profit|earnings|quarter|\bfy ?\d\d|results|order book", re.IGNORECASE),
+    ),
+    (
         ClaimType.PAST_PERFORMANCE,
         re.compile(
             r"\bgave\b|returned|\bdiya\b|\bgrew\b|\brose\b|\bfell\b|\bup \d|\bin (19|20)\d\d\b|"
             r"last year|pichle|\bmade\b|\bearned\b|kamaya|दिया",
             re.IGNORECASE,
         ),
-    ),
-    (
-        ClaimType.COMPANY_FACT,
-        re.compile(r"revenue|profit|earnings|quarter|\bfy ?\d\d|results|order book", re.IGNORECASE),
     ),
 ]
 
