@@ -34,6 +34,7 @@ from papertrail.llm import (
 )
 from papertrail.models import (
     CONFIDENCE_NOT_CERTAINTY,
+    REGISTRATION_NOT_ENDORSEMENT,
     Claim,
     ClaimType,
     Evidence,
@@ -306,7 +307,10 @@ def judge_credential(claim: Claim, registration: SebiRegistration) -> JudgeResul
         _not_verifiable(
             claim,
             "We could not confirm this registration in our copy of SEBI's register.",
-            [registration.note],
+            [
+                registration.note.replace(REGISTRATION_NOT_ENDORSEMENT, "").strip()
+                or "Registration could not be confirmed."
+            ],
             "Low confidence: a failed lookup is not proof either way.",
         )
     )
