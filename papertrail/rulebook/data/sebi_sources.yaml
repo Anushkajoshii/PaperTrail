@@ -1,0 +1,186 @@
+# PaperTrail SEBI rulebook: curated official sources.
+#
+# RULES FOR THIS FILE (see docs/adr/008-sebi-rulebook.md):
+# - Only documents hosted on sebi.gov.in / investor.sebi.gov.in. The model validator enforces it.
+# - Every date, number and provision below was checked against SEBI's own page on `verified_on`.
+# - Provisions are paraphrased in plain language. Nothing is added from memory.
+# - `verification_level` says HOW it was checked: full_text, official_listing, or
+#   quoted_in_sebi_orders. Be honest here: the UI shows it.
+# - When SEBI updates a document, update the entry and `verified_on` and note what changed.
+
+sources:
+  - id: sebi-ia-regs-2013
+    title: "SEBI (Investment Advisers) Regulations, 2013"
+    doc_type: regulation
+    url: "https://www.sebi.gov.in/sebi_data/attachdocs/aug-2026/1785912187595.pdf"
+    reference_number: "No. LAD-NRO/GN/2012-13/31/1778"
+    published_on: 2013-01-21
+    effective_from: 2013-04-21  # regulation 1(2): ninetieth day from publication in the Gazette
+    amended_up_to: 2025-11-25
+    summary: >-
+      The rules for anyone who gives investment advice for a fee. To act as, or present yourself
+      as, an investment adviser you need a certificate of registration from SEBI.
+    key_points:
+      - "Giving investment advice as a business needs SEBI registration."
+      - "Registered advisers get a registration number in the format INA followed by digits."
+    provisions:
+      - ref: "Regulation 3(1)"
+        summary: >-
+          No person shall act as an investment adviser or hold itself out as one unless it has
+          obtained a certificate of registration from SEBI under these regulations.
+    verified_on: 2026-11-26
+    verification_level: full_text
+    verification_note: >-
+      Read from SEBI's consolidated text (amended up to 25 November 2025). The original
+      notification is at https://www.sebi.gov.in/legal/regulations/jan-2013/sebi-investment-advisors-regulations-2013_26872.html
+
+  - id: sebi-ra-regs-2014
+    title: "SEBI (Research Analysts) Regulations, 2014"
+    doc_type: regulation
+    url: "https://www.sebi.gov.in/sebi_data/attachdocs/aug-2026/1785912002778.pdf"
+    reference_number: "No. LAD-NRO/GN/2014-15/07/1414"
+    published_on: 2014-09-01
+    effective_from: 2014-12-01  # regulation 1(2): ninetieth day from publication
+    amended_up_to: 2025-11-25
+    summary: >-
+      The rules for anyone who publishes research or buy/sell recommendations on securities,
+      including through public media like YouTube or social media. They must be registered with
+      SEBI as a research analyst.
+    key_points:
+      - "Publishing stock recommendations as a research analyst needs SEBI registration."
+      - "The regulations define 'public media' to include internet and web media."
+      - "Registered research analysts get a registration number in the format INH followed by digits."
+    provisions:
+      - ref: "Regulation 3(1)"
+        summary: >-
+          No person shall act as a research analyst or research entity, or hold itself out as a
+          research analyst, unless it has obtained a certificate of registration from SEBI.
+      - ref: "Regulation 2(1) definition of 'public media'"
+        summary: >-
+          Public media means any media available to the general public, including radio,
+          television, internet, web or print media.
+    verified_on: 2026-11-26
+    verification_level: full_text
+    verification_note: >-
+      Read from SEBI's consolidated text (amended up to 25 November 2025). A later amendment
+      (around 10 October 2026) may exist that we have not reviewed yet; re-verify before relying
+      on details beyond Regulation 3(1).
+
+  - id: sebi-circular-2025-11-association
+    title: >-
+      Details/clarifications on provisions related to association of persons regulated by the
+      Board, MIIs, and their agents with persons engaged in prohibited activities
+    doc_type: circular
+    url: "https://www.sebi.gov.in/legal/circulars/jan-2025/details-clarifications-on-provisions-related-to-association-of-persons-regulated-by-the-board-miis-and-their-agents-with-persons-engaged-in-prohibited-activities_91356.html"
+    reference_number: "SEBI/HO/MIRSD/MIRSD-PoD-1/P/CIR/2025/11"
+    published_on: 2025-01-29
+    updated_on: 2026-05-08
+    summary: >-
+      Explains SEBI's 2024 'finfluencer' rules. SEBI-registered firms (brokers, mutual funds,
+      advisers and others) must not associate with anyone who (i) gives advice or recommendations
+      on securities without SEBI registration, or (ii) makes claims of returns or performance on
+      securities without SEBI's permission. Pure investor education is allowed.
+    key_points:
+      - "SEBI calls two activities 'prohibited': unregistered advice or recommendations, and unpermitted claims of returns or performance."
+      - "Registered firms may not pay, refer clients to, or share client data with people doing these things."
+      - "A person counts as doing 'education' only if they avoid both prohibited activities."
+      - "Since 8 May 2026, an educator should not use market price data from the preceding 30 days to name a security while indicating its future price, advice or a recommendation. Before that date the period was three months."
+    provisions:
+      - ref: "Regulation 16A, SEBI (Intermediaries) Regulations, 2008"
+        summary: >-
+          Inserted by the Intermediaries (Amendment) Regulations, 2024, published in the Gazette on
+          29 August 2024. Persons regulated by SEBI and their agents shall not have any direct or
+          indirect association with a person who gives securities advice or recommendations
+          without registration, or makes claims of returns or performance without SEBI permission.
+      - ref: "Annexure A, FAQ 8 (as modified on 8 May 2026)"
+        summary: >-
+          A person engaged solely in education should not use market price data of the preceding
+          thirty days to name a security in a way that indicates its future price, advice or a
+          recommendation.
+    verified_on: 2026-11-26
+    verification_level: full_text
+    verification_note: >-
+      Read from the circular PDF (version updated on 8 May 2026 by circular
+      HO/47/17/12(11)2025-MRD-POD3/I/11107/2026). The underlying rule applies directly to
+      SEBI-regulated entities; PaperTrail uses it to explain which activities SEBI treats as
+      prohibited, not to say that a creator broke it.
+
+  - id: sebi-pr-22-2025-social-media
+    title: >-
+      Caution to public against Fraudulent / Manipulative activities on Social Media Platforms
+      (SMPs) related to securities market
+    doc_type: press_release
+    url: "https://www.sebi.gov.in/sebi_data/attachdocs/may-2025/1746621138080.pdf"
+    reference_number: "PR No. 22/2025"
+    published_on: 2025-04-11
+    summary: >-
+      SEBI warns about securities frauds on YouTube, Instagram, X, WhatsApp, Telegram and app
+      stores, such as trading calls given 'in the name of education', fake claims of SEBI
+      registration, promises of assured or risk-free returns, and invitations to 'VIP' chat groups.
+    key_points:
+      - "Scamsters give trading calls in the name of providing education."
+      - "Common tricks include misleading testimonials and promises of assured or risk-free returns."
+      - "Some falsely claim to be SEBI-registered or show fake SEBI certificates."
+      - "Investors are lured into private WhatsApp/Telegram groups ('VIP group', 'Institutional Trading group', 'Investment Club')."
+      - "Verify registration at https://www.sebi.gov.in/intermediaries.html and report unregistered entities on SEBI's Market Intelligence portal (https://mi.sebi.gov.in/)."
+      - "Disputes with unregistered entities get no SEBI or exchange investor-protection recourse, including SCORES."
+    verified_on: 2026-11-26
+    verification_level: full_text
+
+  - id: sebi-pr-112-2016-registered-only
+    title: "SEBI cautions public to deal with only SEBI registered investment advisers and research analysts"
+    doc_type: press_release
+    url: "https://www.sebi.gov.in/sebi_data/docfiles/34058_t.html"
+    reference_number: "PR No. 112/2016"
+    published_on: 2016-06-09
+    summary: >-
+      SEBI advises the public to deal only with SEBI-registered investment advisers and research
+      analysts, to check registration on SEBI's website, and not to be lured by trading tips from
+      unregistered people received by SMS, websites or social media.
+    key_points:
+      - "Check an adviser's or analyst's registration on SEBI's website before using their services."
+      - "Don't be lured by trading tips from unregistered persons via SMS, websites or social networks."
+    verified_on: 2026-11-26
+    verification_level: full_text
+
+  - id: sebi-investor-spot-a-scam
+    title: "How to Spot a Scam"
+    doc_type: investor_awareness
+    url: "https://investor.sebi.gov.in/spot-any-scam.html"
+    published_on: null  # the page shows no date
+    summary: >-
+      SEBI's investor-education page on warning signs of scams: guaranteed or near-certain
+      returns, unregistered entities, unrealistically high returns, overly complex strategies,
+      missing documents and pressure to decide immediately.
+    key_points:
+      - "Be suspicious of anyone who guarantees assured, guaranteed or near-certain returns: all securities investments carry some risk."
+      - "Be wary of pressure to decide immediately."
+      - "Be wary of unrealistically high returns regardless of market conditions."
+    verified_on: 2026-11-26
+    verification_level: full_text
+
+  - id: sebi-pfutp-regs-2003
+    title: >-
+      SEBI (Prohibition of Fraudulent and Unfair Trade Practices relating to Securities Market)
+      Regulations, 2003
+    doc_type: regulation
+    url: "https://www.sebi.gov.in/sebi_data/docfiles/16859_t.html"
+    published_on: 2003-07-17
+    summary: >-
+      SEBI's main anti-fraud rules. Among other things, they treat spreading false or misleading
+      information or advice about securities through any media, including digital media, as a
+      fraudulent or unfair trade practice when it is likely to influence investors.
+    provisions:
+      - ref: "Regulation 4(2)(k)"
+        summary: >-
+          Disseminating information or advice through any media, physical or digital, which the
+          disseminator knows to be false or misleading (or spreads in a reckless or careless
+          manner), and which is designed to or likely to influence investors' decisions, is a
+          fraudulent or unfair trade practice.
+    verified_on: 2026-11-26
+    verification_level: quoted_in_sebi_orders
+    verification_note: >-
+      SEBI's regulation page confirms the title and 2003 date, but its consolidated copy only runs
+      to 2013. The current wording of 4(2)(k) (from the 2018 amendment, effective 1 February
+      2019) is as quoted in recent SEBI orders. Only SEBI or a court can decide whether this
+      provision was breached.
