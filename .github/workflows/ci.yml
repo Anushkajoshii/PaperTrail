@@ -37,3 +37,36 @@ jobs:
 
       - name: Test
         run: uv run pytest --cov=papertrail --cov-report=term-missing --cov-fail-under=85
+
+  smoke-eval:
+    name: Smoke eval (regression gate)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      PAPERTRAIL_LLM_PROVIDER: mock
+      PAPERTRAIL_ENV: test
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install dependencies
+        run: uv sync --locked --all-extras
+
+      - name: Run 15-claim smoke eval and compare with baseline
+        run: |
+          uv run python -m papertrail.evaluation --split smoke --out eval-out \
+            --baseline evals/baselines/mock-smoke.json --max-drop 0.05
+
+      - name: Add report to the job summary
+        if: always()
+        run: cat eval-out/mock-smoke.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-eval-report
+          path: eval-out/

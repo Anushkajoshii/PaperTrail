@@ -1,0 +1,48 @@
+name: Eval (real model)
+
+# Manual only, so it never spends money unless you start it:
+# GitHub > Actions > "Eval (real model)" > Run workflow.
+# Needs the repository secret ANTHROPIC_API_KEY (Settings > Secrets and variables > Actions).
+# From Part 10 this can switch to Amazon Bedrock through GitHub OIDC (no stored keys).
+
+on:
+  workflow_dispatch:
+    inputs:
+      split:
+        description: "smoke (15 claims) or full (40 claims)"
+        default: smoke
+        type: choice
+        options: [smoke, full]
+
+permissions:
+  contents: read
+
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      PAPERTRAIL_LLM_PROVIDER: anthropic
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - name: Install dependencies
+        run: uv sync --locked --all-extras
+      - name: Check the secret is configured
+        run: |
+          if [ -z "$ANTHROPIC_API_KEY" ]; then
+            echo "::error::Add the ANTHROPIC_API_KEY repository secret first."; exit 1
+          fi
+      - name: Run eval
+        run: uv run python -m papertrail.evaluation --split "${{ inputs.split }}" --out eval-out
+      - name: Add report to the job summary
+        if: always()
+        run: cat eval-out/*.md >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: real-model-eval-${{ inputs.split }}
+          path: eval-out/
