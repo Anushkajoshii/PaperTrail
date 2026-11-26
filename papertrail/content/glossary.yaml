@@ -1,0 +1,26 @@
+# Plain-language definitions served by GET /glossary and used for tooltips in the web app.
+# Keep each definition to one or two sentences a non-expert can follow.
+terms:
+  - {term: Claim, definition: "One checkable statement of fact, like a number, a date or a past result. Opinions are not claims."}
+  - {term: Evidence, definition: "A passage from a source (exchange data, filings, news, regulator material) that relates to a claim."}
+  - {term: Supported, definition: "Reliable sources agree with the claim."}
+  - {term: Contradicted, definition: "Reliable sources say the opposite of the claim."}
+  - {term: Misleading, definition: "Partly true, but missing context changes its meaning, such as a cherry-picked time period."}
+  - {term: Not verifiable, definition: "We could not find enough reliable evidence either way. This is not an accusation."}
+  - {term: Confidence, definition: "How strongly the evidence backs PaperTrail's assessment. It is never a guarantee that a claim is true or false."}
+  - {term: Supporting evidence, definition: "A source that agrees with the claim."}
+  - {term: Contradicting evidence, definition: "A source that disagrees with the claim."}
+  - {term: Context evidence, definition: "Relevant background that neither confirms nor refutes the claim."}
+  - {term: Reliability, definition: "How trustworthy this type of source is. Regulators and exchanges rank highest, social media lowest."}
+  - {term: Recency, definition: "How recent the source is, judged against the kind of claim."}
+  - {term: Relevance, definition: "How directly the source talks about this exact claim."}
+  - {term: SEBI, definition: "The Securities and Exchange Board of India, the regulator for India's securities markets."}
+  - {term: Investment Adviser, definition: "A person or firm registered with SEBI to give investment advice for a fee. Registration numbers start with INA."}
+  - {term: Research Analyst, definition: "A person or firm registered with SEBI to publish research and stock recommendations. Registration numbers start with INH."}
+  - {term: Registered is not endorsed, definition: "SEBI registration means eligibility requirements were met. It does not mean SEBI approves or guarantees anyone's advice."}
+  - {term: Official SEBI rule or guidance, definition: "A flag backed by an official SEBI document we verified and link to. It describes what was said, not a finding that a rule was broken."}
+  - {term: Potential concern, definition: "Something the AI noticed that may deserve a closer look. It never names a regulation and is never presented as a violation."}
+  - {term: Prohibited activities, definition: "SEBI's term for giving securities advice without registration, or making claims of returns or performance without SEBI's permission."}
+  - {term: Claim Ledger, definition: "A running record of a creator's past stock calls, re-checked against actual prices over time."}
+  - {term: Grounding, definition: "Checking that every claim really appears, word for word, in the content. Claims that can't be traced back are dropped."}
+  - {term: Transcript, definition: "The spoken words of a video or audio clip turned into text."}
