@@ -1,0 +1,48 @@
+# PaperTrail golden set v1: SEBI rulebook flags (32 sentences)
+#
+# Each sentence lists the verified-rule flag kinds it SHOULD raise (empty list = none).
+# Registration is assumed "not found" unless `registered: true`.
+# Negatives include tricky look-alikes ("no guarantees", "registered for a marathon").
+
+sentences:
+  # guaranteed_returns
+  - {id: r01, split: smoke, text: "Guaranteed 5% returns every month in my group.", expect: [guaranteed_returns, tip_group_solicitation]}
+  - {id: r02, split: smoke, text: "Yeh scheme bilkul risk-free hai, pakka profit milega.", expect: [guaranteed_returns]}
+  - {id: r03, split: full, text: "हर महीने 10% की गारंटी है।", expect: [guaranteed_returns]}
+  - {id: r04, split: full, text: "Double your money in six months, no loss.", expect: [guaranteed_returns]}
+  - {id: r05, split: full, text: "Bank deposits are insured up to ₹5 lakh by DICGC.", expect: []}
+  # misleading_performance
+  - {id: r06, split: smoke, text: "Is stock ne pichle saal 300% return diya.", expect: [misleading_performance]}
+  - {id: r07, split: full, text: "My students made 2 lakh last month trading options.", expect: [misleading_performance]}
+  - {id: r08, split: full, text: "Our calls have 92% accuracy.", expect: [misleading_performance]}
+  - {id: r09, split: full, text: "Inflation was 5% last year according to official data.", expect: []}
+  # unregistered_advice
+  - {id: r10, split: smoke, text: "Buy INFY with a target of 2000 and stop loss 1700.", expect: [unregistered_advice]}
+  - {id: r11, split: full, text: "KESTREL ka target ₹1500 hai.", expect: [unregistered_advice]}
+  - {id: r12, split: full, text: "Abhi kharid lo, target 900.", expect: [unregistered_advice, pressure_tactics]}
+  - {id: r13, split: full, text: "I bought a new phone for my mother.", expect: []}
+  - {id: r14, split: full, text: "Buy INFY with a target of 2000.", expect: [], registered: true}
+  # unconfirmed_registration_claim
+  - {id: r15, split: smoke, text: "Main SEBI registered advisor hoon.", expect: [unconfirmed_registration_claim]}
+  - {id: r16, split: full, text: "I am a registered research analyst.", expect: [unconfirmed_registration_claim]}
+  - {id: r17, split: full, text: "I registered for the Mumbai marathon.", expect: []}
+  - {id: r18, split: full, text: "I am a SEBI registered adviser.", expect: [], registered: true}
+  # tip_group_solicitation
+  - {id: r19, split: smoke, text: "Join my premium Telegram group for daily calls.", expect: [tip_group_solicitation]}
+  - {id: r20, split: full, text: "Link for the VIP channel is in my bio.", expect: [tip_group_solicitation]}
+  - {id: r21, split: full, text: "The group of companies reported strong results.", expect: []}
+  # live_price_education (needs a recommendation in the same content)
+  - {id: r22, split: smoke, text: "For educational purposes only. Buy INFY, target 2000.", expect: [live_price_education, unregistered_advice]}
+  - {id: r23, split: full, text: "This video is for educational purposes only. Learn what P/E means.", expect: []}
+  # pressure_tactics
+  - {id: r24, split: smoke, text: "Only 5 seats left, join now before Monday!", expect: [pressure_tactics]}
+  - {id: r25, split: full, text: "Abhi kharid lo warna pachtaoge.", expect: [pressure_tactics]}
+  - {id: r26, split: full, text: "Last chance, offer ends tonight.", expect: [pressure_tactics]}
+  # clean content
+  - {id: r27, split: smoke, text: "Index funds track an index and usually have low costs.", expect: []}
+  - {id: r28, split: full, text: "Diversification can reduce risk but does not remove it.", expect: []}
+  - {id: r29, split: full, text: "Check an adviser's registration on SEBI's website before paying.", expect: []}
+  - {id: r30, split: full, text: "The company reported revenue of ₹1,200 crore in Q2.", expect: []}
+  # known limitations (kept in the set so the numbers stay honest)
+  - {id: r31, split: full, text: "There are no guarantees in the stock market.", expect: [], note: "negated guarantee: known false positive"}
+  - {id: r32, split: full, text: "Markets were in a hurry to price in the rate cut.", expect: [], note: "neutral 'hurry': known false positive"}
