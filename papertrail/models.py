@@ -126,7 +126,9 @@ class RedFlagKind(StrEnum):
     MISLEADING_PERFORMANCE = "misleading_performance"
     UNREGISTERED_ADVICE = "unregistered_advice"
     MISSING_DISCLAIMER = "missing_disclaimer"
+    UNCONFIRMED_REGISTRATION_CLAIM = "unconfirmed_registration_claim"
     TIP_GROUP_SOLICITATION = "tip_group_solicitation"
+    PRESSURE_TACTICS = "pressure_tactics"
     LIVE_PRICE_EDUCATION = "live_price_education"
     OTHER = "other"
 
@@ -300,6 +302,19 @@ class Verdict(_Model):
 # --------------------------------------------------------------------------------------------
 
 
+class VerificationLevel(StrEnum):
+    FULL_TEXT = "full_text"  # we read the official document itself
+    OFFICIAL_LISTING = "official_listing"  # SEBI's page confirms title/date; text not reviewed
+    QUOTED_IN_SEBI_ORDERS = "quoted_in_sebi_orders"  # wording taken from SEBI's own orders
+
+
+class Provision(_Model):
+    """A specific clause, paraphrased in plain language (never invented)."""
+
+    ref: str = Field(description="e.g. 'Regulation 3(1)'")
+    summary: str
+
+
 class RegulatorySource(_Model):
     """An official SEBI document from the curated rulebook registry."""
 
@@ -308,16 +323,23 @@ class RegulatorySource(_Model):
     doc_type: SebiDocType
     url: HttpUrl
     reference_number: str | None = Field(default=None, description="Circular or notification no.")
-    published_on: date
+    published_on: date | None = Field(default=None, description="None if the page shows no date.")
     effective_from: date | None = None
+    amended_up_to: date | None = Field(default=None, description="For consolidated texts.")
+    updated_on: date | None = Field(default=None, description="For circulars revised later.")
     summary: str = Field(description="Plain-language summary of what the document says.")
+    key_points: list[str] = Field(default_factory=list)
+    provisions: list[Provision] = Field(default_factory=list)
+    verified_on: date | None = Field(default=None, description="When we last checked the source.")
+    verification_level: VerificationLevel = VerificationLevel.FULL_TEXT
+    verification_note: str | None = None
 
     @model_validator(mode="after")
     def _must_be_official_sebi(self) -> Self:
         host = (urlparse(str(self.url)).hostname or "").lower()
         if host not in OFFICIAL_SEBI_HOSTS:
             raise ValueError(f"regulatory sources must be hosted on sebi.gov.in, got '{host}'")
-        if self.effective_from and self.effective_from < self.published_on:
+        if self.effective_from and self.published_on and self.effective_from < self.published_on:
             # Allowed in rare cases (retrospective effect) but almost always a data-entry error.
             raise ValueError("effective_from is earlier than published_on; check the source")
         return self
@@ -368,6 +390,9 @@ class SebiRegistration(_Model):
     matched_name: str | None = None
     registration_numbers: list[str] = Field(default_factory=list)
     registry_snapshot_date: date | None = None
+    match_basis: str | None = Field(
+        default=None, description="'registration_number' or 'name' (a name-only match is weaker)."
+    )
     source_url: HttpUrl | None = None
     note: str = REGISTRATION_NOT_ENDORSEMENT
 
