@@ -63,6 +63,11 @@ class Settings(BaseSettings):
     media_bucket: str | None = None
     transcribe_timeout_seconds: int = 900
 
+    # --- SEBI register ------------------------------------------------------------------
+    # Local copy of SEBI's public list of registered investment advisers / research analysts.
+    # Only names, registration numbers and validity are stored (never contact details).
+    registry_snapshot_path: str = "data/sebi_registry/snapshot.json"
+
 
 @lru_cache
 def get_settings() -> Settings:

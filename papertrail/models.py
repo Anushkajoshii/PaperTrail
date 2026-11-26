@@ -390,6 +390,9 @@ class SebiRegistration(_Model):
     matched_name: str | None = None
     registration_numbers: list[str] = Field(default_factory=list)
     registry_snapshot_date: date | None = None
+    match_basis: str | None = Field(
+        default=None, description="'registration_number' or 'name' (a name-only match is weaker)."
+    )
     source_url: HttpUrl | None = None
     note: str = REGISTRATION_NOT_ENDORSEMENT
 
