@@ -24,6 +24,18 @@ tooltips inside the app.
 So "Contradicted, high confidence" means: *the evidence we found clearly disagrees with the
 claim.* It does **not** mean "this is 100% proven false" or "this person lied".
 
+## How a check works, step by step
+
+1. **Read** the content (text, article link, subtitles, or audio/video).
+2. **Find claims**: the checkable statements, each with the exact words used.
+3. **Check registration**: look the creator up in our copy of SEBI's register.
+4. **Research**: search trustworthy sources and pick the most relevant passage from each. If
+   nothing relevant turns up, try one broader search.
+5. **Judge**: weigh the evidence for each claim and explain the verdict.
+6. **Rulebook**: compare what was said with official SEBI rules and guidance.
+
+If anything goes wrong along the way, you get an error message, never half a result.
+
 ## Glossary
 
 | Term | Plain meaning |
@@ -31,6 +43,8 @@ claim.* It does **not** mean "this is 100% proven false" or "this person lied".
 | **Claim** | One checkable statement of fact, e.g. a number, a date or a past result. Opinions ("I like this stock") are not claims. |
 | **Claim extraction** | The step where the AI reads the transcript and lists the checkable claims. |
 | **Evidence** | A piece of text from a source (news, exchange data, official filings) that relates to a claim. |
+| **Context evidence** | A source that is relevant background but neither confirms nor refutes the claim, e.g. SEBI's guidance that returns can't be guaranteed. |
+| **Confidence note** | One sentence under each verdict explaining its confidence: how many sources, how strong they are, and whether they disagree. |
 | **Supporting / contradicting evidence** | Evidence that agrees with the claim / evidence that disagrees with it. |
 | **Source reliability** | How trustworthy the *type* of source is. Exchange or regulator websites rank highest, anonymous blogs lowest. |
 | **Recency** | How recent the source is. Old evidence can be outdated for market claims. |
