@@ -1,0 +1,40 @@
+# Secrets — never commit. Use .env.example as the template; real secrets live in AWS SSM.
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info/
+
+# Data
+*.db
+*.sqlite
+data/raw/
+data/uploads/
+
+# Node / web
+node_modules/
+web/dist/
+
+# Terraform
+infra/**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+.terraform.lock.hcl.bak
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/
