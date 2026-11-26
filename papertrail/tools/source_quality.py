@@ -259,10 +259,24 @@ def _numbers(text: str) -> set[str]:
     return set(_NUM.findall(text.replace(",", "")))
 
 
+# A passage about guaranteed/assured returns is on-topic for ANY return promise, even when the
+# wording differs (e.g. a Hinglish promise vs an English regulator caution).
+_GUARANTEE_TOPIC = re.compile(
+    r"guarantee|assured|risk[- ]?free|fixed returns?|market risk|गारंटी", re.IGNORECASE
+)
+TOPIC_RELEVANCE = 0.6
+
+
 def relevance_score(claim: Claim, passage: str) -> float:
     keys = _keywords(claim.text) | {t.lower() for t in claim.tickers}
     if not keys or not passage.strip():
         return 0.0
+    if claim.claim_type is ClaimType.RETURN_PROMISE and _GUARANTEE_TOPIC.search(passage):
+        return max(TOPIC_RELEVANCE, _lexical_relevance(claim, keys, passage))
+    return _lexical_relevance(claim, keys, passage)
+
+
+def _lexical_relevance(claim: Claim, keys: set[str], passage: str) -> float:
     passage_tokens = set(_TOKEN.findall(normalize_for_match(passage)))
     coverage = len(keys & passage_tokens) / len(keys)
     claim_nums = _numbers(claim.text)

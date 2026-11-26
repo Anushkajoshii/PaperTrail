@@ -106,3 +106,13 @@ def test_assess_source_and_plain_language_labels():
     assert describe_quality("https://x.com/a", None, low, as_of=TODAY)["recency"] == (
         "Medium: Publication date unknown"
     )
+
+
+def test_return_promises_find_guarantee_cautions_relevant_across_languages():
+    c = claim(
+        "Mere group mein guaranteed 5% har mahine milega, bilkul risk-free.",
+        ClaimType.RETURN_PROMISE,
+    )
+    caution = "No one can guarantee fixed returns. Investments are subject to market risk."
+    assert relevance_score(c, caution) >= 0.6
+    assert relevance_score(c, "The monsoon arrived early this year.") < 0.2
