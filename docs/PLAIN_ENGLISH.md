@@ -46,5 +46,8 @@ claim.* It does **not** mean "this is 100% proven false" or "this person lied".
 | **Accountability profile** | A summary of how a creator's *checkable* past claims held up. It is not a judgement of the person. |
 | **Transcript** | The spoken words of a video or audio turned into text. |
 | **LLM** | "Large Language Model", the kind of AI that reads and writes text (like ChatGPT or Claude). |
+| **Grounding** | Checking that every claim the AI found really appears, word for word, in the video or post. Claims that can't be traced back to the exact words are thrown away. |
+| **Hinglish** | Hindi and English mixed together, often written in English letters ("yeh stock pakka double hoga"). PaperTrail understands English, Hindi and Hinglish. |
+| **Why checkable** | A one-line note on each claim saying what kind of public record could confirm or refute it. |
 | **Mock mode** | A test mode where the AI is replaced by fixed, predictable answers, so the app can run without internet or API keys. |
 | **Prompt injection** | A trick where a web page hides instructions meant for the AI ("ignore your rules…"). PaperTrail treats all fetched text as data, never as instructions. |

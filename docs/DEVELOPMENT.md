@@ -1,0 +1,66 @@
+# Development guide
+
+## Setup
+
+```bash
+make install      # uv sync --all-extras + pre-commit hooks
+make test         # pytest with coverage
+make lint         # ruff check + format check
+```
+
+Requirements: Python 3.12+, [uv](https://docs.astral.sh/uv/). No API keys and no AWS account are
+needed for development or tests.
+
+## Project layout
+
+```
+papertrail/
+  models.py         # Core data contract (Claim, Evidence, Verdict, RedFlag, Check)
+  config.py         # Settings from env vars / .env
+  llm/              # Pluggable LLM layer
+    base.py         #   Provider protocol, generate_structured (validate + retry), usage/cost
+    mock.py         #   Offline deterministic provider (default)
+    anthropic_provider.py  # Claude via Anthropic API and Amazon Bedrock
+    http_providers.py      # OpenAI-compatible endpoints, Ollama
+    factory.py      #   Provider + per-step model selection
+    pricing.py      #   Approximate token prices for cost-per-check
+  text/             # Language detection, sentence splitting, Indian number parsing
+  agent/
+    prompts.py      #   Versioned prompts with injection-safe data tags
+    extract.py      #   Claim extraction with grounding
+    heuristics.py   #   Rule-based extractor (mock backend and eval baseline)
+  api/ tools/ ledger/   # Filled in later parts
+examples/           # Synthetic sample transcripts
+tests/              # Unit tests (all offline)
+docs/               # ADRs, roadmap, plain-English guide, limitations
+```
+
+## Choosing an LLM provider
+
+Set `PAPERTRAIL_LLM_PROVIDER` in `.env`:
+
+| Value | Needs | Notes |
+|---|---|---|
+| `mock` (default) | nothing | Rule-based. For development and tests, not for accuracy. |
+| `anthropic` | `ANTHROPIC_API_KEY` (or `ant auth login`) | Haiku 5.5 extracts, Opus 5.5 judges |
+| `bedrock` | AWS credentials (Part 10) | Same models via Amazon Bedrock |
+| `openai_compat` | `PAPERTRAIL_OPENAI_COMPAT_BASE_URL`, key, model names | Any OpenAI-compatible API |
+| `ollama` | Ollama running locally, model names | Free, local, slower |
+
+Override models per step with `PAPERTRAIL_EXTRACT_MODEL` and `PAPERTRAIL_JUDGE_MODEL`.
+
+## Try claim extraction
+
+```bash
+uv run python -m papertrail.agent.extract examples/hinglish_reel.txt
+```
+
+The output lists each claim (type, exact quote, tickers, why it is checkable), any claims dropped
+(with the reason), and the estimated cost.
+
+## Conventions
+
+- Conventional Commits (`feat:`, `fix:`, `test:`, `docs:`, `ci:`, `infra:`, `eval:`, `refactor:`).
+- One branch per roadmap part (`part-N/name`), merged through a PR after CI passes.
+- Prompts are versioned in `papertrail/agent/prompts.py`. Bump the version when the wording changes.
+- User-facing text must explain concepts in plain language (see `docs/PLAIN_ENGLISH.md`).
