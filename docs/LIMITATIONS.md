@@ -20,5 +20,10 @@ Being honest about limits is part of the product. The app shows this list too.
    This only affects hints given to the AI, not which claims are checked.
 9. **Exact quotes only.** If a creator's words were transcribed very differently, a real claim can
    be dropped as "not found in transcript". We prefer missing a claim to inventing one.
-10. **It is not financial advice.** It never recommends buying or selling anything, and creator
+10. **Source scores are about the website, not the article.** A weak article on a strong news
+    site still gets a high reliability score. The AI judge reads the actual text.
+11. **PDF documents are not read yet.** Many exchange filings are PDFs. Support is planned.
+12. **Offline demo mode uses sample data.** Without a search key, results come from a small set of
+    clearly labelled demo sources on `.test` addresses, never real ones.
+13. **It is not financial advice.** It never recommends buying or selling anything, and creator
    comparisons are not recommendations.

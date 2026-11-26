@@ -9,7 +9,7 @@ Legend: ✅ done · 🔄 in progress · ⬜ not started · ☁️ needs AWS (ask
 |---|---|---|---|
 | 1 | Foundation: scaffold, docs, data models, CI | `part-1/scaffold` | ✅ |
 | 2 | LLM layer (pluggable + mock) and claim extraction | `part-2/llm-claims` | ✅ |
-| 3 | Evidence tools: transcription, search, safe fetch, source quality | `part-3/evidence` | ⬜ |
+| 3 | Evidence tools: transcription, search, safe fetch, source quality | `part-3/evidence` | ✅ |
 | 4 | SEBI Rulebook Intelligence and registry lookup | `part-4/sebi` | ⬜ |
 | 5 | LangGraph agent and explainable judge | `part-5/agent` | ⬜ |
 | 6 | Golden set v1, eval runner, CI smoke-eval gate | `part-6/evals` | ⬜ |
