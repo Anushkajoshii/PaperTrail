@@ -11,12 +11,15 @@ dependencies = [
     "pydantic>=2.9",
     "pydantic-settings>=2.6",
     "rapidfuzz>=3.14.6",
+    "trafilatura>=2.4.0",
 ]
 
 [project.optional-dependencies]
 # Real LLM providers are optional: the default mock provider needs none of these.
 anthropic = ["anthropic>=2.14"]
 bedrock = ["anthropic[bedrock]>=2.14"]
+# AWS services (Transcribe, S3, DynamoDB): only needed in the cloud or with an AWS account.
+aws = ["boto3>=1.35"]
 
 [dependency-groups]
 dev = [
@@ -43,3 +46,4 @@ select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
+filterwarnings = ["ignore::DeprecationWarning:urllib3.*", "ignore:SOCKS support:Warning"]

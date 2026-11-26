@@ -35,6 +35,8 @@ claim.* It does **not** mean "this is 100% proven false" or "this person lied".
 | **Source reliability** | How trustworthy the *type* of source is. Exchange or regulator websites rank highest, anonymous blogs lowest. |
 | **Recency** | How recent the source is. Old evidence can be outdated for market claims. |
 | **Relevance** | How directly the source talks about *this exact* claim. |
+| **Evidence quality** | Each source is marked High, Medium or Low on three things: how trustworthy that kind of website is (reliability), how recent it is (recency), and how closely it talks about the claim (relevance). |
+| **Demo data** | Sample sources used when PaperTrail runs without internet search. They are always labelled "(demo data)" and use made-up `.test` web addresses. |
 | **Citation** | A link to the exact source used, so you can check it yourself. |
 | **SEBI** | Securities and Exchange Board of India, the regulator for India's securities markets. |
 | **Investment Adviser (IA)** | A person or firm registered with SEBI to give personalised investment advice for a fee. |

@@ -29,7 +29,14 @@ papertrail/
     prompts.py      #   Versioned prompts with injection-safe data tags
     extract.py      #   Claim extraction with grounding
     heuristics.py   #   Rule-based extractor (mock backend and eval baseline)
-  api/ tools/ ledger/   # Filled in later parts
+  tools/
+    transcribe.py   #   Amazon Transcribe (en-IN/hi-IN) + .srt/.vtt/.txt files
+    search.py       #   Tavily live search + offline demo fixture; social media excluded
+    fetch.py        #   Safe page fetch: SSRF guard, limits, robots.txt, readable text
+    untrusted.py    #   Prompt-injection sanitising and data-tag wrapping
+    source_quality.py  # Reliability / recency / relevance scores + plain labels
+    data/           #   Offline demo search results (.test domains only)
+  api/ ledger/      # Filled in later parts
 examples/           # Synthetic sample transcripts
 tests/              # Unit tests (all offline)
 docs/               # ADRs, roadmap, plain-English guide, limitations
@@ -57,6 +64,19 @@ uv run python -m papertrail.agent.extract examples/hinglish_reel.txt
 
 The output lists each claim (type, exact quote, tickers, why it is checkable), any claims dropped
 (with the reason), and the estimated cost.
+
+## Evidence tools
+
+| Setting | Values |
+|---|---|
+| `PAPERTRAIL_SEARCH_PROVIDER` | `offline` (default) or `tavily` (needs `PAPERTRAIL_TAVILY_API_KEY`) |
+| `PAPERTRAIL_MEDIA_BUCKET` | S3 bucket for audio/video transcription (Part 10). Without it, upload `.srt`/`.vtt`/`.txt`. |
+
+Quick check of the fetcher on a real page (makes one network request):
+
+```bash
+uv run python -c "from papertrail.tools.fetch import PageFetcher; p = PageFetcher().fetch('https://www.sebi.gov.in/'); print(p.title, len(p.text))"
+```
 
 ## Conventions
 
