@@ -27,10 +27,15 @@ variable "search_provider" {
   default     = "offline"
 }
 
-variable "github_repo" {
-  description = "owner/name allowed to deploy through GitHub OIDC (main branch only)"
+variable "github_oidc_subject" {
+  description = <<-EOT
+    The repository part of GitHub's OIDC "sub" claim. This repository uses GitHub's immutable
+    subject format (owner and repo with their numeric ids), so a renamed or re-created
+    repository with the same name can never deploy. See it with:
+    gh api repos/OWNER/REPO/actions/oidc/customization/sub
+  EOT
   type        = string
-  default     = "Anushkajoshii/PaperTrail"
+  default     = "repo:Anushkajoshii@89680319/PaperTrail@1473509764"
 }
 
 variable "budget_email" {
