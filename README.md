@@ -18,7 +18,9 @@ red flags, such as "guaranteed returns".
 
 ---
 
-![PaperTrail results dashboard](docs/screenshots/results-summary.jpg)
+![PaperTrail demo: paste a Hinglish finfluencer post, watch the check run, get claim-by-claim verdicts with sources, SEBI red flags and the creator's track record](docs/screenshots/demo.gif)
+
+*Recorded on the live site. Evidence in the demo comes from a labelled offline set, so the web results are illustrative.*
 
 ## What it does, in plain English
 
@@ -34,25 +36,33 @@ red flags, such as "guaranteed returns".
 
 A full glossary lives in [docs/PLAIN_ENGLISH.md](docs/PLAIN_ENGLISH.md).
 
-## Architecture (target)
+## Architecture
 
 ```mermaid
 flowchart LR
-    U[User / Browser<br/>React app] -->|upload or paste| API[API Gateway + FastAPI on Lambda<br/>also serves the web app]
-    API -->|store file| S3[(S3: uploads, transcripts)]
+    U[Browser<br/>React app] -->|"/ and /api"| G[API Gateway<br/>HTTP API, throttled]
+    A2[AI assistants<br/>via MCP server] -->|tools| G
+    G --> API[API Lambda<br/>FastAPI + web app]
+    API -->|upload| S3[(S3<br/>uploads, 7 days)]
+    API -->|save| DB[(DynamoDB<br/>checks, 180 days)]
     API -->|queue job| Q[[SQS]]
     Q --> W[Worker Lambda<br/>LangGraph agent]
+    Q -.->|3 failures| DLQ[[Dead-letter queue]]
     W --> T[Amazon Transcribe<br/>hi-IN / en-IN]
-    W --> LLM[LLM provider<br/>Groq free tier / Bedrock / mock]
+    W --> LLM[LLM: Groq free tier<br/>gpt-oss 20b / 120b]
     W --> S[Search + safe page fetch]
-    W --> R[SEBI registry +<br/>Rulebook module]
-    W --> DB[(DynamoDB: checks,<br/>claims, ledger)]
-    U -->|poll results| API
-    EB[EventBridge daily] --> L[Ledger re-check job] --> DB
+    W --> R[SEBI register +<br/>rulebook rules]
+    W --> DB
+    W -->|stock calls| L[(DynamoDB<br/>Claim Ledger)]
+    EB[EventBridge<br/>weekdays 17:00 IST] --> LJ[Ledger Lambda] -->|prices| L
+    SSM[(SSM Parameter Store<br/>encrypted keys)] -.-> API & W & LJ
+    W -.->|traces| LF[Langfuse<br/>optional]
 ```
 
-The browser never waits on the AI: the API queues a job, a worker runs the steps, and the app
-checks back for results. Design decisions are recorded in [docs/adr/](docs/adr/).
+The browser never waits on the AI: the API queues a job, a worker runs the agent, and the app
+checks back for results. Everything is pay-per-use (about $0 when idle) and deployed by GitHub
+Actions over OIDC with no stored AWS keys. Design decisions are recorded in
+[docs/adr/](docs/adr/). The deployment guide and cost table are in [docs/DEPLOY.md](docs/DEPLOY.md).
 
 ## Quick start (local, no keys, no AWS)
 
