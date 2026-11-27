@@ -93,6 +93,16 @@ make worker                      # ... and this runs them
 docker compose up --build        # both, in containers
 ```
 
+## Run the web app
+
+```bash
+make dev                         # API on :8000
+cd web && npm install && npm run dev    # UI on :5173
+cd web && npm test               # web tests
+```
+
+See [web/README.md](../web/README.md).
+
 ## Run a full check
 
 ```bash

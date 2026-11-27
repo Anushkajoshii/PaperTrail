@@ -33,6 +33,8 @@ from papertrail.api.schemas import (
     ErrorResponse,
     GlossaryTerm,
     Health,
+    RulebookResponse,
+    RuleEntry,
 )
 from papertrail.config import Settings, get_settings
 from papertrail.models import (
@@ -306,12 +308,17 @@ def create_app(
             recent=summaries[:20],
         )
 
-    @app.get("/rulebook", tags=["reference"], summary="Every SEBI rulebook check and its sources")
-    def rulebook() -> dict:
-        return {
-            "rules": rule_catalog(),
-            "sources": [src.model_dump(mode="json") for src in load_sources().values()],
-        }
+    @app.get(
+        "/rulebook",
+        response_model=RulebookResponse,
+        tags=["reference"],
+        summary="Every SEBI rulebook check and its verified official sources",
+    )
+    def rulebook() -> RulebookResponse:
+        return RulebookResponse(
+            rules=[RuleEntry(**r) for r in rule_catalog()],
+            sources=list(load_sources().values()),
+        )
 
     @app.get(
         "/glossary",

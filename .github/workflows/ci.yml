@@ -85,3 +85,36 @@ jobs:
           for i in $(seq 1 30); do curl -sf localhost:8000/health && break; sleep 1; done
           curl -sf localhost:8000/health
           docker rm -f pt
+
+  web:
+    name: Web app (types, tests, build)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: API types match the backend's OpenAPI spec
+        run: |
+          npm run gen:api
+          git diff --exit-code src/api/schema.d.ts || (echo "::error::Run 'npm run gen:api' in web/ after changing the API" && exit 1)
+
+      - name: Type-check
+        run: npx tsc -b --noEmit
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
