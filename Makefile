@@ -1,4 +1,4 @@
-.PHONY: help install dev worker openapi test lint format eval eval-smoke plan deploy destroy ledger stats stats-prod rulebook-docs demo
+.PHONY: help install dev worker openapi test lint format eval eval-compare eval-smoke plan deploy destroy ledger stats stats-prod rulebook-docs demo
 
 help: ## Show available commands
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-10s\033[0m %s\n", $$1, $$2}'
@@ -26,6 +26,9 @@ format: ## Auto-fix lint and formatting
 
 eval: ## Full eval with the configured LLM provider; report in evals/reports/
 	uv run python -m papertrail.evaluation --split full
+
+eval-compare: ## Compare saved full-set runs side by side -> evals/reports/model-comparison.md
+	uv run python -m papertrail.evaluation.compare evals/reports/*-full.json --out evals/reports/model-comparison.md
 
 eval-smoke: ## 15-claim smoke eval + regression gate (what CI runs)
 	uv run python -m papertrail.evaluation --split smoke --baseline evals/baselines/mock-smoke.json

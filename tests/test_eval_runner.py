@@ -38,3 +38,21 @@ def test_cli_writes_reports_and_enforces_gate(tmp_path, capsys):
     strict.write_text(json.dumps({"verdicts.accuracy": 1.5}))
     assert main(["--split", "smoke", "--out", str(tmp_path), "--baseline", str(strict)]) == 1
     assert "REGRESSION GATE FAILED" in capsys.readouterr().err
+
+
+def test_extraction_errors_are_counted_not_fatal():
+    from papertrail.evaluation.golden import load_extraction
+    from papertrail.evaluation.runner import run_extraction
+    from papertrail.llm import LLMError, UsageLog
+
+    class Broken:
+        name = "broken"
+
+        def complete(self, request, *, feedback=None):
+            raise LLMError("groq HTTP 429: Request too large")
+
+    items = load_extraction("smoke")
+    out = run_extraction(items, Broken(), UsageLog())
+    assert out["errors"] == len(items) and out["recall"] == 0.0
+    assert out["gold_claims"] == sum(len(i.claims) for i in items)
+    assert "Request too large" in out["misses"][0]

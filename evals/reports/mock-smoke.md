@@ -1,6 +1,6 @@
 # PaperTrail eval report: smoke split, provider `mock`
 
-Generated 2026-11-26T18:22:42+00:00 · models: extract `mock`, judge `mock` · prompts: extract=extract-v1, judge=judge-v1
+Generated 2026-11-27T13:43:16+00:00 · models: extract `mock`, judge `mock` · prompts: extract=extract-v1, judge=judge-v1
 
 > **Offline mock run.** These numbers measure the rule-based mock and the code around it. They are a regression baseline, **not** the accuracy of a real AI model.
 
@@ -15,7 +15,7 @@ Generated 2026-11-26T18:22:42+00:00 · models: extract `mock`, judge `mock` · p
 | Calibration error (ECE, lower is better) | 0.144 |
 | Claim-extraction recall (6 claims) | 100.0% (with correct type: 100.0%) |
 | Claim-extraction precision | 100.0% |
-| Rulebook flags micro-F1 (9 sentences) | 0.900 |
+| Rulebook flags micro-F1 (9 sentences) | 1.000 |
 | Accusatory wording in explanations | 0.0% |
 | Judge latency p50 / p95 | 0 ms / 0 ms |
 | Cost per verdict | $0.00000 |
@@ -51,9 +51,9 @@ Generated 2026-11-26T18:22:42+00:00 · models: extract `mock`, judge `mock` · p
 |---|---|---|---|
 | guaranteed_returns | 1.00 | 1.00 | 1.00 |
 | live_price_education | 1.00 | 1.00 | 1.00 |
-| misleading_performance | 0.50 | 1.00 | 0.67 |
+| misleading_performance | 1.00 | 1.00 | 1.00 |
 | pressure_tactics | 1.00 | 1.00 | 1.00 |
-| tip_group_solicitation | 1.00 | 0.50 | 0.67 |
+| tip_group_solicitation | 1.00 | 1.00 | 1.00 |
 | unconfirmed_registration_claim | 1.00 | 1.00 | 1.00 |
 | unregistered_advice | 1.00 | 1.00 | 1.00 |
 
@@ -62,4 +62,3 @@ Generated 2026-11-26T18:22:42+00:00 · models: extract `mock`, judge `mock` · p
 - Verdict `v013`: expected **contradicted**, got **not_verifiable** (confidence 0.40)
 - Verdict `v016`: expected **contradicted**, got **not_verifiable** (confidence 0.40)
 - Verdict `v022`: expected **misleading**, got **supported** (confidence 0.82)
-- Rulebook `r01`: expected ['guaranteed_returns', 'tip_group_solicitation'], got ['guaranteed_returns', 'misleading_performance']

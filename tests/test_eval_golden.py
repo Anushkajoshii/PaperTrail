@@ -6,9 +6,9 @@ from papertrail.models import VerdictLabel
 
 def test_verdict_set_shape():
     full, smoke = load_verdicts("full"), load_verdicts("smoke")
-    assert len(full) == 40 and len(smoke) == 15
+    assert len(full) == 95 and len(smoke) == 15  # golden set v2
     labels = Counter(i.gold_label for i in full)
-    assert set(labels) == set(VerdictLabel) and min(labels.values()) >= 9
+    assert set(labels) == set(VerdictLabel) and min(labels.values()) >= 23  # balanced
     assert {i.language.value for i in full} == {"en", "hi", "hinglish"}
     assert set(Counter(i.gold_label for i in smoke)) == set(VerdictLabel)  # every label in smoke
 
@@ -21,7 +21,7 @@ def test_evidence_is_clearly_synthetic():
 
 def test_extraction_and_rulebook_sets():
     ext = load_extraction()
-    assert len(ext) == 10 and sum(len(t.claims) for t in ext) == 28
+    assert len(ext) == 20 and sum(len(t.claims) for t in ext) == 55
     rb = load_rulebook()
-    assert len(rb) == 32 and any(not s.expect for s in rb)  # includes negatives
+    assert len(rb) == 52 and any(not s.expect for s in rb)  # includes negatives
     assert load_extraction("smoke") and load_rulebook("smoke")

@@ -3,5 +3,5 @@
   "verdicts.macro_f1": 0.789,
   "verdicts.stance_accuracy": 0.643,
   "extraction.recall_strict": 1.0,
-  "rulebook.micro_f1": 0.9
+  "rulebook.micro_f1": 1.0
 }

@@ -1,4 +1,4 @@
-# PaperTrail golden set v1: claim extraction (10 transcripts, 28 gold claims)
+# PaperTrail golden set v2: claim extraction (20 transcripts, 55 gold claims; v1 was x01-x10)
 #
 # Each transcript lists the claims a careful human would extract. A gold claim is matched when
 # an extracted quote contains `anchor` (case-insensitive) and has the same claim_type.
@@ -125,3 +125,129 @@ transcripts:
       - {anchor: "sure-shot calls", claim_type: return_promise}
       - {anchor: "debt-free", claim_type: company_fact}
     not_claims: ["welcome back"]
+
+  # ==========================================================================================
+  # GOLDEN SET v2 ADDITIONS (Part 13): x11-x20, full split.
+  # ==========================================================================================
+  - id: x11
+    split: full
+    language: en
+    text: >-
+      Big week for banks. Orion Bank's deposits crossed ₹1 lakh crore in Q4 FY25 and its net NPA
+      is just 0.5%. I think banks are the safest bet right now. Buy ORIONBANK for a target of ₹1,050
+      by March 2026. Share this with your friends!
+    claims:
+      - {anchor: "deposits crossed ₹1 lakh crore", claim_type: company_fact}
+      - {anchor: "net NPA is just 0.5%", claim_type: company_fact}
+      - {anchor: "target of ₹1,050", claim_type: stock_call}
+    not_claims: ["safest bet", "Share this with your friends"]
+
+  - id: x12
+    split: full
+    language: hinglish
+    text: >-
+      Doston, VELASOFT ne 1 saal mein 150% diya hai. Company ne har paanch shares pe ek bonus share
+      diya. Mera manna hai IT sector ka future bright hai. Mere VIP channel mein roz 3 calls milti
+      hain, 90% accuracy ke saath.
+    claims:
+      - {anchor: "150% diya", claim_type: past_performance}
+      - {anchor: "ek bonus share", claim_type: company_fact}
+      - {anchor: "90% accuracy", claim_type: past_performance}
+    not_claims: ["future bright hai"]
+
+  - id: x13
+    split: full
+    language: hi
+    text: >-
+      नमस्ते। गंगा सीमेंट पर कोई कर्ज़ नहीं है और इसकी क्षमता 25 MTPA है। यह शेयर जून 2026 तक ₹900
+      जाएगा। मैं सेबी रजिस्टर्ड एडवाइज़र हूँ। आप सबका धन्यवाद।
+    claims:
+      - {anchor: "कोई कर्ज़ नहीं", claim_type: company_fact}
+      - {anchor: "25 MTPA", claim_type: company_fact}
+      - {anchor: "₹900", claim_type: stock_call}
+      - {anchor: "सेबी रजिस्टर्ड एडवाइज़र", claim_type: credential}
+    not_claims: ["धन्यवाद"]
+
+  - id: x14
+    split: full
+    language: en
+    text: >-
+      Quick fund review. Demo Small-Cap Fund has zero exit load and its direct plan costs 0.70% a
+      year. In 2024 it returned 28%. Small caps can be volatile, so only invest money you won't need
+      for five years. What do you think, should I review more funds?
+    claims:
+      - {anchor: "zero exit load", claim_type: other}
+      - {anchor: "costs 0.70% a year", claim_type: other}
+      - {anchor: "returned 28%", claim_type: past_performance}
+    not_claims: ["only invest money", "should I review more funds"]
+
+  - id: x15
+    split: full
+    language: hinglish
+    text: >-
+      Monsoon Power 300% upar hai doston, aur promoters ke paas 51% stake hai. Suna hai ki jaldi
+      buyback aayega. Abhi entry le lo, kal tak late ho jaoge!
+    claims:
+      - {anchor: "300% upar", claim_type: past_performance}
+      - {anchor: "51% stake", claim_type: company_fact}
+    not_claims: ["Abhi entry le lo", "late ho jaoge"]
+
+  - id: x16
+    split: full
+    language: en
+    text: >-
+      Macro update: the central bank cut its policy rate to 6% on 9 April 2025, and the Demo 100
+      fell 2.3% on 7 April. Rate cuts are usually good for borrowers. Keep investing through SIPs
+      and stay calm.
+    claims:
+      - {anchor: "cut its policy rate to 6%", claim_type: market_fact}
+      - {anchor: "fell 2.3% on 7 April", claim_type: market_fact}
+    not_claims: ["Keep investing", "stay calm"]
+
+  - id: x17
+    split: full
+    language: hinglish
+    text: >-
+      Lotus Foods ka revenue FY25 mein ₹2,180 crore raha aur company ab debt-free hai. Export sales
+      50% badhi. LOTUSFOOD is saal 50% dega, likh ke le lo. Comment mein batao aapka favourite stock.
+    claims:
+      - {anchor: "₹2,180 crore", claim_type: company_fact}
+      - {anchor: "debt-free", claim_type: company_fact}
+      - {anchor: "Export sales", claim_type: company_fact}
+      - {anchor: "is saal 50% dega", claim_type: stock_call}
+    not_claims: ["Comment mein batao"]
+
+  - id: x18
+    split: full
+    language: en
+    text: >-
+      Sitara Pharma turned ₹1 lakh into ₹10 lakh for patient investors. This year it received US FDA
+      approval for two products. Pharma is a defensive sector in my view. Disclaimer: I hold this
+      stock.
+    claims:
+      - {anchor: "₹1 lakh into ₹10 lakh", claim_type: past_performance}
+      - {anchor: "approval for two products", claim_type: company_fact}
+    not_claims: ["defensive sector", "I hold this stock"]
+
+  - id: x19
+    split: full
+    language: hi
+    text: >-
+      दोस्तों, हर महीने 8% पक्का मिलेगा मेरी स्कीम में। डेमो 100 ने 2024 में 11% रिटर्न दिया था। मेरा
+      टेलीग्राम ग्रुप जॉइन करो, सिर्फ़ 10 सीटें बची हैं।
+    claims:
+      - {anchor: "8% पक्का", claim_type: return_promise}
+      - {anchor: "11% रिटर्न", claim_type: market_fact}
+    not_claims: ["सीटें बची हैं"]
+
+  - id: x20
+    split: full
+    language: en
+    text: >-
+      Kestrel Motors cut its debt by ₹500 crore in FY25 and the stock has tripled since its 2021
+      IPO. I'm not a SEBI-registered adviser, so this is just my opinion. Have a great weekend,
+      everyone.
+    claims:
+      - {anchor: "cut its debt by ₹500 crore", claim_type: company_fact}
+      - {anchor: "tripled since its 2021", claim_type: past_performance}
+    not_claims: ["Have a great weekend", "just my opinion"]

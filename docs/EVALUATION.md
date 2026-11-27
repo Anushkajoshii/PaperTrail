@@ -7,7 +7,8 @@ golden sets, the labelling rubric, every metric, and how to run evals.
 
 ```bash
 make eval-smoke     # 15 claims, offline, with the regression gate (what CI runs on every PR)
-make eval           # all 40 claims with the configured LLM provider
+make eval           # all 95 claims with the configured LLM provider
+make eval-compare   # side-by-side table of saved runs (evals/reports/model-comparison.md)
 ```
 
 Reports are written to `evals/reports/<provider>-<split>.md` (and `.json`). Every report says
@@ -16,24 +17,39 @@ which provider, models and prompt versions produced it.
 > **Offline (mock) numbers are not model accuracy.** With `PAPERTRAIL_LLM_PROVIDER=mock`, verdicts
 > come from simple number-matching rules. That run is a *regression baseline* that catches code
 > changes that break behaviour. Real-model results come from running the same sets with
-> `anthropic` or `bedrock`.
+> `groq` (free), `anthropic` or `bedrock`.
 
 ## The golden sets (`evals/golden/`)
 
 | Set | Size | What it tests |
 |---|---|---|
-| `verdicts.yaml` | 40 claims (15 in the smoke split) | The judge, given a **fixed** set of evidence passages, separately from search quality |
-| `extraction.yaml` | 10 transcripts, 28 gold claims | Finding the checkable claims, with the right type, and nothing else |
-| `rulebook.yaml` | 32 sentences | The deterministic SEBI red-flag rules, including look-alike negatives |
+| `verdicts.yaml` | 95 claims (15 in the smoke split): 24 supported, 24 contradicted, 23 misleading, 24 not verifiable; 59 English, 23 Hinglish, 13 Hindi | The judge, given a **fixed** set of evidence passages, separately from search quality |
+| `extraction.yaml` | 20 transcripts, 55 gold claims | Finding the checkable claims, with the right type, and nothing else |
+| `rulebook.yaml` | 52 sentences | The deterministic SEBI red-flag rules, including look-alike negatives |
 
 Coverage: all four verdict labels; English, Hinglish and Hindi; conflicting and irrelevant
 sources; a social post repeating a claim; a prompt-injection passage; private claims; future
-predictions; registered and not-found credentials.
+predictions; registered and not-found credentials. Version 2 (Part 13) adds harder cases:
+- lakh vs crore unit confusion
+- a segment's growth presented as total growth
+- net NPA presented as all bad loans
+- one-off gains
+- start dates cherry-picked from market lows
+- outdated or conflicting sources, rumours and undated "yesterday" claims
 
-**Honesty notes.** v1 is synthetic: companies are fictional and evidence uses `.eval.test` URLs,
-so nothing describes a real company or person. Labels were assigned by one annotator using the
-rubric below. Golden set v2 (Part 13) adds real claims drawn from public SEBI orders, a second
-annotator and an agreement score.
+**Honesty notes.**
+- **Synthetic data:** companies are fictional and evidence uses `.eval.test` URLs, so nothing
+  describes a real company or person.
+- **One annotator:** labels were assigned by one annotator using the rubric below. There is no
+  second annotator or agreement score yet, so treat small differences between models with
+  caution.
+- **No real SEBI-order claims:** the plan to add real claims from public SEBI orders was dropped
+  on purpose. Those orders name real people, and PaperTrail's test data should never attach
+  verdicts to real individuals.
+- **The rulebook set is not held out:** the 20 new rulebook sentences were written together with
+  fixes to the rules (negations such as "returns are not guaranteed", and look-alikes such as a
+  family WhatsApp group). So the rulebook score shows the rules handle these patterns, not how
+  they would do on unseen text.
 
 ## Labelling rubric
 
@@ -85,8 +101,11 @@ uv run python -m papertrail.evaluation --split smoke --write-baseline evals/base
 
 ## Real-model evals
 
-- **Locally:** set `PAPERTRAIL_LLM_PROVIDER=anthropic` and `ANTHROPIC_API_KEY` in `.env`, then
-  `make eval`.
+- **Free, locally:** set `PAPERTRAIL_LLM_PROVIDER=groq` and `PAPERTRAIL_GROQ_API_KEY` in
+  `.env`, then `make eval`. Pick models with `PAPERTRAIL_EXTRACT_MODEL` and
+  `PAPERTRAIL_JUDGE_MODEL`, give each run a name with `--name`, and compare runs with
+  `make eval-compare`.
+- **Claude:** set `PAPERTRAIL_LLM_PROVIDER=anthropic` and `ANTHROPIC_API_KEY`, then `make eval`.
 - **In GitHub Actions:** add the `ANTHROPIC_API_KEY` repository secret, then run the manual
   **Eval (real model)** workflow. It never runs automatically, so it cannot spend money by
   surprise.

@@ -71,6 +71,8 @@ PERFORMANCE = _rx(
     r"\b(accuracy|success\s+rate|hit\s+rate|win\s+rate)\b[^.!?\n]{0,15}\d+\s?%",
     r"\d+\s?%\s*(accuracy|success|hit\s+rate|win\s+rate)",
     r"\bprofit\s+screenshots?\b",
+    r"\b(my|our)\s+(last\s+)?\d+\s+(calls|trades|picks|tips)\b[^.!?\n]{0,25}"
+    r"\b(profit|profitable|winners?|green)\b",
     r"\d+\s?%\s*(रिटर्न|मुनाफ़ा|मुनाफा)",
 )
 
@@ -96,6 +98,7 @@ TIP_GROUP = _rx(
     r"\b(telegram|whats\s?app|discord)\b",
     r"\b(vip|premium|paid|private|exclusive|inner\s+circle)\s+(group|channel|community|club)\b",
     r"\bjoin\s+(my|our|the)\s+(group|channel|community|club)\b",
+    r"\bin\s+(my|our)\s+(group|channel)\b",
     r"\binstitutional\s+trading\s+group\b",
     r"\binvestment\s+club\b",
     "टेलीग्राम",
@@ -105,6 +108,7 @@ TIP_GROUP = _rx(
 EDUCATION_FRAMING = _rx(
     r"\b(for\s+)?educational?\s+purposes?(\s+only)?\b",
     r"\beducation(al)?\s+only\b",
+    r"\b(only|purely|just)\s+educational\b",
     r"\b(sirf|just|only)\s+(for\s+)?education\b",
     r"\bnot\s+(a\s+)?(buy|sell|stock)?\s*recommendations?\b",
     r"\bnot\s+(financial|investment)\s+advice\b",
@@ -121,10 +125,37 @@ PRESSURE = _rx(
     r"\bdon'?t\s+miss\b",
     r"\boffer\s+ends\b",
     r"\bjaldi\b",
-    r"\babhi\s+(kharid|khareed|join|le\s+lo|invest)",
+    r"\babhi\s+(kharid|khareed|join|le\s+lo|invest|entry)",
+    r"\blate\s+ho\s+ja(o|y)ge\b",
     r"\bwarna\s+pacht",
     "अभी (खरीदें|खरीदो|जुड़ें)",
     "जल्दी (करें|करो)",
+)
+
+
+# Negations and look-alikes (see FlagRule.exclude)
+NOT_GUARANTEED = _rx(
+    r"\bnot\s+(guaranteed|assured)\b",
+    r"\bno\s+guarantees?\b",
+    r"\b(can'?t|cannot|nobody\s+can|no\s+one\s+can)\s+guarantee\b",
+    "गारंटी नहीं",
+)
+NOT_REGISTERED = _rx(
+    r"\b(not|never|n't)\s+(a\s+)?(sebi[- ]?)?(registered|regd)\b",
+    "(रजिस्टर्ड|पंजीकृत) नहीं",
+)
+NO_PRESSURE = _rx(
+    r"\bno\s+(hurry|rush)\b",
+    r"\bdon'?t\s+(hurry|rush)\b",
+    r"\bin\s+a\s+hurry\s+to\b",
+)
+NOT_A_TIP_GROUP = _rx(r"\b(family|friends?|school|college|holiday|photos?|wedding|alumni)\b")
+NOT_PROMOTIONAL_PERFORMANCE = _rx(
+    r"\b(according\s+to|as\s+per)\b",
+    # "5% every month" is a promise about the future (the guarantee rule), not past performance
+    r"\b(every|per|each)\s+(month|week|day)\b",
+    r"\bhar\s+(mahine|din|hafte)\b",
+    "हर (महीने|दिन)",
 )
 
 
@@ -158,6 +189,14 @@ class FlagRule:
     provision: str | None = None
     applies: Callable[[RuleContext], bool] = lambda ctx: True
     max_hits: int = 2
+    # Sentences that match the pattern but say the opposite ("not guaranteed") or are a
+    # look-alike ("our family WhatsApp group") are skipped.
+    exclude: re.Pattern[str] | None = None
+
+    def matches(self, sentence: str) -> bool:
+        return bool(self.pattern.search(sentence)) and not (
+            self.exclude is not None and self.exclude.search(sentence)
+        )
 
     def why_for(self, ctx: RuleContext) -> str:
         return self.why(ctx) if callable(self.why) else self.why
@@ -186,6 +225,7 @@ RULES: tuple[FlagRule, ...] = (
         kind=RedFlagKind.GUARANTEED_RETURNS,
         title="Promises of guaranteed or risk-free returns",
         pattern=GUARANTEE,
+        exclude=NOT_GUARANTEED,
         source_ids=("sebi-pr-22-2025-social-media", "sebi-investor-spot-a-scam"),
         what="A promise of guaranteed, assured or risk-free returns.",
         why=(
@@ -203,6 +243,7 @@ RULES: tuple[FlagRule, ...] = (
         kind=RedFlagKind.MISLEADING_PERFORMANCE,
         title="Claims of returns, accuracy or past performance",
         pattern=PERFORMANCE,
+        exclude=NOT_PROMOTIONAL_PERFORMANCE,
         source_ids=("sebi-circular-2025-11-association", "sebi-pr-22-2025-social-media"),
         provision="Regulation 16A, SEBI (Intermediaries) Regulations, 2008",
         what="A claim about returns or performance (for example '300% returns' or '90% accuracy').",
@@ -246,6 +287,7 @@ RULES: tuple[FlagRule, ...] = (
         kind=RedFlagKind.UNCONFIRMED_REGISTRATION_CLAIM,
         title="Claims of SEBI registration we could not confirm",
         pattern=REGISTRATION_CLAIM,
+        exclude=NOT_REGISTERED,
         source_ids=("sebi-pr-22-2025-social-media", "sebi-pr-112-2016-registered-only"),
         what="The speaker says they are SEBI-registered, but we could not confirm it.",
         why=lambda ctx: (
@@ -265,6 +307,7 @@ RULES: tuple[FlagRule, ...] = (
         kind=RedFlagKind.TIP_GROUP_SOLICITATION,
         title="Invitations to private Telegram, WhatsApp or 'VIP' groups",
         pattern=TIP_GROUP,
+        exclude=NOT_A_TIP_GROUP,
         source_ids=("sebi-pr-22-2025-social-media",),
         what="An invitation to a private Telegram/WhatsApp group or a 'VIP' or premium channel.",
         why=(
@@ -308,6 +351,7 @@ RULES: tuple[FlagRule, ...] = (
         kind=RedFlagKind.PRESSURE_TACTICS,
         title="Pressure to act immediately",
         pattern=PRESSURE,
+        exclude=NO_PRESSURE,
         source_ids=("sebi-investor-spot-a-scam",),
         what="Pressure to buy, join or pay quickly.",
         why="SEBI's investor guidance lists pressure to decide immediately as a warning sign.",
@@ -367,7 +411,7 @@ def apply_rules(
     for rule in RULES:
         if not rule.applies(ctx):
             continue
-        hits = [s for s in sentences if rule.pattern.search(s)][: rule.max_hits]
+        hits = [s for s in sentences if rule.matches(s)][: rule.max_hits]
         for sentence in hits:
             result.flags.append(
                 RedFlag(
