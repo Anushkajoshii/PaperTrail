@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import logging
 import time
+from collections import Counter
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import date
@@ -50,6 +51,7 @@ from papertrail.models import (
     TranscriptSegment,
     Verdict,
 )
+from papertrail.observability.tracing import NoopTracer, Tracer, get_tracer, span, use_tracer
 from papertrail.rulebook.concerns import CONCERNS_PROMPT_VERSION, check_rulebook
 from papertrail.rulebook.registry import Registry, lookup_registration
 from papertrail.tools.fetch import PageFetcher
@@ -86,6 +88,7 @@ class AgentDeps:
     today: date = field(default_factory=date.today)
     on_progress: ProgressFn | None = None
     include_ai_concerns: bool = True
+    tracer: Tracer = field(default_factory=NoopTracer)
 
     @classmethod
     def from_settings(cls, settings: Settings | None = None, **overrides: Any) -> AgentDeps:
@@ -96,6 +99,7 @@ class AgentDeps:
             fetcher=PageFetcher.from_settings(s),
             registry=Registry.load(s.registry_snapshot_path),
             settings=s,
+            tracer=get_tracer(s),
         )
         return cls(**(base | overrides))
 
@@ -116,6 +120,7 @@ class AgentState(TypedDict, total=False):
     steps: int
     usage: UsageLog
     notes: list[str]
+    timings: dict[str, float]
 
 
 def build_graph(deps: AgentDeps):
@@ -132,8 +137,14 @@ def build_graph(deps: AgentDeps):
                 raise AgentStepLimitError(
                     f"Stopped after {s.max_agent_steps} steps (safety limit) at '{name}'"
                 )
-            update = fn(state)
+            started = time.perf_counter()
+            with span(name, metadata={"step": steps}):
+                update = fn(state)
+            timings = dict(state.get("timings", {}))
+            elapsed = (time.perf_counter() - started) * 1000
+            timings[name] = round(timings.get(name, 0.0) + elapsed, 1)
             update["steps"] = steps
+            update["timings"] = timings
             return update
 
         return wrapped
@@ -309,10 +320,42 @@ class AgentRun:
 
 
 def run_check(check_input: CheckInput, deps: AgentDeps, *, check_id: str | None = None) -> AgentRun:
-    """Run the whole pipeline and return a validated Check (completed or failed)."""
+    """Run the whole pipeline and return a validated Check (completed or failed).
+
+    With tracing on, the whole run is one trace (id = check id) with a span per agent step and
+    a generation per AI call.
+    """
+    trace_id = check_id or Check.model_fields["id"].default_factory()
+    with use_tracer(
+        deps.tracer,
+        trace_id=trace_id,
+        name="check",
+        input={"kind": check_input.kind.value, "creator": check_input.creator_handle},
+        metadata={"llm_provider": deps.settings.llm_provider.value},
+        tags=[deps.settings.llm_provider.value, check_input.kind.value],
+    ) as root:
+        run = _run_check(check_input, deps, check_id=trace_id)
+        c = run.check
+        root.output = {
+            "status": c.status.value,
+            "claims": len(c.claims),
+            "verdicts": dict(Counter(v.label.value for v in c.verdicts)),
+            "red_flags": len(c.red_flags),
+            "error": c.error,
+        }
+        if c.metrics:
+            root.metadata |= {
+                "duration_ms": c.metrics.duration_ms,
+                "cost_usd": c.metrics.cost_usd,
+                "total_tokens": c.metrics.total_tokens,
+            }
+        return run
+
+
+def _run_check(check_input: CheckInput, deps: AgentDeps, *, check_id: str) -> AgentRun:
     started = time.perf_counter()
     graph = build_graph(deps)
-    ids = {"id": check_id} if check_id else {}
+    ids = {"id": check_id}
     try:
         state = graph.invoke(
             {"input": check_input, "steps": 0, "notes": [], "usage": UsageLog()},
@@ -337,6 +380,9 @@ def run_check(check_input: CheckInput, deps: AgentDeps, *, check_id: str | None 
         total_tokens=usage.total_tokens,
         cost_usd=usage.total_cost_usd,
         duration_ms=round((time.perf_counter() - started) * 1000, 1),
+        llm_provider=deps.settings.llm_provider.value,
+        models=usage.models_by_purpose(),
+        step_ms=state.get("timings", {}),
         agent_steps=state["steps"],
         search_rounds=state.get("research_round", 0),
         pages_fetched=sum(r.pages_fetched for r in research.values()),

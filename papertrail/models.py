@@ -461,6 +461,13 @@ class CheckMetrics(_Model):
     agent_steps: int = 0
     search_rounds: int = 0
     pages_fetched: int = 0
+    llm_provider: str | None = Field(default=None, description="e.g. groq, anthropic, mock")
+    models: dict[str, str] = Field(
+        default_factory=dict, description="Model used per step, e.g. extract / judge."
+    )
+    step_ms: dict[str, float] = Field(
+        default_factory=dict, description="Time spent in each agent step, in milliseconds."
+    )
     prompt_versions: dict[str, str] = Field(default_factory=dict)
     notes: list[str] = Field(
         default_factory=list, description="Non-fatal issues, e.g. a site that blocked us."
