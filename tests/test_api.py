@@ -205,3 +205,43 @@ def test_lambda_handler_imports(monkeypatch, tmp_path):
         assert callable(lambda_handler.handler)
     finally:
         get_settings.cache_clear()
+
+
+def test_report_endpoint_formats_and_states(api):
+    client, _ = api
+    r = client.post(
+        "/checks",
+        json={
+            "kind": "text",
+            "creator_handle": "@demo",
+            "text": (EXAMPLES / "hinglish_reel.txt").read_text(),
+        },
+    )
+    cid = r.json()["id"]
+    html = client.get(f"/checks/{cid}/report")
+    assert html.status_code == 200 and html.headers["content-type"].startswith("text/html")
+    assert "default-src 'none'" in html.headers["content-security-policy"]
+    assert "Claims and verdicts" in html.text and "content-disposition" not in html.headers
+    md = client.get(f"/checks/{cid}/report?format=md&download=true")
+    assert md.headers["content-type"].startswith("text/markdown")
+    assert md.headers["content-disposition"] == f'attachment; filename="papertrail-{cid}.md"'
+    assert md.text.startswith("# PaperTrail fact-check report")
+    printed = client.get(f"/checks/{cid}/report?print=true")
+    assert "addEventListener('load'" in printed.text
+    assert client.get(f"/checks/{cid}/report?format=pdf").status_code == 422
+    assert client.get("/checks/chk_missing/report").status_code == 404
+
+
+def test_report_not_ready_returns_409(tmp_path):
+    settings = Settings(_env_file=None, store_backend="memory", queue_mode="sqlite")
+    client = TestClient(
+        create_app(
+            settings,
+            store=MemoryCheckStore(),
+            queue=SqliteJobQueue(tmp_path / "q.db"),
+            uploads=LocalUploadStorage(tmp_path / "up"),
+        )
+    )
+    cid = client.post("/checks", json={"kind": "text", "text": "Nifty hit 26,277."}).json()["id"]
+    r = client.get(f"/checks/{cid}/report")
+    assert r.status_code == 409 and r.json()["error"]["code"] == "not_ready"
