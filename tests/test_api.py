@@ -245,3 +245,41 @@ def test_report_not_ready_returns_409(tmp_path):
     cid = client.post("/checks", json={"kind": "text", "text": "Nifty hit 26,277."}).json()["id"]
     r = client.get(f"/checks/{cid}/report")
     assert r.status_code == 409 and r.json()["error"]["code"] == "not_ready"
+
+
+def test_creator_profile_ledger_timeline_and_compare(api):
+    client, _ = api
+    for handle, sample in [("@demo", "hinglish_reel.txt"), ("@other", "english_post.txt")]:
+        r = client.post(
+            "/checks",
+            json={
+                "kind": "text",
+                "creator_handle": handle,
+                "text": (EXAMPLES / sample).read_text(),
+            },
+        )
+        assert r.status_code == 202
+
+    p = client.get("/creators/demo").json()
+    assert p["handle"] == "@demo" and p["checks"] == 1
+    assert p["first_checked"] == p["last_checked"]
+    assert p["registration"] == "Not checked"  # no register copy in tests
+    tr = p["track_record"]
+    assert tr["claims_checked"] >= 3 and tr["enough_data"] is False
+    assert tr["supported_share"] is None  # too few claims to show a share
+    (call,) = p["ledger"]["entries"]  # TATAMOTORS ka target ₹1500 hai, March tak
+    assert call["entry"]["ticker"] == "TATAMOTORS" and call["target"] == 1500
+    assert call["entry"]["status"] == "open" and call["entry"]["deadline_stated"] is True
+    assert p["ledger"]["counts"]["open"] == 1 and p["ledger"]["hit_share"] is None
+    assert p["timeline"] and any(t["official"] for t in p["timeline"])
+    assert "not a judgement" in p["note"]
+
+    ledger = client.get("/ledger").json()
+    assert [e["entry"]["ticker"] for e in ledger["summary"]["entries"]] == ["TATAMOTORS"]
+    assert "first saw them" in ledger["note"]
+
+    cmp = client.get("/creators/compare", params={"handles": ["demo", "@Other", "ghost"]}).json()
+    assert [c["handle"] for c in cmp["creators"]] == ["@demo", "@other"]
+    assert cmp["missing"] == ["@ghost"] and "not a recommendation" in cmp["note"]
+    for bad in (["demo"], ["demo", "@DEMO"], ["a", "b", "c", "d"]):
+        assert client.get("/creators/compare", params={"handles": bad}).status_code == 422

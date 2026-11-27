@@ -25,12 +25,17 @@ from fastapi.responses import JSONResponse, Response
 from pydantic import ValidationError
 
 from papertrail import __version__
+from papertrail.api.creators import (
+    CompareView,
+    CreatorProfile,
+    LedgerView,
+    build_profile,
+    ledger_summary,
+)
 from papertrail.api.schemas import (
     CheckAccepted,
-    CheckSummary,
     CheckView,
     CreateCheckRequest,
-    CreatorView,
     ErrorResponse,
     GlossaryTerm,
     Health,
@@ -331,32 +336,54 @@ def create_app(
             )
         return Response(body, media_type=f"{media}; charset=utf-8", headers=headers)
 
+    def profile_of(handle: str) -> CreatorProfile | None:
+        h = normalize_handle(handle)
+        return build_profile(h, store.list_by_creator(h, limit=200), ledger.list_by_creator(h))
+
     @app.get(
-        "/creators/{handle}",
-        response_model=CreatorView,
+        "/creators/compare",
+        response_model=CompareView,
         tags=["creators"],
         responses=ERRORS,
-        summary="Recent checks of a creator's content",
+        summary="Two or three creators side by side (facts, not a recommendation)",
     )
-    def get_creator(handle: str) -> CreatorView:
-        checks = store.list_by_creator(handle)
-        if not checks:
+    def compare_creators(
+        handles: list[str] = Query(..., min_length=2, max_length=3, description="2 or 3 handles"),
+    ) -> CompareView:
+        unique = list(dict.fromkeys(normalize_handle(h) for h in handles if h.strip()))
+        if len(unique) < 2:
+            raise HTTPException(
+                422, {"code": "invalid_request", "message": "Give two or three different handles."}
+            )
+        profiles = {h: profile_of(h) for h in unique}
+        return CompareView(
+            creators=[p for p in profiles.values() if p],
+            missing=[f"@{h}" for h, p in profiles.items() if p is None],
+        )
+
+    @app.get(
+        "/creators/{handle}",
+        response_model=CreatorProfile,
+        tags=["creators"],
+        responses=ERRORS,
+        summary="A creator's profile: track record, Claim Ledger, red-flag timeline",
+    )
+    def get_creator(handle: str) -> CreatorProfile:
+        profile = profile_of(handle)
+        if profile is None:
             raise HTTPException(
                 404, {"code": "not_found", "message": "No checks for this creator yet."}
             )
-        summaries = [CheckSummary.of(c) for c in checks]
-        totals: dict[str, int] = defaultdict(int)
-        for summary in summaries:
-            for label, n in summary.verdicts.items():
-                totals[label] += n
-            totals["official_flags"] += summary.official_flags
-            totals["potential_concerns"] += summary.potential_concerns
-        return CreatorView(
-            handle=f"@{normalize_handle(handle)}",
-            checks=len(checks),
-            totals=dict(totals),
-            recent=summaries[:20],
-        )
+        return profile
+
+    @app.get(
+        "/ledger",
+        response_model=LedgerView,
+        tags=["creators"],
+        summary="The Claim Ledger: recent stock calls and whether they came true",
+    )
+    def get_ledger(limit: int = Query(100, ge=1, le=200)) -> LedgerView:
+        return LedgerView(summary=ledger_summary(ledger.list_recent(limit)))
 
     @app.get(
         "/rulebook",
