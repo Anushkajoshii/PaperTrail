@@ -1,0 +1,72 @@
+name: Deploy
+
+# Ships main to AWS after CI passes. Uses GitHub OIDC: AWS gives this workflow short-lived
+# credentials for one role that can only push the image and update the two functions.
+# No AWS keys are stored in GitHub. Does nothing until the repository variable
+# AWS_DEPLOY_ROLE_ARN is set (after the first `make deploy`, see docs/DEPLOY.md).
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+env:
+  AWS_REGION: ap-southeast-2
+  ENV_NAME: prod
+
+jobs:
+  deploy:
+    name: Build and deploy to AWS Lambda
+    if: >-
+      vars.AWS_DEPLOY_ROLE_ARN != '' &&
+      (github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success')
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - id: ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push the arm64 image
+        id: image
+        run: |
+          image="${{ steps.ecr.outputs.registry }}/papertrail:$(git rev-parse --short=12 HEAD)"
+          docker build --provenance=false -f Dockerfile.lambda -t "$image" .
+          docker push "$image"
+          echo "uri=$image" >> "$GITHUB_OUTPUT"
+
+      - name: Point both functions at the new image
+        run: |
+          for fn in api worker; do
+            aws lambda update-function-code --function-name "papertrail-$ENV_NAME-$fn" \
+              --image-uri "${{ steps.image.outputs.uri }}" >/dev/null
+          done
+          for fn in api worker; do
+            aws lambda wait function-updated-v2 --function-name "papertrail-$ENV_NAME-$fn"
+          done
+
+      - name: Smoke test the live app
+        if: vars.APP_URL != ''
+        run: |
+          url="${{ vars.APP_URL }}"
+          for i in 1 2 3 4 5; do curl -sf "${url%/}/api/health" && break; sleep 5; done
+          curl -sf "${url%/}/api/health"
+          echo "Deployed ${{ steps.image.outputs.uri }} to $url" >> "$GITHUB_STEP_SUMMARY"

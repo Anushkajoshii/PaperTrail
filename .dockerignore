@@ -17,3 +17,8 @@ examples
 *.md
 !README.md
 * [0-9].*
+# Dockerfile.lambda builds the web app inside the image
+!web
+web/node_modules
+web/dist
+web/*.tsbuildinfo

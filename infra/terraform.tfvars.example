@@ -1,0 +1,4 @@
+# Copy to terraform.tfvars (git-ignored) and fill in.
+budget_email = "you@example.com"
+# llm_provider    = "groq"     # or "mock" to run with no key
+# search_provider = "offline"  # or "tavily" with a free key in SSM

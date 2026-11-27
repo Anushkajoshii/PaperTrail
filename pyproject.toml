@@ -26,7 +26,9 @@ dependencies = [
 anthropic = ["anthropic>=2.14"]
 bedrock = ["anthropic[bedrock]>=2.14"]
 # AWS services (Transcribe, S3, DynamoDB): only needed in the cloud or with an AWS account.
-aws = ["boto3>=1.35"]
+aws = [
+    "boto3>=1.35",
+]
 
 [dependency-groups]
 dev = [
@@ -34,6 +36,7 @@ dev = [
     "pytest-cov>=6.0",
     "ruff>=0.8",
     "pre-commit>=4.0",
+    "moto[dynamodb,s3,sqs,ssm]>=5.0",
 ]
 
 [build-system]

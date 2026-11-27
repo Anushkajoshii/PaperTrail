@@ -10,7 +10,7 @@ def test_defaults_run_offline(monkeypatch):
     monkeypatch.delenv("PAPERTRAIL_LLM_PROVIDER", raising=False)
     settings = Settings(_env_file=None)
     assert settings.llm_provider is LLMProvider.MOCK
-    assert settings.aws_region == "ap-south-1"
+    assert settings.aws_region == "ap-southeast-2"
 
 
 def test_provider_from_env(monkeypatch):

@@ -1,11 +1,13 @@
-"""AWS Lambda entry point for the API (wired up by Terraform in Part 10).
+"""AWS Lambda entry point for the API (and the web app): API Gateway -> Lambda -> Mangum.
 
-API Gateway -> Lambda -> Mangum -> FastAPI. In AWS the queue mode is SQS and the store is
-DynamoDB; those adapters arrive in Part 10.
+Secrets are loaded from SSM before the settings are read. In AWS the store is DynamoDB, the
+queue is SQS and uploads go to S3 (all chosen by environment variables set in Terraform).
 """
 
 from mangum import Mangum
 
-from papertrail.api.app import create_app
+from papertrail.api.web import create_root_app
+from papertrail.aws.secrets import load_secrets_from_env
 
-handler = Mangum(create_app(), lifespan="off")
+load_secrets_from_env()
+handler = Mangum(create_root_app(), lifespan="off")

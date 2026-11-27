@@ -1,7 +1,8 @@
 """The worker: takes queued checks, runs the agent, and saves the results.
 
 Locally it polls the SQLite queue (``python -m papertrail.worker``). In AWS the same
-``process_check`` function runs inside the SQS-triggered worker Lambda (Part 10).
+``process_check`` function runs inside the SQS-triggered worker Lambda
+(``papertrail.aws.worker_lambda``).
 """
 
 from __future__ import annotations
@@ -20,9 +21,9 @@ from papertrail.models import Check, CheckStatus
 from papertrail.store import (
     CheckStore,
     JobQueue,
-    LocalUploadStorage,
-    SqliteJobQueue,
     get_check_store,
+    get_job_queue,
+    get_upload_storage,
 )
 from papertrail.store.uploads import UploadStorage
 
@@ -98,8 +99,10 @@ def main(argv: list[str] | None = None) -> int:  # pragma: no cover - exercised 
     logging.basicConfig(level=get_settings().log_level, format="%(asctime)s %(name)s %(message)s")
     s = get_settings()
     store = get_check_store(s)
-    queue = SqliteJobQueue(s.sqlite_path)
-    uploads = LocalUploadStorage(s.upload_dir, max_bytes=s.max_upload_bytes)
+    queue = get_job_queue(s)
+    if queue is None:
+        parser.error("Set PAPERTRAIL_QUEUE_MODE=sqlite (or sqs) to run a separate worker")
+    uploads = get_upload_storage(s)
     worker = Worker(store, queue, default_deps_factory(s, uploads))
     signal.signal(signal.SIGTERM, lambda *_: worker.stop_event.set())
     if args.once:

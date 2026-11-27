@@ -12,6 +12,8 @@ DEFAULT_MODELS: dict[LLMProvider, dict[Purpose, str]] = {
         Purpose.EXTRACT: "anthropic.claude-haiku-5-5",
         Purpose.JUDGE: "anthropic.claude-opus-5-5",
     },
+    # Free tier, open-weight models with JSON-schema support on Groq.
+    LLMProvider.GROQ: {Purpose.EXTRACT: "openai/gpt-oss-20b", Purpose.JUDGE: "openai/gpt-oss-120b"},
 }
 
 
@@ -49,6 +51,10 @@ def get_provider(settings: Settings | None = None) -> Provider:
             from papertrail.llm.http_providers import OpenAICompatProvider
 
             return OpenAICompatProvider.from_settings(s)
+        case LLMProvider.GROQ:
+            from papertrail.llm.http_providers import OpenAICompatProvider
+
+            return OpenAICompatProvider.for_groq(s)
         case LLMProvider.OLLAMA:
             from papertrail.llm.http_providers import OllamaProvider
 

@@ -169,3 +169,82 @@ def test_ollama_request_and_invalid_json():
         provider.complete(REQ)
     assert payloads[0]["stream"] is False
     assert payloads[0]["format"]["properties"]["answer"]["type"] == "string"
+
+
+def ok_body(content='{"answer": "hi"}'):
+    return httpx.Response(
+        200, json={"model": "m", "choices": [{"message": {"content": content}}], "usage": {}}
+    )
+
+
+def test_openai_compat_falls_back_to_json_mode_when_schema_unsupported():
+    payloads = []
+
+    def handler(request):
+        payload = json.loads(request.content)
+        payloads.append(payload)
+        if payload["response_format"]["type"] == "json_schema":
+            return httpx.Response(400, text="model does not support response format `json_schema`")
+        return ok_body()
+
+    provider = OpenAICompatProvider(http_client(handler), "https://x/v1", MODELS)
+    assert generate_structured(provider, REQ).output.answer == "hi"
+    assert generate_structured(provider, REQ).output.answer == "hi"
+    # Second call goes straight to JSON mode: the model's limitation is remembered.
+    assert [p["response_format"]["type"] for p in payloads] == [
+        "json_schema",
+        "json_object",
+        "json_object",
+    ]
+    assert '"answer"' in payloads[1]["messages"][0]["content"]  # schema is in the prompt
+
+
+def test_openai_compat_other_400_is_not_retried():
+    calls = []
+
+    def handler(request):
+        calls.append(1)
+        return httpx.Response(400, text="context too long")
+
+    provider = OpenAICompatProvider(http_client(handler), "https://x/v1", MODELS)
+    with pytest.raises(LLMError, match="HTTP 400"):
+        provider.complete(REQ)
+    assert len(calls) == 1
+
+
+def test_openai_compat_waits_and_retries_when_rate_limited():
+    responses = iter(
+        [httpx.Response(429, headers={"retry-after": "3"}), httpx.Response(429), ok_body()]
+    )
+    waits = []
+    provider = OpenAICompatProvider(
+        http_client(lambda r: next(responses)), "https://x/v1", MODELS, sleep=waits.append
+    )
+    assert provider.complete(REQ).data == {"answer": "hi"}
+    assert waits == [3.0, 4.0]
+
+
+def test_openai_compat_gives_up_after_rate_limit_retries():
+    provider = OpenAICompatProvider(
+        http_client(lambda r: httpx.Response(429)),
+        "https://x/v1",
+        MODELS,
+        max_rate_retries=1,
+        sleep=lambda s: None,
+    )
+    with pytest.raises(LLMError, match="HTTP 429"):
+        provider.complete(REQ)
+
+
+def test_groq_preset_uses_free_models_and_low_reasoning_effort(monkeypatch):
+    s = Settings(_env_file=None, llm_provider=LLMProvider.GROQ, groq_api_key="gsk_test_not_real")
+    provider = get_provider(s)
+    assert provider.name == "groq"
+    assert provider._url == "https://api.groq.com/openai/v1/chat/completions"
+    assert provider._models[Purpose.JUDGE] == "openai/gpt-oss-120b"
+    assert provider._payload(REQ, "m", None)["reasoning_effort"] == "low"
+
+
+def test_groq_needs_a_key():
+    with pytest.raises(LLMError, match="GROQ_API_KEY"):
+        get_provider(Settings(_env_file=None, llm_provider=LLMProvider.GROQ))

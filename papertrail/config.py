@@ -16,6 +16,8 @@ class LLMProvider(StrEnum):
     BEDROCK = "bedrock"
     OPENAI_COMPAT = "openai_compat"
     OLLAMA = "ollama"
+    # Groq's free tier: an OpenAI-compatible endpoint with open models (no card needed).
+    GROQ = "groq"
 
 
 class Environment(StrEnum):
@@ -29,7 +31,7 @@ class Settings(BaseSettings):
 
     env: Environment = Environment.LOCAL
     log_level: str = "INFO"
-    aws_region: str = "ap-south-1"
+    aws_region: str = "ap-southeast-2"
 
     # --- LLM ---------------------------------------------------------------------------
     llm_provider: LLMProvider = LLMProvider.MOCK
@@ -44,6 +46,10 @@ class Settings(BaseSettings):
     openai_compat_base_url: str | None = None
     openai_compat_api_key: SecretStr | None = None
     ollama_base_url: str = "http://localhost:11434"
+    groq_api_key: SecretStr | None = None
+    groq_base_url: str = "https://api.groq.com/openai/v1"
+    # Reasoning models (e.g. gpt-oss) accept "low" | "medium" | "high"; empty means not sent.
+    reasoning_effort: str | None = None
 
     # --- Agent -------------------------------------------------------------------------
     # Safety guards for the agent (Part 5): total graph steps, and search rounds per claim.
@@ -82,6 +88,18 @@ class Settings(BaseSettings):
     max_upload_bytes: int = 25_000_000
     rate_limit_per_minute: int = 20
     cors_origins: list[str] = ["http://localhost:5173"]
+
+    # --- AWS (Part 10) --------------------------------------------------------------------
+    # store_backend="dynamodb" uses this table; queue_mode="sqs" sends jobs to this queue;
+    # upload_backend="s3" keeps uploads in media_bucket.
+    dynamodb_table: str | None = None
+    sqs_queue_url: str | None = None
+    upload_backend: str = "local"
+    # In Lambda, secrets (e.g. the Groq key) are read from SSM Parameter Store under this path,
+    # never from Terraform or environment variables.
+    ssm_secrets_path: str | None = None
+    # Built web app to serve at "/" (the API then lives under /api). Empty: API only.
+    web_dist_dir: str | None = None
 
 
 @lru_cache
