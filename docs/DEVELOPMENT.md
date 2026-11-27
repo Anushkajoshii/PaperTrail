@@ -52,6 +52,7 @@ papertrail/
     schemas.py      #   Request/response models (drive the OpenAPI docs)
     main.py         #   uvicorn entry point
     lambda_handler.py  # AWS Lambda entry point (Mangum)
+  report/           # Source-cited reports: builder (numbered citations), HTML + Markdown templates
   store/            # CheckStore / JobQueue / UploadStorage (SQLite + disk locally)
   worker.py         # Runs queued checks with live progress
   content/glossary.yaml  # Plain-language terms for tooltips
@@ -108,6 +109,7 @@ See [web/README.md](../web/README.md).
 ```bash
 make demo
 uv run python -m papertrail.agent.run examples/english_post.txt --json > check.json
+uv run python -m papertrail.agent.run examples/hinglish_reel.txt --report report.html   # or report.md
 uv run python -m papertrail.agent.run https://example.com/article --creator-name "Name"
 ```
 

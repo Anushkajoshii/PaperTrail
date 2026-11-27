@@ -19,3 +19,4 @@ New ADRs copy [000-template.md](000-template.md).
 | [012](012-evaluation-design.md) | Evaluation design: fixed-evidence judge evals, honest baselines, a CI gate | Accepted |
 | [013](013-async-api-and-adapters.md) | Asynchronous API with swappable store, queue and upload adapters | Accepted |
 | [014](014-web-frontend.md) | React web app with types generated from the API contract | Accepted |
+| [015](015-reports.md) | Reports as print-ready HTML and Markdown, not server-side PDF | Accepted |
