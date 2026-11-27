@@ -68,3 +68,9 @@ def test_unfinished_checks_have_no_report():
                 input=CheckInput(kind=InputKind.TEXT, text="x y z"), status=CheckStatus.RESEARCHING
             )
         )
+
+
+def test_parenthesised_ids_become_single_citation_brackets():
+    report = build_report(completed_check())
+    text = " ".join(r for c in report.claims for r in c.reasoning)
+    assert "([" not in text and "guidance [1]" in text

@@ -216,11 +216,12 @@ def build_report(check: Check, *, generated_at: datetime | None = None) -> Repor
             citations.append(cite)
 
         def readable(text: str) -> str:
-            return re.sub(
-                r"\bevd_[A-Za-z0-9_]+\b",
-                lambda m: f"[{numbers[m.group(0)]}]" if m.group(0) in numbers else m.group(0),
-                text,
-            )
+            # "(evd_x)" and "evd_x" both become "[n]".
+            def sub(m: re.Match[str]) -> str:
+                eid = m.group(1)
+                return f"[{numbers[eid]}]" if eid in numbers else m.group(0)
+
+            return re.sub(r"\(?\b(evd_[A-Za-z0-9_]+)\b\)?", sub, text)
 
         v = verdicts.get(claim.id)
         report_claims.append(

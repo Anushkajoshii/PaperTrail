@@ -1,10 +1,10 @@
-import { BadgeCheck, CircleSlash, Copy, ExternalLink, Info, Plus, SearchX } from "lucide-react";
-import { useState } from "react";
+import { BadgeCheck, CircleSlash, ExternalLink, Info, Plus, SearchX } from "lucide-react";
 import { Link } from "react-router";
 import type { CheckView, SebiRegistration } from "../api/types";
 import { VERDICTS, VERDICT_ORDER, formatDate } from "../lib/verdicts";
 import { ClaimCard } from "./ClaimCard";
 import { FlagCard } from "./FlagCard";
+import { ShareBar } from "./ShareBar";
 import { Term } from "./Term";
 
 const LANGUAGE_NAMES: Record<string, string> = { en: "English", hi: "Hindi", hinglish: "Hinglish" };
@@ -43,7 +43,6 @@ function RegistrationCard({ reg }: { reg: SebiRegistration }) {
 
 export function ResultsView({ view }: { view: CheckView }) {
   const { check } = view;
-  const [copied, setCopied] = useState(false);
   const verdictFor = (id: string) => check.verdicts.find((v) => v.claim_id === id);
   const claims = [...check.claims].sort((a, b) => {
     const ra = VERDICT_ORDER.indexOf(verdictFor(a.id)?.label ?? "not_verifiable");
@@ -77,21 +76,13 @@ export function ResultsView({ view }: { view: CheckView }) {
             {formatDate(check.created_at)} · {LANGUAGE_NAMES[check.detected_language ?? "en"] ?? check.detected_language} · Check {check.id}
           </p>
         </div>
-        <div className="flex gap-2">
-          <button
-            type="button"
-            className="btn-secondary"
-            onClick={() => {
-              void navigator.clipboard?.writeText(window.location.href);
-              setCopied(true);
-            }}
-          >
-            <Copy className="h-4 w-4" aria-hidden="true" /> {copied ? "Link copied" : "Copy link"}
-          </button>
-          <Link to="/check" className="btn-primary">
-            <Plus className="h-4 w-4" aria-hidden="true" /> New check
-          </Link>
-        </div>
+        <Link to="/check" className="btn-primary">
+          <Plus className="h-4 w-4" aria-hidden="true" /> New check
+        </Link>
+      </div>
+
+      <div className="mt-6">
+        <ShareBar check={check} />
       </div>
 
       {/* Summary */}
