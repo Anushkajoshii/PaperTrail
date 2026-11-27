@@ -86,6 +86,17 @@ jobs:
           curl -sf localhost:8000/health
           docker rm -f pt
 
+  lambda-image:
+    name: Lambda image builds and responds (arm64)
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build the arm64 Lambda image
+        run: docker build --provenance=false -f Dockerfile.lambda -t papertrail-lambda:ci .
+      - name: Invoke it with the Lambda runtime emulator
+        run: scripts/lambda_smoke.sh papertrail-lambda:ci
+
   infra:
     name: Terraform (format and validate)
     runs-on: ubuntu-latest
