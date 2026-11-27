@@ -8,7 +8,7 @@ and gives a sourced verdict for each claim in plain language. It also checks whe
 registered with SEBI, and it flags statements that official SEBI rules and guidance treat as
 red flags, such as "guaranteed returns".
 
-> **Status:** 🚧 In progress. Parts 1–8 of 14 complete: the full fact-checking pipeline runs locally (claims → evidence → verdicts → SEBI rulebook). See the [roadmap](docs/ROADMAP.md).
+> **Status:** 🚧 In progress. Parts 1–9 of 14 complete: the full fact-checking pipeline runs locally (claims → evidence → verdicts → SEBI rulebook). See the [roadmap](docs/ROADMAP.md).
 > Live demo link: *coming after Part 10*.
 
 > **Not financial advice.** PaperTrail assesses *claims*, never *people*. A verdict of "no
@@ -28,7 +28,8 @@ red flags, such as "guaranteed returns".
 | 3. **Gather evidence** | Searches trustworthy sources and rates each one for reliability, recency and relevance. | You see *where* the answer comes from. |
 | 4. **Give a verdict** | Each claim is marked **Supported**, **Contradicted**, **Misleading** or **Not verifiable**, with reasons. | You can see *why*, and what couldn't be checked. |
 | 5. **Check the rulebook** | Is the creator SEBI-registered? Do they promise things SEBI rules warn about? | Each flag links to the official SEBI source. |
-| 6. **Keep receipts** | Past stock calls are re-checked against real prices over time (the Claim Ledger). | Track records, not hype. |
+| 6. **Download the report** | A source-cited report you can save as PDF, download, or share on WhatsApp. | Keep proof, and share it with family. |
+| 7. **Keep receipts** | Past stock calls are re-checked against real prices over time (the Claim Ledger). | Track records, not hype. |
 
 A full glossary lives in [docs/PLAIN_ENGLISH.md](docs/PLAIN_ENGLISH.md).
 
@@ -86,9 +87,9 @@ Run the web app (with the API running):
 cd web && npm install && npm run dev     # http://localhost:5173
 ```
 
-| Landing page | Claim with evidence | SEBI rulebook |
-|---|---|---|
-| ![Landing](docs/screenshots/landing.jpg) | ![Claims](docs/screenshots/results-claims.jpg) | ![Rulebook](docs/screenshots/rulebook.jpg) |
+| Landing page | Claim with evidence | SEBI rulebook | Downloadable report |
+|---|---|---|---|
+| ![Landing](docs/screenshots/landing.jpg) | ![Claims](docs/screenshots/results-claims.jpg) | ![Rulebook](docs/screenshots/rulebook.jpg) | ![Report](docs/screenshots/report.jpg) |
 
 By default the AI runs in **mock mode**: deterministic and offline, so tests and CI need no
 API keys. Real providers (Bedrock, Anthropic, OpenAI-compatible, Ollama) are switched on through

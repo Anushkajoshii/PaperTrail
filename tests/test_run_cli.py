@@ -50,3 +50,12 @@ def test_subtitle_file_and_failure_exit_code(tmp_path, capsys):
     empty.write_text("   ")
     assert run_cli.main([str(empty)]) == 1
     assert "Check failed" in capsys.readouterr().out
+
+
+def test_report_option_writes_html_and_markdown(tmp_path, capsys):
+    out_html, out_md = tmp_path / "r.html", tmp_path / "r.md"
+    assert run_cli.main([str(EXAMPLES / "english_post.txt"), "--report", str(out_html)]) == 0
+    assert run_cli.main([str(EXAMPLES / "english_post.txt"), "--report", str(out_md)]) == 0
+    assert "<!doctype html>" in out_html.read_text()
+    assert out_md.read_text().startswith("# PaperTrail fact-check report")
+    assert "Report saved" in capsys.readouterr().err

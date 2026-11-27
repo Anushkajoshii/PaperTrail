@@ -65,4 +65,12 @@ export const api = {
   getCreator: (handle: string) => request<CreatorView>(`/creators/${encodeURIComponent(handle)}`),
   getRulebook: () => request<RulebookResponse>("/rulebook"),
   getGlossary: () => request<GlossaryTerm[]>("/glossary"),
+
+  /** Plain URL for a report: open it, download it, or open the print dialog (Save as PDF). */
+  reportUrl: (id: string, opts: { format?: "html" | "md"; download?: boolean; print?: boolean } = {}) => {
+    const q = new URLSearchParams({ format: opts.format ?? "html" });
+    if (opts.download) q.set("download", "true");
+    if (opts.print) q.set("print", "true");
+    return `${BASE}/checks/${encodeURIComponent(id)}/report?${q}`;
+  },
 };

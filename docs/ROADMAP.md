@@ -15,7 +15,7 @@ Legend: ✅ done · 🔄 in progress · ⬜ not started · ☁️ needs AWS (ask
 | 6 | Golden set v1, eval runner, CI smoke-eval gate | `part-6/evals` | ✅ |
 | 7 | FastAPI, local worker, Docker Compose, API docs | `part-7/api` | ✅ |
 | 8 | Web app: landing, guided input, progress, results, rulebook, glossary | `part-8/web` | ✅ |
-| 9 | Downloadable source-cited report and shareable result | `part-9/report` | ⬜ |
+| 9 | Downloadable source-cited report and shareable result | `part-9/report` | ✅ |
 | 10 | ☁️ AWS: Terraform, OIDC CI/CD deploy, budgets | `part-10/aws` | ⬜ |
 | 11 | Langfuse tracing and cost per check | `part-11/tracing` | ⬜ |
 | 12 | Claim Ledger, creator profile, red-flag timeline, creator comparison | `part-12/ledger` | ⬜ |

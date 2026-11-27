@@ -15,12 +15,13 @@ import time
 from collections import defaultdict, deque
 from functools import lru_cache
 from pathlib import Path, PurePath
+from typing import Literal
 
 import yaml
-from fastapi import BackgroundTasks, FastAPI, File, Form, HTTPException, Request, UploadFile
+from fastapi import BackgroundTasks, FastAPI, File, Form, HTTPException, Query, Request, UploadFile
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 from pydantic import ValidationError
 
 from papertrail import __version__
@@ -44,6 +45,8 @@ from papertrail.models import (
     InputKind,
     Language,
 )
+from papertrail.report.builder import ReportNotReadyError
+from papertrail.report.render import render as render_report
 from papertrail.rulebook.rules import rule_catalog
 from papertrail.rulebook.sources import load_sources
 from papertrail.store import (
@@ -280,6 +283,50 @@ def create_app(
         if check is None:
             raise HTTPException(404, {"code": "not_found", "message": "No check with that id."})
         return CheckView.of(check)
+
+    @app.get(
+        "/checks/{check_id}/report",
+        tags=["checks"],
+        responses={
+            **ERRORS,
+            409: {"model": ErrorResponse, "description": "Check not finished"},
+            200: {
+                "content": {"text/html": {}, "text/markdown": {}},
+                "description": "The report",
+            },
+        },
+        response_class=Response,
+        summary="Download a source-cited report (HTML for print/PDF, or Markdown)",
+    )
+    def get_report(
+        check_id: str,
+        format: Literal["html", "md"] = Query("html", description="html or md"),
+        download: bool = Query(False, description="Send as a file download"),
+        print_: bool = Query(False, alias="print", description="Open the print dialog (HTML)"),
+    ) -> Response:
+        check = store.get(check_id)
+        if check is None:
+            raise HTTPException(404, {"code": "not_found", "message": "No check with that id."})
+        try:
+            body = render_report(check, format, auto_print=print_)
+        except ReportNotReadyError:
+            raise HTTPException(
+                409,
+                {"code": "not_ready", "message": "The report is available once the check is done."},
+            ) from None
+        media = "text/html" if format == "html" else "text/markdown"
+        headers = {
+            # Reports contain escaped third-party text; lock the page down anyway.
+            "Content-Security-Policy": (
+                "default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; "
+                "img-src 'none'; base-uri 'none'; form-action 'none'"
+            ),
+        }
+        if download:
+            headers["Content-Disposition"] = (
+                f'attachment; filename="papertrail-{check.id}.{format}"'
+            )
+        return Response(body, media_type=f"{media}; charset=utf-8", headers=headers)
 
     @app.get(
         "/creators/{handle}",

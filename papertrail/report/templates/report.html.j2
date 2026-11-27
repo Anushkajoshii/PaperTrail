@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="PaperTrail {{ r.app_version }} ({{ r.version }})">
+<title>PaperTrail fact-check report · {{ r.check_id }}</title>
+<style>
+  @page { size: A4; margin: 18mm 16mm 20mm; }
+  :root { --ink:#0f2a2b; --muted:#5b6b70; --line:#e2e8f0; --brand:#0f766e;
+          --supported:#047857; --contradicted:#be123c; --misleading:#b45309; --nv:#475569; }
+  * { box-sizing: border-box; }
+  body { font-family: "Inter", "Noto Sans", "Noto Sans Devanagari", system-ui, -apple-system, "Segoe UI", sans-serif;
+         color: var(--ink); line-height: 1.5; font-size: 10.5pt; margin: 0 auto; max-width: 820px; padding: 24px; }
+  h1 { font-size: 20pt; margin: 0 0 4px; letter-spacing: -0.01em; }
+  h2 { font-size: 13pt; margin: 28px 0 10px; padding-bottom: 6px; border-bottom: 2px solid var(--ink); }
+  h3 { font-size: 11pt; margin: 0 0 6px; }
+  p { margin: 4px 0; }
+  a { color: var(--brand); word-break: break-word; }
+  .muted { color: var(--muted); font-size: 9pt; }
+  .brand { display:flex; align-items:center; gap:8px; font-weight:700; color: var(--brand); font-size: 10pt;
+           text-transform: uppercase; letter-spacing: .08em; }
+  .meta { display:grid; grid-template-columns: max-content 1fr; gap: 2px 14px; font-size: 9.5pt; margin-top: 10px; }
+  .meta dt { color: var(--muted); }
+  .meta dd { margin: 0; }
+  .notice { border:1px solid #aeeae1; background:#effcfa; border-radius:8px; padding:10px 14px; margin-top:16px; font-size:9pt; }
+  .notice li { margin: 2px 0; }
+  .counts { display:grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 8px; }
+  .count { border:1px solid var(--line); border-radius:8px; padding:8px 10px; }
+  .count b { font-size: 16pt; display:block; }
+  .card { border:1px solid var(--line); border-radius:10px; padding:14px 16px; margin: 12px 0; break-inside: avoid; }
+  .verdict { display:inline-block; font-weight:700; font-size:9pt; padding:2px 8px; border-radius:999px; border:1px solid currentColor; }
+  .v-supported { color: var(--supported); } .v-contradicted { color: var(--contradicted); }
+  .v-misleading { color: var(--misleading); } .v-not_verifiable { color: var(--nv); }
+  .quote { border-left:3px solid var(--line); padding-left:10px; font-style: italic; color:#334155; margin:6px 0; }
+  .tags { font-size: 8.5pt; color: var(--muted); }
+  .label { font-weight: 600; font-size: 9pt; margin-top: 8px; }
+  ol, ul { margin: 4px 0; padding-left: 20px; }
+  .cite { margin: 6px 0; font-size: 9pt; }
+  .cite .q { color:#334155; }
+  .flag-official { border-color:#fcd34d; background:#fffbeb; }
+  .flag-ai { border-color:#bae6fd; background:#f0f9ff; }
+  .flag-label { font-size: 8.5pt; font-weight:700; text-transform:uppercase; letter-spacing:.05em; }
+  table { width:100%; border-collapse: collapse; font-size: 9pt; }
+  th, td { text-align:left; vertical-align: top; padding: 6px 8px; border-bottom:1px solid var(--line); }
+  th { color: var(--muted); font-weight:600; }
+  footer { margin-top: 28px; padding-top: 10px; border-top:1px solid var(--line); font-size: 8.5pt; color: var(--muted); }
+  .toolbar { position: sticky; top: 0; background: #fff; padding: 8px 0 12px; display:flex; gap:8px; }
+  .toolbar button { font: inherit; padding: 6px 14px; border-radius: 8px; border: 1px solid var(--ink); background: var(--ink); color:#fff; cursor:pointer; }
+  @media print { .toolbar { display:none; } body { padding: 0; max-width: none; } a { color: var(--ink); } h2 { break-after: avoid; } }
+</style>
+</head>
+<body>
+<div class="toolbar"><button type="button" onclick="window.print()">Save as PDF / Print</button></div>
+
+<div class="brand">PaperTrail · Fact-check report</div>
+<h1>{{ r.claims | length }} claim{{ '' if r.claims | length == 1 else 's' }} checked{% if r.creator %} from {{ r.creator }}{% endif %}</h1>
+<dl class="meta">
+  <dt>Check ID</dt><dd>{{ r.check_id }}</dd>
+  <dt>Checked</dt><dd>{{ r.checked_at.strftime('%d %b %Y, %H:%M UTC') }}</dd>
+  <dt>Report generated</dt><dd>{{ r.generated_at.strftime('%d %b %Y, %H:%M UTC') }}</dd>
+  <dt>Content</dt><dd>{{ r.input_summary }}{% if r.language %} · {{ r.language }}{% endif %}</dd>
+</dl>
+
+<div class="notice"><ul>{% for n in r.notices %}<li>{{ n }}</li>{% endfor %}</ul></div>
+
+<h2>Summary</h2>
+<div class="counts">
+  {% for label, n in r.counts.items() %}<div class="count"><b>{{ n }}</b>{{ label }}</div>{% endfor %}
+</div>
+<p style="margin-top:10px"><b>SEBI registration:</b> {{ r.registration_title }}.</p>
+{% for line in r.registration_detail %}<p class="muted">{{ line }}</p>{% endfor %}
+<p><b>SEBI rulebook:</b> {{ r.flags | selectattr('official') | list | length }} official flag(s), {{ r.flags | rejectattr('official') | list | length }} AI potential concern(s).</p>
+
+<h2>Claims and verdicts</h2>
+{% if not r.claims %}<p>No checkable factual claims were found. Opinions and general advice are not fact-checked.</p>{% endif %}
+{% for c in r.claims %}
+<section class="card">
+  <p class="tags">Claim {{ c.number }} · {{ c.claim_type }}{% if c.timestamp %} · at {{ c.timestamp }}{% endif %}{% for t in c.tickers %} · {{ t }}{% endfor %}</p>
+  <h3>{{ c.text }}</h3>
+  {% if c.quote != c.text %}<p class="quote">Said: “{{ c.quote }}”</p>{% endif %}
+  {% if c.verdict %}
+  <p><span class="verdict v-{{ c.verdict_key }}">{{ c.verdict }}</span>
+     &nbsp;<span class="muted">{{ c.confidence_band }} confidence in this assessment ({{ '%.2f' | format(c.confidence) }}) · {{ c.verdict_description }}</span></p>
+  <p>{{ c.summary }}</p>
+  {% if c.reasoning %}<p class="label">How we got there</p><ol>{% for s in c.reasoning %}<li>{{ s }}</li>{% endfor %}</ol>{% endif %}
+  {% if c.could_not_verify %}<p class="label">What we could not verify</p><ul>{% for s in c.could_not_verify %}<li>{{ s }}</li>{% endfor %}</ul>{% endif %}
+  {% if c.citations %}<p class="label">Evidence</p>
+    {% for cite in c.citations %}
+    <div class="cite">[{{ cite.number }}] <a href="{{ cite.evidence.url | safe_url }}">{{ cite.evidence.title }}</a>
+      <span class="muted">· {{ cite.source_type_title }} · {{ cite.evidence.published_at.strftime('%d %b %Y') if cite.evidence.published_at else 'date not stated' }} · {{ cite.stance_title }} · {% for k, b in cite.quality.items() %}{{ k }} {{ b }}{{ ', ' if not loop.last }}{% endfor %}</span>
+      <div class="q">“{{ cite.evidence.snippet }}”</div>
+    </div>
+    {% endfor %}
+  {% endif %}
+  {% if c.confidence_note %}<p class="muted">{{ c.confidence_note }}</p>{% endif %}
+  {% endif %}
+</section>
+{% endfor %}
+
+<h2>SEBI rulebook</h2>
+<p class="muted">Official flags cite SEBI documents we verified. AI potential concerns are observations, never findings that a rule was broken. Only SEBI or a court can decide that.</p>
+{% if not r.flags %}<p>No red flags from our rulebook were found in this content.</p>{% endif %}
+{% for f in r.flags %}
+<section class="card {{ 'flag-official' if f.official else 'flag-ai' }}">
+  <p class="flag-label">{{ f.label }}</p>
+  <h3>{{ f.what }}</h3>
+  <p class="quote">“{{ f.said }}”</p>
+  <p><b>Why it matters:</b> {{ f.why }}</p>
+  <p><b>What you should know:</b> {{ f.takeaway }}</p>
+  {% if f.provision %}<p><b>Relevant provision:</b> {{ f.provision }}</p>{% endif %}
+  {% if f.source_refs %}<p class="muted">Sources: {{ f.source_refs | join(', ') }}</p>{% endif %}
+</section>
+{% endfor %}
+
+{% if r.sources %}
+<h2>Official SEBI sources</h2>
+<table>
+  <thead><tr><th>Ref</th><th>Document</th><th>Reference</th><th>Published</th><th>Verified</th></tr></thead>
+  <tbody>
+  {% for s in r.sources %}
+  <tr><td>{{ s.ref }}</td>
+      <td><a href="{{ s.source.url | safe_url }}">{{ s.source.title }}</a></td>
+      <td>{{ s.source.reference_number or '–' }}</td>
+      <td>{{ s.source.published_on.strftime('%d %b %Y') if s.source.published_on else 'Not stated' }}</td>
+      <td>{{ s.verification }}{% if s.source.verified_on %}, checked {{ s.source.verified_on.strftime('%d %b %Y') }}{% endif %}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+<h2>Method and limitations</h2>
+<p>PaperTrail extracts checkable claims, searches trusted sources, rates each source for reliability, recency and relevance, and asks an AI judge to weigh the evidence under rules that are enforced in code: every verdict must cite matching evidence, and confidence is capped by evidence quality.</p>
+<ul>{% for l in r.limitations %}<li>{{ l }}</li>{% endfor %}</ul>
+<p class="muted">{% for k, v in r.metrics.items() %}{{ k }}: {{ v }}{{ ' · ' if not loop.last }}{% endfor %}</p>
+
+<footer>Generated by PaperTrail {{ r.app_version }} ({{ r.version }}). Not financial advice. Verdicts are about claims, not people. Verify SEBI registrations at https://www.sebi.gov.in/intermediaries.html</footer>
+{% if auto_print %}<script>window.addEventListener('load', function () { window.print(); });</script>{% endif %}
+</body>
+</html>

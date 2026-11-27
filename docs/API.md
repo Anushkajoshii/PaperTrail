@@ -23,6 +23,7 @@ A check either completes or fails as a whole. You never get partial verdicts.
 | `POST` | `/checks` | Check pasted text (`kind: "text"`) or an article link (`kind: "article_url"`) |
 | `POST` | `/checks/upload` | Check a file: `.srt` / `.vtt` subtitles, `.txt` transcript, or audio/video (needs AWS) |
 | `GET` | `/checks/{id}` | Progress while running, full results when done |
+| `GET` | `/checks/{id}/report` | Source-cited report: `?format=html` (print-ready; `&print=true` opens Save as PDF) or `?format=md`; add `&download=true` for a file |
 | `GET` | `/creators/{handle}` | Recent checks of a creator's content, with totals |
 | `GET` | `/rulebook` | Every SEBI rulebook check and its verified official sources |
 | `GET` | `/glossary` | Plain-language definitions for tooltips |
@@ -38,6 +39,9 @@ curl -s -X POST localhost:8000/checks -H 'content-type: application/json' \
 
 # 2. Poll
 curl -s localhost:8000/checks/chk_…
+
+# Download the report (HTML, or format=md for Markdown)
+curl -s -o report.html 'localhost:8000/checks/chk_…/report?download=true'
 
 # Upload subtitles
 curl -s -X POST localhost:8000/checks/upload -F file=@clip.srt -F creator_handle=@democreator
@@ -67,6 +71,7 @@ Every error has the same shape:
 | Status | Code | When |
 |---|---|---|
 | 400 | `bad_upload` | Unsupported or empty file, or not UTF-8 |
+| 409 | `not_ready` | Report requested before the check finished |
 | 404 | `not_found` | Unknown check id or creator |
 | 413 | `too_large` / `bad_upload` | Text over the limit (default 50,000 characters) or file over the limit |
 | 422 | `invalid_request` | Missing or invalid fields |

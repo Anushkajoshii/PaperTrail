@@ -61,3 +61,19 @@ describe("ProgressView", () => {
     expect(screen.getByText(/Weighing the evidence/).textContent).toMatch(/waiting/);
   });
 });
+
+describe("ShareBar", () => {
+  it("links to the report formats and builds a neutral WhatsApp summary", async () => {
+    const { ShareBar, shareText } = await import("../components/ShareBar");
+    renderWithProviders(<ShareBar check={fixtureCheck} />);
+    expect(screen.getByRole("link", { name: /Save as PDF/ })).toHaveAttribute("href", `/api/checks/${fixtureCheck.id}/report?format=html&print=true`);
+    expect(screen.getByRole("link", { name: /Download report/ })).toHaveAttribute("href", expect.stringContaining("download=true"));
+    expect(screen.getByRole("link", { name: /Markdown/ })).toHaveAttribute("href", expect.stringContaining("format=md"));
+    expect(screen.getByRole("link", { name: /WhatsApp/ }).getAttribute("href")).toMatch(/^https:\/\/wa\.me\/\?text=/);
+    const text = shareText(fixtureCheck, "https://papertrail.example/checks/x");
+    expect(text).toContain("4 claims checked");
+    expect(text).toContain("1 misleading");
+    expect(text).toContain("Not financial advice");
+    expect(text).not.toMatch(/scam|fraud|liar/i);
+  });
+});

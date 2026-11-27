@@ -1824,6 +1824,135 @@
         ]
       }
     },
+    "/checks/{check_id}/report": {
+      "get": {
+        "operationId": "get_report_checks__check_id__report_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "check_id",
+            "required": true,
+            "schema": {
+              "title": "Check Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "html or md",
+            "in": "query",
+            "name": "format",
+            "required": false,
+            "schema": {
+              "default": "html",
+              "description": "html or md",
+              "enum": [
+                "html",
+                "md"
+              ],
+              "title": "Format",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Send as a file download",
+            "in": "query",
+            "name": "download",
+            "required": false,
+            "schema": {
+              "default": false,
+              "description": "Send as a file download",
+              "title": "Download",
+              "type": "boolean"
+            }
+          },
+          {
+            "description": "Open the print dialog (HTML)",
+            "in": "query",
+            "name": "print",
+            "required": false,
+            "schema": {
+              "default": false,
+              "description": "Open the print dialog (HTML)",
+              "title": "Print",
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "text/html": {},
+              "text/markdown": {}
+            },
+            "description": "The report"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad upload"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Check not finished"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid request"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Rate limited"
+          }
+        },
+        "summary": "Download a source-cited report (HTML for print/PDF, or Markdown)",
+        "tags": [
+          "checks"
+        ]
+      }
+    },
     "/creators/{handle}": {
       "get": {
         "operationId": "get_creator_creators__handle__get",

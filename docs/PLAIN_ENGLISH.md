@@ -63,6 +63,7 @@ If anything goes wrong along the way, you get an error message, never half a res
 | **Verified rule vs potential concern** | A *verified rule* is quoted from an official SEBI document we link to. A *potential concern* is something the AI noticed that **may** be relevant. It is clearly labelled as such and is never presented as a violation. |
 | **Claim Ledger** | A running record of a creator's past stock calls, re-checked against actual prices over time. |
 | **Accountability profile** | A summary of how a creator's *checkable* past claims held up. It is not a judgement of the person. |
+| **Report** | A document with every claim, verdict and source, numbered [1], [2]… so each statement can be traced. Save it as PDF or share it. |
 | **Transcript** | The spoken words of a video or audio turned into text. |
 | **LLM** | "Large Language Model", the kind of AI that reads and writes text (like ChatGPT or Claude). |
 | **Grounding** | Checking that every claim the AI found really appears, word for word, in the video or post. Claims that can't be traced back to the exact words are thrown away. |

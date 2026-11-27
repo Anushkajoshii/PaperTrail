@@ -26,6 +26,7 @@ from papertrail.models import (
     FlagBasis,
     InputKind,
 )
+from papertrail.report.render import render as render_file
 
 ICONS = {
     "supported": "✅ Supported",
@@ -98,6 +99,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--creator-handle")
     parser.add_argument("--json", action="store_true", help="Print the Check as JSON")
     parser.add_argument("--no-ai-concerns", action="store_true")
+    parser.add_argument(
+        "--report", metavar="FILE", help="Also save a source-cited report (.html or .md)"
+    )
     args = parser.parse_args(argv)
 
     src = args.source
@@ -128,6 +132,10 @@ def main(argv: list[str] | None = None) -> int:
         print(check.model_dump_json(indent=2))
     else:
         print(render_report(check), end="")
+    if args.report and check.status is CheckStatus.COMPLETED:
+        fmt = "md" if args.report.lower().endswith(".md") else "html"
+        Path(args.report).write_text(render_file(check, fmt), encoding="utf-8")
+        print(f"Report saved to {args.report}", file=sys.stderr)
     return 0 if check.status is CheckStatus.COMPLETED else 1
 
 

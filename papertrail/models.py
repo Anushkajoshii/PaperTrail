@@ -177,6 +177,16 @@ VERDICT_DESCRIPTIONS: dict[VerdictLabel, str] = {
     ),
 }
 
+CLAIM_TYPE_LABELS: dict[ClaimType, str] = {
+    ClaimType.PAST_PERFORMANCE: "Past performance",
+    ClaimType.RETURN_PROMISE: "Return promise",
+    ClaimType.STOCK_CALL: "Stock call",
+    ClaimType.MARKET_FACT: "Market fact",
+    ClaimType.COMPANY_FACT: "Company fact",
+    ClaimType.CREDENTIAL: "Credential",
+    ClaimType.OTHER: "Other fact",
+}
+
 STATUS_DESCRIPTIONS: dict[CheckStatus, str] = {
     CheckStatus.QUEUED: "Your check is in line and will start shortly.",
     CheckStatus.TRANSCRIBING: "Turning speech into text.",
