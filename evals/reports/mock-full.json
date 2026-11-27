@@ -9,35 +9,35 @@
     "extract": "extract-v1",
     "judge": "judge-v1"
   },
-  "created_at": "2026-11-26T18:22:41+00:00",
+  "created_at": "2026-11-27T13:43:16+00:00",
   "verdicts": {
-    "n": 40,
-    "accuracy": 0.625,
-    "macro_f1": 0.567,
+    "n": 95,
+    "accuracy": 0.495,
+    "macro_f1": 0.462,
     "per_class": {
       "supported": {
-        "precision": 0.625,
-        "recall": 1.0,
-        "f1": 0.769,
-        "support": 10
+        "precision": 0.5,
+        "recall": 0.667,
+        "f1": 0.571,
+        "support": 24
       },
       "contradicted": {
-        "precision": 1.0,
-        "recall": 0.2,
-        "f1": 0.333,
-        "support": 10
+        "precision": 0.312,
+        "recall": 0.208,
+        "f1": 0.25,
+        "support": 24
       },
       "misleading": {
         "precision": 1.0,
-        "recall": 0.333,
-        "f1": 0.5,
-        "support": 9
+        "recall": 0.261,
+        "f1": 0.414,
+        "support": 23
       },
       "not_verifiable": {
-        "precision": 0.526,
-        "recall": 0.909,
-        "f1": 0.667,
-        "support": 11
+        "precision": 0.488,
+        "recall": 0.833,
+        "f1": 0.615,
+        "support": 24
       }
     },
     "confusion": {
@@ -49,40 +49,40 @@
       ],
       "matrix": [
         [
-          10,
+          16,
+          6,
           0,
-          0,
-          0
+          2
         ],
         [
-          2,
-          2,
+          6,
+          5,
           0,
+          13
+        ],
+        [
+          8,
+          3,
+          6,
           6
         ],
         [
-          3,
+          2,
+          2,
           0,
-          3,
-          3
-        ],
-        [
-          1,
-          0,
-          0,
-          10
+          20
         ]
       ]
     },
     "by_language": {
-      "en": 0.519,
-      "hi": 0.75,
-      "hinglish": 0.889
+      "en": 0.424,
+      "hi": 0.538,
+      "hinglish": 0.652
     },
-    "ece": 0.125,
-    "brier": 0.223,
-    "stance_accuracy": 0.575,
-    "citation_validity": 0.611,
+    "ece": 0.199,
+    "brier": 0.29,
+    "stance_accuracy": 0.448,
+    "citation_validity": 0.375,
     "accusatory_rate": 0.0,
     "errors": 0,
     "latency_ms_p50": 0.1,
@@ -177,33 +177,236 @@
         "gold": "not_verifiable",
         "pred": "supported",
         "confidence": 0.64
+      },
+      {
+        "id": "v042",
+        "gold": "supported",
+        "pred": "contradicted",
+        "confidence": 0.8
+      },
+      {
+        "id": "v043",
+        "gold": "supported",
+        "pred": "not_verifiable",
+        "confidence": 0.4
+      },
+      {
+        "id": "v046",
+        "gold": "supported",
+        "pred": "contradicted",
+        "confidence": 0.73
+      },
+      {
+        "id": "v047",
+        "gold": "supported",
+        "pred": "contradicted",
+        "confidence": 0.79
+      },
+      {
+        "id": "v049",
+        "gold": "supported",
+        "pred": "not_verifiable",
+        "confidence": 0.4
+      },
+      {
+        "id": "v050",
+        "gold": "supported",
+        "pred": "contradicted",
+        "confidence": 0.6
+      },
+      {
+        "id": "v051",
+        "gold": "supported",
+        "pred": "contradicted",
+        "confidence": 0.5
+      },
+      {
+        "id": "v054",
+        "gold": "supported",
+        "pred": "contradicted",
+        "confidence": 0.71
+      },
+      {
+        "id": "v055",
+        "gold": "contradicted",
+        "pred": "supported",
+        "confidence": 0.8
+      },
+      {
+        "id": "v056",
+        "gold": "contradicted",
+        "pred": "not_verifiable",
+        "confidence": 0.4
+      },
+      {
+        "id": "v058",
+        "gold": "contradicted",
+        "pred": "not_verifiable",
+        "confidence": 0.4
+      },
+      {
+        "id": "v059",
+        "gold": "contradicted",
+        "pred": "not_verifiable",
+        "confidence": 0.4
+      },
+      {
+        "id": "v060",
+        "gold": "contradicted",
+        "pred": "supported",
+        "confidence": 0.77
+      },
+      {
+        "id": "v061",
+        "gold": "contradicted",
+        "pred": "supported",
+        "confidence": 0.84
+      },
+      {
+        "id": "v062",
+        "gold": "contradicted",
+        "pred": "supported",
+        "confidence": 0.79
+      },
+      {
+        "id": "v063",
+        "gold": "contradicted",
+        "pred": "not_verifiable",
+        "confidence": 0.4
+      },
+      {
+        "id": "v065",
+        "gold": "contradicted",
+        "pred": "not_verifiable",
+        "confidence": 0.4
+      },
+      {
+        "id": "v066",
+        "gold": "contradicted",
+        "pred": "not_verifiable",
+        "confidence": 0.4
+      },
+      {
+        "id": "v067",
+        "gold": "contradicted",
+        "pred": "not_verifiable",
+        "confidence": 0.4
+      },
+      {
+        "id": "v069",
+        "gold": "misleading",
+        "pred": "supported",
+        "confidence": 0.85
+      },
+      {
+        "id": "v072",
+        "gold": "misleading",
+        "pred": "contradicted",
+        "confidence": 0.76
+      },
+      {
+        "id": "v073",
+        "gold": "misleading",
+        "pred": "contradicted",
+        "confidence": 0.77
+      },
+      {
+        "id": "v074",
+        "gold": "misleading",
+        "pred": "supported",
+        "confidence": 0.73
+      },
+      {
+        "id": "v075",
+        "gold": "misleading",
+        "pred": "not_verifiable",
+        "confidence": 0.4
+      },
+      {
+        "id": "v076",
+        "gold": "misleading",
+        "pred": "supported",
+        "confidence": 0.78
+      },
+      {
+        "id": "v077",
+        "gold": "misleading",
+        "pred": "not_verifiable",
+        "confidence": 0.4
+      },
+      {
+        "id": "v079",
+        "gold": "misleading",
+        "pred": "not_verifiable",
+        "confidence": 0.4
+      },
+      {
+        "id": "v080",
+        "gold": "misleading",
+        "pred": "supported",
+        "confidence": 0.84
+      },
+      {
+        "id": "v081",
+        "gold": "misleading",
+        "pred": "contradicted",
+        "confidence": 0.77
+      },
+      {
+        "id": "v082",
+        "gold": "misleading",
+        "pred": "supported",
+        "confidence": 0.78
+      },
+      {
+        "id": "v089",
+        "gold": "not_verifiable",
+        "pred": "contradicted",
+        "confidence": 0.8
+      },
+      {
+        "id": "v093",
+        "gold": "not_verifiable",
+        "pred": "supported",
+        "confidence": 0.84
+      },
+      {
+        "id": "v095",
+        "gold": "not_verifiable",
+        "pred": "contradicted",
+        "confidence": 0.8
       }
     ]
   },
   "extraction": {
-    "transcripts": 10,
-    "gold_claims": 28,
-    "recall": 0.893,
-    "recall_strict": 0.607,
-    "type_accuracy": 0.68,
-    "precision": 1.0,
-    "forbidden_extractions": 0,
+    "transcripts": 20,
+    "gold_claims": 55,
+    "recall": 0.855,
+    "recall_strict": 0.509,
+    "type_accuracy": 0.596,
+    "precision": 0.976,
+    "forbidden_extractions": 1,
     "misses": [
       "x06: never had a losing year",
       "x06: expense ratio is zero",
-      "x10: debt-free"
+      "x10: debt-free",
+      "x12: ek bonus share",
+      "x13: कोई कर्ज़ नहीं",
+      "x13: 25 MTPA",
+      "x13: सेबी रजिस्टर्ड एडवाइज़र",
+      "x18: approval for two products"
     ]
   },
   "rulebook": {
-    "sentences": 32,
-    "micro_precision": 0.87,
-    "micro_recall": 0.952,
-    "micro_f1": 0.909,
+    "sentences": 52,
+    "micro_precision": 1.0,
+    "micro_recall": 1.0,
+    "micro_f1": 1.0,
     "per_kind": {
       "guaranteed_returns": {
-        "precision": 0.8,
+        "precision": 1.0,
         "recall": 1.0,
-        "f1": 0.889
+        "f1": 1.0
       },
       "live_price_education": {
         "precision": 1.0,
@@ -211,19 +414,19 @@
         "f1": 1.0
       },
       "misleading_performance": {
-        "precision": 0.75,
+        "precision": 1.0,
         "recall": 1.0,
-        "f1": 0.857
+        "f1": 1.0
       },
       "pressure_tactics": {
-        "precision": 0.8,
+        "precision": 1.0,
         "recall": 1.0,
-        "f1": 0.889
+        "f1": 1.0
       },
       "tip_group_solicitation": {
         "precision": 1.0,
-        "recall": 0.667,
-        "f1": 0.8
+        "recall": 1.0,
+        "f1": 1.0
       },
       "unconfirmed_registration_claim": {
         "precision": 1.0,
@@ -236,40 +439,11 @@
         "f1": 1.0
       }
     },
-    "errors": [
-      {
-        "id": "r01",
-        "expected": [
-          "guaranteed_returns",
-          "tip_group_solicitation"
-        ],
-        "predicted": [
-          "guaranteed_returns",
-          "misleading_performance"
-        ],
-        "note": null
-      },
-      {
-        "id": "r31",
-        "expected": [],
-        "predicted": [
-          "guaranteed_returns"
-        ],
-        "note": "negated guarantee: known false positive"
-      },
-      {
-        "id": "r32",
-        "expected": [],
-        "predicted": [
-          "pressure_tactics"
-        ],
-        "note": "neutral 'hurry': known false positive"
-      }
-    ]
+    "errors": []
   },
   "cost": {
-    "llm_calls": 47,
-    "total_tokens": 32638,
+    "llm_calls": 107,
+    "total_tokens": 73745,
     "total_usd": 0.0,
     "usd_per_verdict": 0.0
   }
