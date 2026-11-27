@@ -19,6 +19,13 @@ from papertrail.llm.factory import model_for
 
 log = logging.getLogger(__name__)
 
+# After a model hits its daily limit, skip it for this long before trying it again.
+DAILY_LIMIT_COOLDOWN_S = 30 * 60
+
+
+class DailyLimitError(LLMError):
+    """The model's daily allowance is used up: waiting a minute will not help."""
+
 
 def _messages(request: LLMRequest, feedback: str | None) -> list[dict[str, str]]:
     user = request.user if feedback is None else f"{request.user}\n\n{feedback}"
@@ -48,7 +55,10 @@ def _post(
     for attempt in range(max_rate_retries + 1):
         try:
             resp = client.post(url, json=payload)
-            too_large = resp.status_code == 429 and "too large" in resp.text.lower()
+            text = resp.text.lower() if resp.status_code == 429 else ""
+            if "per day" in text:
+                raise DailyLimitError(f"{name} HTTP 429 (daily limit): {resp.text[:200]}")
+            too_large = "too large" in text
             if resp.status_code == 429 and attempt < max_rate_retries and not too_large:
                 wait = _retry_after(resp, attempt)
                 log.warning("%s rate limited; waiting %.1fs (retry %d)", name, wait, attempt + 1)
@@ -97,7 +107,9 @@ class OpenAICompatProvider:
         reasoning_effort: str | None = None,
         max_output_tokens: int | None = None,
         max_rate_retries: int = 3,
+        fallback_models: dict[str, str] | None = None,
         sleep: Callable[[float], None] = time.sleep,
+        clock: Callable[[], float] = time.monotonic,
     ) -> None:
         self._client = client
         self._url = base_url.rstrip("/") + "/chat/completions"
@@ -106,7 +118,11 @@ class OpenAICompatProvider:
         self._max_output_tokens = max_output_tokens
         self._max_rate_retries = max_rate_retries
         self._sleep = sleep
+        self._clock = clock
         self._json_object_models: set[str] = set()
+        # A model whose daily limit is used up is swapped for its fallback for a while.
+        self._fallbacks = fallback_models or {}
+        self._exhausted_at: dict[str, float] = {}
 
     @classmethod
     def from_settings(cls, s: Settings) -> OpenAICompatProvider:
@@ -122,6 +138,11 @@ class OpenAICompatProvider:
             s, s.groq_base_url, s.groq_api_key, default_effort="low", default_max_output=4000
         )
         provider.name = "groq"
+        # Each free model has its own daily allowance, so when one runs out use the other.
+        provider._fallbacks = {
+            "openai/gpt-oss-120b": "openai/gpt-oss-20b",
+            "openai/gpt-oss-20b": "openai/gpt-oss-120b",
+        }
         return provider
 
     @classmethod
@@ -185,12 +206,39 @@ class OpenAICompatProvider:
             sleep=self._sleep,
         )
 
+    def _usable(self, model: str) -> bool:
+        at = self._exhausted_at.get(model)
+        return at is None or self._clock() - at >= DAILY_LIMIT_COOLDOWN_S
+
+    def _candidates(self, model: str) -> list[str]:
+        fallback = self._fallbacks.get(model)
+        models = [model] + ([fallback] if fallback and fallback != model else [])
+        usable = [m for m in models if self._usable(m)]
+        return usable or models
+
     def complete(self, request: LLMRequest, *, feedback: str | None = None) -> RawResult:
-        model = self._models[request.purpose]
+        candidates = self._candidates(self._models[request.purpose])
+        for i, model in enumerate(candidates):
+            try:
+                return self._complete_with(request, model, feedback)
+            except DailyLimitError:
+                self._exhausted_at[model] = self._clock()
+                if i == len(candidates) - 1:
+                    raise
+                log.warning(
+                    "%s: %s daily limit reached; using %s", self.name, model, candidates[i + 1]
+                )
+        raise AssertionError("unreachable")  # pragma: no cover
+
+    def _complete_with(self, request: LLMRequest, model: str, feedback: str | None) -> RawResult:
         try:
             body = self._send(request, model, feedback)
         except LLMError as exc:
-            if model in self._json_object_models or not _schema_unsupported(exc):
+            if (
+                isinstance(exc, DailyLimitError)
+                or model in self._json_object_models
+                or not _schema_unsupported(exc)
+            ):
                 raise
             self._json_object_models.add(model)  # remember: this model needs JSON mode
             body = self._send(request, model, feedback)
