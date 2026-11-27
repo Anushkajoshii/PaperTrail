@@ -12,6 +12,7 @@ from typing import Any
 
 from papertrail.aws.secrets import load_secrets_from_env
 from papertrail.config import get_settings
+from papertrail.ledger.store import get_ledger_store
 from papertrail.store import get_check_store, get_upload_storage
 from papertrail.store.queue import parse_job
 from papertrail.worker import default_deps_factory, process_check
@@ -24,11 +25,15 @@ logging.getLogger().setLevel(logging.INFO)
 def _runtime():
     load_secrets_from_env()
     s = get_settings()
-    return get_check_store(s), default_deps_factory(s, get_upload_storage(s))
+    return (
+        get_check_store(s),
+        default_deps_factory(s, get_upload_storage(s)),
+        get_ledger_store(s),
+    )
 
 
 def handler(event: dict[str, Any], context: Any = None) -> dict[str, list[dict[str, str]]]:
-    store, make_deps = _runtime()
+    store, make_deps, ledger = _runtime()
     failures: list[dict[str, str]] = []
     for record in event.get("Records", []):
         try:
@@ -37,7 +42,7 @@ def handler(event: dict[str, Any], context: Any = None) -> dict[str, list[dict[s
             log.error("Dropping malformed message %s", record.get("messageId"))
             continue  # retrying a malformed message can never succeed
         try:
-            process_check(check_id, store, make_deps)
+            process_check(check_id, store, make_deps, ledger)
         except Exception:
             log.exception("Check %s failed; SQS will retry it", check_id)
             failures.append({"itemIdentifier": record["messageId"]})

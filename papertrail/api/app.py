@@ -38,6 +38,7 @@ from papertrail.api.schemas import (
     RuleEntry,
 )
 from papertrail.config import Settings, get_settings
+from papertrail.ledger.store import LedgerStore, get_ledger_store
 from papertrail.models import (
     STATUS_DESCRIPTIONS,
     Check,
@@ -118,6 +119,7 @@ def create_app(
     queue: JobQueue | None = None,
     uploads: UploadStorage | None = None,
     make_deps: DepsFactory | None = None,
+    ledger: LedgerStore | None = None,
 ) -> FastAPI:
     s = settings or get_settings()
     store = store or get_check_store(s)
@@ -125,6 +127,7 @@ def create_app(
     if queue is None:
         queue = get_job_queue(s)
     make_deps = make_deps or default_deps_factory(s, uploads)
+    ledger = ledger or get_ledger_store(s)
     limiter = RateLimiter(s.rate_limit_per_minute)
 
     app = FastAPI(
@@ -187,7 +190,7 @@ def create_app(
         if queue is not None:
             queue.enqueue(check.id)
         else:  # inline mode: run after the response is sent
-            background.add_task(process_check, check.id, store, make_deps)
+            background.add_task(process_check, check.id, store, make_deps, ledger)
         return CheckAccepted(
             id=check.id,
             status=check.status,

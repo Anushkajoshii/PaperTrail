@@ -17,6 +17,8 @@ from collections.abc import Callable
 
 from papertrail.agent.graph import AgentDeps, run_check
 from papertrail.config import Settings, get_settings
+from papertrail.ledger.service import track_check
+from papertrail.ledger.store import LedgerStore, get_ledger_store
 from papertrail.models import Check, CheckStatus
 from papertrail.store import (
     CheckStore,
@@ -39,8 +41,16 @@ def default_deps_factory(settings: Settings, uploads: UploadStorage) -> DepsFact
     return make
 
 
-def process_check(check_id: str, store: CheckStore, make_deps: DepsFactory) -> Check | None:
-    """Run one stored check end to end. Progress updates go to the store as they happen."""
+def process_check(
+    check_id: str,
+    store: CheckStore,
+    make_deps: DepsFactory,
+    ledger: LedgerStore | None = None,
+) -> Check | None:
+    """Run one stored check end to end. Progress updates go to the store as they happen.
+
+    Stock calls in a completed check are added to the Claim Ledger (if one is given).
+    """
     original = store.get(check_id)
     if original is None:
         log.warning("Check %s not found; skipping", check_id)
@@ -56,6 +66,13 @@ def process_check(check_id: str, store: CheckStore, make_deps: DepsFactory) -> C
     final = result.check.model_copy(update={"created_at": original.created_at})
     store.save(final)
     log.info("Check %s finished: %s", check_id, final.status.value)
+    if ledger is not None:
+        try:
+            added = track_check(final, ledger)
+            if added:
+                log.info("Check %s: %d stock call(s) added to the ledger", check_id, len(added))
+        except Exception:  # the fact-check itself is done; the ledger must not undo it
+            log.exception("Could not add check %s to the ledger", check_id)
     return final
 
 
@@ -66,9 +83,11 @@ class Worker:
         queue: JobQueue,
         make_deps: DepsFactory,
         *,
+        ledger: LedgerStore | None = None,
         poll_seconds: float = 1.0,
     ) -> None:
         self.store, self.queue, self.make_deps = store, queue, make_deps
+        self.ledger = ledger
         self.poll_seconds = poll_seconds
         self.stop_event = threading.Event()
 
@@ -78,7 +97,7 @@ class Worker:
         if check_id is None:
             return False
         try:
-            process_check(check_id, self.store, self.make_deps)
+            process_check(check_id, self.store, self.make_deps, self.ledger)
             self.queue.complete(check_id)
         except Exception:  # keep the worker alive; the job becomes visible again later
             log.exception("Job %s failed; it will be retried", check_id)
@@ -103,7 +122,7 @@ def main(argv: list[str] | None = None) -> int:  # pragma: no cover - exercised 
     if queue is None:
         parser.error("Set PAPERTRAIL_QUEUE_MODE=sqlite (or sqs) to run a separate worker")
     uploads = get_upload_storage(s)
-    worker = Worker(store, queue, default_deps_factory(s, uploads))
+    worker = Worker(store, queue, default_deps_factory(s, uploads), ledger=get_ledger_store(s))
     signal.signal(signal.SIGTERM, lambda *_: worker.stop_event.set())
     if args.once:
         while worker.run_once():
