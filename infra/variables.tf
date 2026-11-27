@@ -27,6 +27,12 @@ variable "search_provider" {
   default     = "offline"
 }
 
+variable "price_provider" {
+  description = "Prices for the Claim Ledger: none, or alphavantage (free key in SSM, 25 requests a day)"
+  type        = string
+  default     = "alphavantage" # without a key in SSM this falls back to none
+}
+
 variable "github_oidc_subject" {
   description = <<-EOT
     The repository part of GitHub's OIDC "sub" claim. This repository uses GitHub's immutable

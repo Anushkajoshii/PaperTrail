@@ -53,13 +53,13 @@ jobs:
           docker push "$image"
           echo "uri=$image" >> "$GITHUB_OUTPUT"
 
-      - name: Point both functions at the new image
+      - name: Point all three functions at the new image
         run: |
-          for fn in api worker; do
+          for fn in api worker ledger; do
             aws lambda update-function-code --function-name "papertrail-$ENV_NAME-$fn" \
               --image-uri "${{ steps.image.outputs.uri }}" >/dev/null
           done
-          for fn in api worker; do
+          for fn in api worker ledger; do
             aws lambda wait function-updated-v2 --function-name "papertrail-$ENV_NAME-$fn"
           done
 
