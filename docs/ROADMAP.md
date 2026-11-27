@@ -20,7 +20,7 @@ Legend: ✅ done · 🔄 in progress · ⬜ not started · ☁️ needs AWS (ask
 | 11 | Langfuse tracing and cost per check | `part-11/tracing` | ✅ |
 | 12 | Claim Ledger, creator profile, red-flag timeline, creator comparison | `part-12/ledger` | ✅ |
 | 13 | Golden set v2 (90+ claims) and model comparison report | `part-13/eval-v2` | ✅ |
-| 14 | Polish: diagrams, demo GIF, tester fixes, MCP server (stretch) | `part-14/polish` | ⬜ |
+| 14 | Polish: diagrams, demo GIF, tester fixes, MCP server (stretch) | `part-14/polish` | ✅ |
 
 ## How each part maps to the original plan
 

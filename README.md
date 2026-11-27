@@ -9,7 +9,7 @@ registered with SEBI, and it flags statements that official SEBI rules and guida
 red flags, such as "guaranteed returns".
 
 > **Live demo:** [w5fnwkmfr6.execute-api.ap-southeast-2.amazonaws.com](https://w5fnwkmfr6.execute-api.ap-southeast-2.amazonaws.com/) · API docs: [/api/docs](https://w5fnwkmfr6.execute-api.ap-southeast-2.amazonaws.com/api/docs)
-> **Status:** Parts 1–12 of 14 complete: the full pipeline (claims → evidence → verdicts → SEBI rulebook → report) runs on AWS Lambda with free open models on Groq. See the [roadmap](docs/ROADMAP.md).
+> **Status:** All 14 parts complete. The full pipeline (claims → evidence → verdicts → SEBI rulebook → report) runs on AWS Lambda with free open models on Groq. See the [roadmap](docs/ROADMAP.md).
 > The demo uses a labelled offline evidence set, so web results are illustrative.
 
 > **Not financial advice.** PaperTrail assesses *claims*, never *people*. A verdict of "no
