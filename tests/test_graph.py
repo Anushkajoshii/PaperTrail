@@ -45,8 +45,14 @@ def verdicts_by_type(check: Check):
 
 
 def test_full_offline_run_on_english_post():
-    events = []
-    run = run_check(text_input("english_post.txt"), deps(on_progress=lambda s, d: events.append(s)))
+    events, details = [], []
+
+    def on_progress(status, detail):
+        if not events or events[-1] is not status:  # one entry per stage
+            events.append(status)
+        details.append(detail)
+
+    run = run_check(text_input("english_post.txt"), deps(on_progress=on_progress))
     check = run.check
     assert check.status is CheckStatus.COMPLETED
     assert verdicts_by_type(check) == {
@@ -61,6 +67,7 @@ def test_full_offline_run_on_english_post():
         CheckStatus.CHECKING_RULEBOOK,
         CheckStatus.COMPLETED,
     ]
+    assert "Weighing the evidence: claim 1 of 3" in details  # progress for every claim
     m = check.metrics
     assert m.agent_steps >= 6 and m.llm_calls >= 3 and m.prompt_versions["judge"] == "judge-v1"
     # Round-trips through JSON (what the API will return and DynamoDB will store).

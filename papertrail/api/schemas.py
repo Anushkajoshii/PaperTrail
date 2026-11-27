@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import UTC, datetime, timedelta
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl
@@ -76,6 +76,23 @@ class CheckAccepted(_Out):
     poll_after_seconds: int = 2
 
 
+# A worker runs for at most 15 minutes (the Lambda limit) and reports progress for every claim,
+# so a check with no progress for longer than this is stuck (e.g. the free AI service was busy).
+STALE_AFTER = timedelta(minutes=15)
+STALE_MESSAGE = (
+    "This check took too long, usually because the free AI service was busy. Please try again "
+    "in a few minutes. If a retry finishes it later, the result will appear here."
+)
+
+
+def shown_status(check: Check, now: datetime) -> Check:
+    """Present a stuck check as failed (without saving that), so nobody waits forever."""
+    finished = check.status in (CheckStatus.COMPLETED, CheckStatus.FAILED)
+    if finished or now - check.updated_at < STALE_AFTER:
+        return check
+    return check.model_copy(update={"status": CheckStatus.FAILED, "error": STALE_MESSAGE})
+
+
 class CheckView(_Out):
     """A check plus plain-language helpers the UI shows next to it."""
 
@@ -87,7 +104,8 @@ class CheckView(_Out):
     verdict_descriptions: dict[VerdictLabel, str]
 
     @classmethod
-    def of(cls, check: Check) -> CheckView:
+    def of(cls, check: Check, now: datetime | None = None) -> CheckView:
+        check = shown_status(check, now or datetime.now(UTC))
         return cls(
             check=check,
             status_description=STATUS_DESCRIPTIONS[check.status],

@@ -72,7 +72,7 @@ resource "aws_lambda_function" "worker" {
   image_uri     = local.image_uri
   architectures = ["arm64"]
   memory_size   = 1024
-  timeout       = 600
+  timeout       = 900 # the Lambda maximum: free-tier rate limits can make a check slow
   image_config { command = ["papertrail.aws.worker_lambda.handler"] }
   environment { variables = local.common_env }
   depends_on = [aws_cloudwatch_log_group.worker]

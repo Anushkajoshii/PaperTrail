@@ -54,8 +54,10 @@ resource "aws_sqs_queue" "jobs_dlq" {
 }
 
 resource "aws_sqs_queue" "jobs" {
-  name                       = "${local.name}-jobs"
-  visibility_timeout_seconds = 3600 # >= 6x the worker timeout, as AWS recommends
+  name = "${local.name}-jobs"
+  # Longer than the worker's 900 s limit, so a timed-out check is retried after 20 minutes
+  # (work is idempotent: a finished check is never overwritten).
+  visibility_timeout_seconds = 1200
   message_retention_seconds  = 86400
   sqs_managed_sse_enabled    = true
   redrive_policy = jsonencode({

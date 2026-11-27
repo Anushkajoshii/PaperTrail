@@ -29,6 +29,11 @@ bedrock = ["anthropic[bedrock]>=2.14"]
 aws = [
     "boto3>=1.35",
 ]
+# MCP server: lets AI assistants use PaperTrail as a tool (docs/MCP.md)
+mcp = ["mcp>=2.3,<3"]
+
+[project.scripts]
+papertrail-mcp = "papertrail.mcp_server:main"
 
 [dependency-groups]
 dev = [
