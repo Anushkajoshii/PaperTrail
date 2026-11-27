@@ -1,0 +1,33 @@
+# PaperTrail for AWS Lambda: one image, two functions (API + web app, and the worker).
+# Build (arm64, Graviton: cheaper per second than x86):
+#   docker build --platform linux/arm64 -f Dockerfile.lambda -t papertrail-lambda .
+# The worker function overrides the command with papertrail.aws.worker_lambda.handler.
+
+# 1) Build the web app (served by the API Lambda at "/", API under "/api")
+FROM node:22-slim AS web
+WORKDIR /web
+COPY web/package.json web/package-lock.json ./
+RUN npm ci --no-audit --no-fund
+COPY web/ ./
+RUN npm run build
+
+# 2) Python dependencies into the Lambda task root
+FROM public.ecr.aws/lambda/python:3.12 AS app
+COPY --from=ghcr.io/astral-sh/uv:0.9.5 /uv /usr/local/bin/uv
+WORKDIR ${LAMBDA_TASK_ROOT}
+COPY pyproject.toml uv.lock README.md ./
+RUN uv export --locked --no-dev --no-hashes --no-emit-project --extra aws -o /tmp/req.txt \
+ && uv pip install --no-cache --target "${LAMBDA_TASK_ROOT}" --python /var/lang/bin/python3.12 -r /tmp/req.txt \
+ && rm /tmp/req.txt
+
+# 3) The application and the built web app
+COPY papertrail ./papertrail
+COPY --from=web /web/dist ./web/dist
+
+# Lambda's filesystem is read-only except /tmp; AWS settings come from Terraform.
+ENV PAPERTRAIL_WEB_DIST_DIR=${LAMBDA_TASK_ROOT}/web/dist \
+    PAPERTRAIL_SQLITE_PATH=/tmp/papertrail.db \
+    PAPERTRAIL_UPLOAD_DIR=/tmp/uploads \
+    PYTHONDONTWRITEBYTECODE=1
+
+CMD ["papertrail.api.lambda_handler.handler"]
