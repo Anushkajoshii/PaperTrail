@@ -248,3 +248,14 @@ def test_groq_preset_uses_free_models_and_low_reasoning_effort(monkeypatch):
 def test_groq_needs_a_key():
     with pytest.raises(LLMError, match="GROQ_API_KEY"):
         get_provider(Settings(_env_file=None, llm_provider=LLMProvider.GROQ))
+
+
+def test_rate_limit_retries_come_from_settings():
+    s = Settings(
+        _env_file=None,
+        llm_provider=LLMProvider.GROQ,
+        groq_api_key="gsk_x",
+        llm_rate_limit_retries=6,
+    )
+    assert get_provider(s)._max_rate_retries == 6
+    assert Settings(_env_file=None).llm_rate_limit_retries == 6

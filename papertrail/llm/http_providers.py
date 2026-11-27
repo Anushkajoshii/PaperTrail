@@ -7,6 +7,7 @@ them with Claude in the eval report. Both ask for JSON matching the Pydantic mod
 from __future__ import annotations
 
 import json
+import logging
 import time
 from collections.abc import Callable
 
@@ -15,6 +16,8 @@ import httpx
 from papertrail.config import Settings
 from papertrail.llm.base import InvalidOutputError, LLMError, LLMRequest, Purpose, RawResult
 from papertrail.llm.factory import model_for
+
+log = logging.getLogger(__name__)
 
 
 def _messages(request: LLMRequest, feedback: str | None) -> list[dict[str, str]]:
@@ -46,7 +49,9 @@ def _post(
         try:
             resp = client.post(url, json=payload)
             if resp.status_code == 429 and attempt < max_rate_retries:
-                sleep(_retry_after(resp, attempt))
+                wait = _retry_after(resp, attempt)
+                log.warning("%s rate limited; waiting %.1fs (retry %d)", name, wait, attempt + 1)
+                sleep(wait)
                 continue
             resp.raise_for_status()
             return resp.json()
@@ -127,6 +132,7 @@ class OpenAICompatProvider:
             base_url,
             {p: model_for(p, s) for p in Purpose},
             reasoning_effort=s.reasoning_effort or default_effort,
+            max_rate_retries=s.llm_rate_limit_retries,
         )
 
     def _payload(self, request: LLMRequest, model: str, feedback: str | None) -> dict:
