@@ -13,8 +13,9 @@ Being honest about limits is part of the product. The app shows this list too.
    Judging can misread a source. Measured error rates are published in the README.
 5. **The registry is a snapshot.** The SEBI list is refreshed periodically. A very recent
    registration or cancellation may not show yet. Always confirm on SEBI's website.
-6. **Price data is unofficial.** The Claim Ledger uses free market data (yfinance), which can have
-   gaps or adjustments.
+6. **Price data is limited.** By default the Claim Ledger has no price source, so calls stay
+   unsettled rather than being settled with made-up numbers. With a free Alpha Vantage key it
+   uses BSE daily prices, which cover about the last 100 trading days and can have gaps.
 7. **It does not scrape social platforms.** You upload the clip or paste the text (see ADR-001).
 8. **Language detection is approximate.** Very short or unusual Hinglish can be labelled English.
    This only affects hints given to the AI, not which claims are checked.
@@ -25,21 +26,34 @@ Being honest about limits is part of the product. The app shows this list too.
 11. **PDF documents are not read yet.** Many exchange filings are PDFs. Support is planned.
 12. **Offline demo mode uses sample data.** Without a search key, results come from a small set of
     clearly labelled demo sources on `.test` addresses, never real ones.
-13. **Pattern rules are not perfect.** A sentence like "there are no guarantees" can still trigger
-    the guaranteed-returns check, and a neutral "hurry" can trigger the pressure check. Each flag
-    shows the exact words, so you can judge for yourself.
-14. **The SEBI register copy is a snapshot.** Its date is shown with every result, and
-    automated refreshing is not switched on yet. Brand names often differ from registered names.
+13. **Pattern rules are not perfect.** Common negations ("returns are not guaranteed", "I'm not
+    SEBI-registered", "no hurry") and look-alikes ("our family WhatsApp group") are handled, but
+    unusual phrasing can still slip through or be flagged by mistake. Each flag shows the exact
+    words, so you can judge for yourself.
+14. **The SEBI register copy is a snapshot, and the live demo has none.** When a copy is loaded,
+    its date is shown with every result; automated refreshing is not switched on. The deployed
+    demo does not include a copy, so registration shows "not checked". Brand names often
+    differ from registered names.
 15. **SEBI rules change.** Sources are re-checked periodically (each shows its "last checked"
     date). The Research Analysts Regulations may have been amended after the version we read.
-16. **Predictions are not judged yet.** Stock targets are "not verifiable" until their deadline;
-    the Claim Ledger (Part 12) re-checks them later.
+16. **Predictions wait for their deadline.** A stock target is "not verifiable" on the day it is
+    checked. The Claim Ledger settles it later, starting from when PaperTrail first saw it,
+    which may be after the creator posted it.
 17. **Offline mode is a demo, not an assessment.** Without a real AI model, verdicts come from
     simple number-matching rules against demo data. Accuracy is measured with real models
-    (Parts 6 and 13).
-18. **The first test set is small and synthetic.** Golden set v1 has 40 claims about fictional
-    companies, labelled by one person. Real claims and a second annotator come in v2.
+    ([docs/EVALUATION.md](EVALUATION.md)).
+18. **The test set is synthetic and has one annotator.** Golden set v2 has 95 claims about
+    fictional companies, labelled by one person, with no agreement score. Real people from SEBI
+    orders are left out on purpose.
 19. **Hindi covers the interface, not the analysis.** Explanations are in English. Original quotes
     are always shown as spoken.
-20. **It is not financial advice.** It never recommends buying or selling anything, and creator
-   comparisons are not recommendations.
+20. **The deployed AI is a free open model.** The live site uses gpt-oss models on Groq's free
+    tier. It is weakest at the "misleading" label: technically true but cherry-picked claims can
+    be marked "supported", and guaranteed-return promises "contradicted"
+    ([model comparison](../evals/reports/model-comparison.md)). Free-tier rate limits make busy
+    moments slower.
+21. **Uploads are limited in the deployed version.** Files over 4 MB are rejected, because of
+    Lambda's request size limit, and audio or video transcription has not been tested on the
+    deployed account yet. Subtitles (.srt/.vtt) and pasted text work.
+22. **It is not financial advice.** It never recommends buying or selling anything, and creator
+    comparisons are not recommendations.
