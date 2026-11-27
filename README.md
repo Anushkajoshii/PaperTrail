@@ -123,7 +123,9 @@ about $0 when idle. Step by step, with a cost table: [docs/DEPLOY.md](docs/DEPLO
 
 ## Results
 
-*Real-model results will appear here once measured. No number is shown before it is measured.*
+*Numbers appear here only once measured. Speed and cost below come from the live deployment on
+27 Nov 2026 (10 real checks of the sample posts in English, Hinglish and Hindi, two at a time, AI
+from Groq's free tier). Accuracy numbers will follow in Part 13.*
 How we evaluate, and what every metric means: [docs/EVALUATION.md](docs/EVALUATION.md). The
 offline regression baseline (rule-based mock, **not** model accuracy) is in
 [evals/reports/mock-full.md](evals/reports/mock-full.md).
@@ -134,8 +136,8 @@ offline regression baseline (rule-based mock, **not** model accuracy) is in
 | Verdict accuracy | - |
 | Citation faithfulness | - |
 | SEBI lookup accuracy | - |
-| p50 / p95 latency | - |
-| Cost per check | - |
+| p50 / p95 time per check | 9.9 s / 37.2 s (the slow tail is free-tier rate limiting) |
+| Cost per check | $0 on Groq's free tier (about 6,000 tokens and 4.6 AI calls per check) |
 
 ## Known limitations
 
