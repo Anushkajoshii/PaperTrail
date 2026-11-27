@@ -26,17 +26,17 @@ can search for `chk_...`:
 check (chk_37c8a7e8773e)                 status, claims, verdict counts, cost, tokens
 ├─ ingest                                 span
 ├─ extract                                span
-│  └─ extract: ClaimExtraction            generation: prompt, output, model, tokens, latency
+│  └─ extract: ClaimExtractionOutput      generation: prompt, output, model, tokens, latency
 ├─ registration                           span
-├─ research (round 1)                     span
+├─ research                              span (round 1)
 │  ├─ search  "Nifty 50 returns 2023"     span: query and results
 │  └─ fetch   https://…                   span
-├─ research (round 2)
+├─ research                              span (round 2)
 ├─ judge
 │  ├─ judge: JudgeOutput                  one generation per claim
 │  └─ judge: JudgeOutput   ⚠ WARNING      output failed validation, retried with feedback
 └─ rulebook
-   └─ judge: ConcernList
+   └─ judge: PotentialConcernsOutput
 ```
 
 What this makes visible:
