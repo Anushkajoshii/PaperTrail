@@ -2,9 +2,11 @@ import type {
   CheckAccepted,
   CheckView,
   CreateCheckRequest,
-  CreatorView,
+  CompareView,
+  CreatorProfile,
   GlossaryTerm,
   Language,
+  LedgerView,
   RulebookResponse,
 } from "./types";
 
@@ -62,7 +64,10 @@ export const api = {
   },
 
   getCheck: (id: string) => request<CheckView>(`/checks/${encodeURIComponent(id)}`),
-  getCreator: (handle: string) => request<CreatorView>(`/creators/${encodeURIComponent(handle)}`),
+  getCreator: (handle: string) => request<CreatorProfile>(`/creators/${encodeURIComponent(handle)}`),
+  compareCreators: (handles: string[]) =>
+    request<CompareView>(`/creators/compare?${handles.map((h) => `handles=${encodeURIComponent(h)}`).join("&")}`),
+  getLedger: () => request<LedgerView>("/ledger"),
   getRulebook: () => request<RulebookResponse>("/rulebook"),
   getGlossary: () => request<GlossaryTerm[]>("/glossary"),
 

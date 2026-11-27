@@ -10,6 +10,7 @@ export type UiLang = "en" | "hi";
 
 const en = {
   "nav.check": "Check content",
+  "nav.ledger": "Claim Ledger",
   "nav.rulebook": "SEBI rulebook",
   "nav.glossary": "Glossary",
   "nav.how": "How it works",
@@ -50,6 +51,7 @@ const en = {
 
 const hi: typeof en = {
   "nav.check": "कंटेंट जाँचें",
+  "nav.ledger": "स्टॉक कॉल रिकॉर्ड",
   "nav.rulebook": "सेबी नियम-पुस्तिका",
   "nav.glossary": "शब्दावली",
   "nav.how": "यह कैसे काम करता है",

@@ -25,7 +25,8 @@ def settle(entry: LedgerEntry, points: list[PricePoint], today: date, source: st
     if entry.status in (LedgerStatus.HIT, LedgerStatus.MISSED):
         return entry
     update: dict = {"last_checked": today}
-    tracked = [p for p in points if p.day >= entry.made_on]
+    # Only prices from the start of tracking up to today count (never a later-dated price).
+    tracked = [p for p in points if entry.made_on <= p.day <= today]
     if not tracked:
         return entry.model_copy(
             update=update

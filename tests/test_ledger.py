@@ -260,3 +260,10 @@ def test_calls_without_data_are_given_up_30_days_after_their_deadline(store):
     store.save(entry(id="led_old", ticker="OLD", status=LedgerStatus.NO_DATA))  # due 31 Jan
     assert run_daily(store, NoPrices(), date(2027, 2, 20))["tickers"] == 1  # still retried
     assert run_daily(store, NoPrices(), date(2027, 3, 5))["tickers"] == 0  # given up
+
+
+def test_prices_dated_after_today_are_ignored():
+    points = series(*flat(5), (120, 100, 115))  # the jump is on 6 Jan
+    e = settle(entry(), points, date(2027, 1, 5), "t")
+    assert e.status is LedgerStatus.OPEN and e.last_price == 100
+    assert settle(entry(), points, date(2027, 1, 6), "t").status is LedgerStatus.HIT
