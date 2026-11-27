@@ -124,6 +124,7 @@ resource "aws_ssm_parameter" "secret" {
     "PAPERTRAIL_TAVILY_API_KEY",
     "PAPERTRAIL_LANGFUSE_PUBLIC_KEY",
     "PAPERTRAIL_LANGFUSE_SECRET_KEY",
+    "PAPERTRAIL_ALPHAVANTAGE_API_KEY",
   ])
   name  = "${local.ssm_path}/${each.key}"
   type  = "SecureString"

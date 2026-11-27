@@ -123,17 +123,6 @@ class CheckSummary(_Out):
         )
 
 
-class CreatorView(_Out):
-    handle: str
-    checks: int
-    totals: dict[str, int]
-    recent: list[CheckSummary]
-    note: str = (
-        "This summarises checks of individual claims. It is not a judgement of the person. The "
-        "accountability profile and Claim Ledger arrive in a later version."
-    )
-
-
 class RuleSourceRef(_Out):
     id: str
     title: str

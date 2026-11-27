@@ -28,6 +28,8 @@ locals {
     PAPERTRAIL_SEARCH_PROVIDER  = var.search_provider
     PAPERTRAIL_STORE_BACKEND    = "dynamodb"
     PAPERTRAIL_DYNAMODB_TABLE   = aws_dynamodb_table.checks.name
+    PAPERTRAIL_LEDGER_TABLE     = aws_dynamodb_table.ledger.name
+    PAPERTRAIL_PRICE_PROVIDER   = var.price_provider
     PAPERTRAIL_QUEUE_MODE       = "sqs"
     PAPERTRAIL_SQS_QUEUE_URL    = aws_sqs_queue.jobs.url
     PAPERTRAIL_UPLOAD_BACKEND   = "s3"

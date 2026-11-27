@@ -28,3 +28,7 @@ output "jobs_dlq_url" {
   description = "Failed checks land here after 3 tries"
   value       = aws_sqs_queue.jobs_dlq.url
 }
+
+output "ledger_function" {
+  value = aws_lambda_function.ledger.function_name
+}

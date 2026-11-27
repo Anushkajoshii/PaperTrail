@@ -22,6 +22,7 @@ export function Layout() {
   const location = useLocation();
   const links = [
     { to: "/check", label: t("nav.check") },
+    { to: "/ledger", label: t("nav.ledger") },
     { to: "/rulebook", label: t("nav.rulebook") },
     { to: "/glossary", label: t("nav.glossary") },
   ];

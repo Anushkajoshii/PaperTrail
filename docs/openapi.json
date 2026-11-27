@@ -599,6 +599,37 @@
         "title": "ClaimType",
         "type": "string"
       },
+      "CompareView": {
+        "properties": {
+          "creators": {
+            "items": {
+              "$ref": "#/components/schemas/CreatorProfile"
+            },
+            "title": "Creators",
+            "type": "array"
+          },
+          "missing": {
+            "description": "Handles with no checks yet.",
+            "items": {
+              "type": "string"
+            },
+            "title": "Missing",
+            "type": "array"
+          },
+          "note": {
+            "default": "Side-by-side facts about checked claims. This is not a recommendation to follow, avoid, buy or sell anything, and creators with more checks are not directly comparable to those with fewer.",
+            "title": "Note",
+            "type": "string"
+          }
+        },
+        "required": [
+          "creators",
+          "missing",
+          "note"
+        ],
+        "title": "CompareView",
+        "type": "object"
+      },
       "CreateCheckRequest": {
         "additionalProperties": false,
         "description": "Submit pasted text or an article link. Use POST /checks/upload for files.",
@@ -684,18 +715,31 @@
         "title": "CreateCheckRequest",
         "type": "object"
       },
-      "CreatorView": {
+      "CreatorProfile": {
         "properties": {
           "checks": {
             "title": "Checks",
             "type": "integer"
           },
+          "first_checked": {
+            "format": "date",
+            "title": "First Checked",
+            "type": "string"
+          },
           "handle": {
             "title": "Handle",
             "type": "string"
           },
+          "last_checked": {
+            "format": "date",
+            "title": "Last Checked",
+            "type": "string"
+          },
+          "ledger": {
+            "$ref": "#/components/schemas/LedgerSummary"
+          },
           "note": {
-            "default": "This summarises checks of individual claims. It is not a judgement of the person. The accountability profile and Claim Ledger arrive in a later version.",
+            "default": "These are facts about checked claims, not a judgement of the person. Counts depend on which content was checked, so a few checks can't describe a whole channel.",
             "title": "Note",
             "type": "string"
           },
@@ -706,23 +750,52 @@
             "title": "Recent",
             "type": "array"
           },
+          "registration": {
+            "description": "SEBI registration status from the latest check.",
+            "title": "Registration",
+            "type": "string"
+          },
+          "timeline": {
+            "items": {
+              "$ref": "#/components/schemas/TimelineItem"
+            },
+            "title": "Timeline",
+            "type": "array"
+          },
           "totals": {
             "additionalProperties": {
               "type": "integer"
             },
             "title": "Totals",
             "type": "object"
+          },
+          "track_record": {
+            "$ref": "#/components/schemas/TrackRecord"
           }
         },
         "required": [
           "handle",
           "checks",
+          "first_checked",
+          "last_checked",
+          "registration",
           "totals",
+          "track_record",
+          "ledger",
+          "timeline",
           "recent",
           "note"
         ],
-        "title": "CreatorView",
+        "title": "CreatorProfile",
         "type": "object"
+      },
+      "Direction": {
+        "enum": [
+          "up",
+          "down"
+        ],
+        "title": "Direction",
+        "type": "string"
       },
       "ErrorBody": {
         "properties": {
@@ -905,6 +978,19 @@
         "title": "GlossaryTerm",
         "type": "object"
       },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
       "Health": {
         "properties": {
           "llm_provider": {
@@ -958,6 +1044,298 @@
         ],
         "title": "Language",
         "type": "string"
+      },
+      "LedgerEntry": {
+        "additionalProperties": false,
+        "properties": {
+          "baseline_price": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Closing price on (or just after) the day tracking started.",
+            "title": "Baseline Price"
+          },
+          "best_price": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Closest the price came to the target while tracking.",
+            "title": "Best Price"
+          },
+          "check_id": {
+            "title": "Check Id",
+            "type": "string"
+          },
+          "claim_id": {
+            "title": "Claim Id",
+            "type": "string"
+          },
+          "claim_text": {
+            "title": "Claim Text",
+            "type": "string"
+          },
+          "creator": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Normalised handle, without '@'.",
+            "title": "Creator"
+          },
+          "deadline_stated": {
+            "description": "False when no deadline was given.",
+            "title": "Deadline Stated",
+            "type": "boolean"
+          },
+          "direction": {
+            "$ref": "#/components/schemas/Direction",
+            "default": "up"
+          },
+          "due_on": {
+            "description": "The deadline: stated, or a default horizon if none was.",
+            "format": "date",
+            "title": "Due On",
+            "type": "string"
+          },
+          "hit_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hit On"
+          },
+          "id": {
+            "description": "led_ + the claim id, so a call is tracked once.",
+            "title": "Id",
+            "type": "string"
+          },
+          "last_checked": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Checked"
+          },
+          "last_price": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Price"
+          },
+          "made_on": {
+            "description": "When PaperTrail first saw the call (tracking starts).",
+            "format": "date",
+            "title": "Made On",
+            "type": "string"
+          },
+          "note": {
+            "default": "",
+            "title": "Note",
+            "type": "string"
+          },
+          "price_source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Source"
+          },
+          "quote": {
+            "title": "Quote",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/LedgerStatus",
+            "default": "open"
+          },
+          "target_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Target as a % move from the starting price, if given that way.",
+            "title": "Target Pct"
+          },
+          "target_price": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Target in rupees.",
+            "title": "Target Price"
+          },
+          "ticker": {
+            "title": "Ticker",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "check_id",
+          "claim_id",
+          "creator",
+          "ticker",
+          "claim_text",
+          "quote",
+          "direction",
+          "target_price",
+          "target_pct",
+          "made_on",
+          "due_on",
+          "deadline_stated",
+          "baseline_price",
+          "status",
+          "hit_on",
+          "best_price",
+          "last_price",
+          "last_checked",
+          "price_source",
+          "note"
+        ],
+        "title": "LedgerEntry",
+        "type": "object"
+      },
+      "LedgerEntryView": {
+        "properties": {
+          "entry": {
+            "$ref": "#/components/schemas/LedgerEntry"
+          },
+          "status_description": {
+            "title": "Status Description",
+            "type": "string"
+          },
+          "target": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target"
+          }
+        },
+        "required": [
+          "entry",
+          "target",
+          "status_description"
+        ],
+        "title": "LedgerEntryView",
+        "type": "object"
+      },
+      "LedgerStatus": {
+        "enum": [
+          "open",
+          "hit",
+          "missed",
+          "no_data"
+        ],
+        "title": "LedgerStatus",
+        "type": "string"
+      },
+      "LedgerSummary": {
+        "properties": {
+          "counts": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Counts",
+            "type": "object"
+          },
+          "entries": {
+            "items": {
+              "$ref": "#/components/schemas/LedgerEntryView"
+            },
+            "title": "Entries",
+            "type": "array"
+          },
+          "hit_share": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Hit / settled, when at least 5 are settled.",
+            "title": "Hit Share"
+          },
+          "settled": {
+            "description": "Hit + missed: calls that could be checked against prices.",
+            "title": "Settled",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "counts",
+          "settled",
+          "hit_share",
+          "entries"
+        ],
+        "title": "LedgerSummary",
+        "type": "object"
+      },
+      "LedgerView": {
+        "properties": {
+          "note": {
+            "default": "Stock calls are tracked from the day PaperTrail first saw them. A call counts as hit if the price reached the target by the deadline; when no deadline was stated, 90 days are used.",
+            "title": "Note",
+            "type": "string"
+          },
+          "summary": {
+            "$ref": "#/components/schemas/LedgerSummary"
+          }
+        },
+        "required": [
+          "summary",
+          "note"
+        ],
+        "title": "LedgerView",
+        "type": "object"
       },
       "Provision": {
         "additionalProperties": false,
@@ -1528,6 +1906,143 @@
         "title": "Stance",
         "type": "string"
       },
+      "TimelineItem": {
+        "properties": {
+          "check_id": {
+            "title": "Check Id",
+            "type": "string"
+          },
+          "date": {
+            "format": "date",
+            "title": "Date",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "official": {
+            "description": "True: a verified SEBI rule. False: an AI potential concern.",
+            "title": "Official",
+            "type": "boolean"
+          },
+          "quote": {
+            "title": "Quote",
+            "type": "string"
+          },
+          "what": {
+            "title": "What",
+            "type": "string"
+          }
+        },
+        "required": [
+          "date",
+          "check_id",
+          "official",
+          "kind",
+          "what",
+          "quote"
+        ],
+        "title": "TimelineItem",
+        "type": "object"
+      },
+      "TrackRecord": {
+        "properties": {
+          "assessed": {
+            "description": "Claims that got a verdict other than 'not verifiable'.",
+            "title": "Assessed",
+            "type": "integer"
+          },
+          "claims_checked": {
+            "title": "Claims Checked",
+            "type": "integer"
+          },
+          "contradicted": {
+            "title": "Contradicted",
+            "type": "integer"
+          },
+          "enough_data": {
+            "title": "Enough Data",
+            "type": "boolean"
+          },
+          "misleading": {
+            "title": "Misleading",
+            "type": "integer"
+          },
+          "not_verifiable": {
+            "title": "Not Verifiable",
+            "type": "integer"
+          },
+          "supported": {
+            "title": "Supported",
+            "type": "integer"
+          },
+          "supported_share": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Supported / assessed. Empty below 5 assessed claims.",
+            "title": "Supported Share"
+          }
+        },
+        "required": [
+          "claims_checked",
+          "assessed",
+          "supported",
+          "contradicted",
+          "misleading",
+          "not_verifiable",
+          "supported_share",
+          "enough_data"
+        ],
+        "title": "TrackRecord",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      },
       "Verdict": {
         "additionalProperties": false,
         "description": "The assessment of one claim.",
@@ -1984,17 +2499,24 @@
         ]
       }
     },
-    "/creators/{handle}": {
+    "/creators/compare": {
       "get": {
-        "operationId": "get_creator_creators__handle__get",
+        "operationId": "compare_creators_creators_compare_get",
         "parameters": [
           {
-            "in": "path",
-            "name": "handle",
+            "description": "2 or 3 handles",
+            "in": "query",
+            "name": "handles",
             "required": true,
             "schema": {
-              "title": "Handle",
-              "type": "string"
+              "description": "2 or 3 handles",
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 3,
+              "minItems": 2,
+              "title": "Handles",
+              "type": "array"
             }
           }
         ],
@@ -2003,7 +2525,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CreatorView"
+                  "$ref": "#/components/schemas/CompareView"
                 }
               }
             },
@@ -2060,7 +2582,89 @@
             "description": "Rate limited"
           }
         },
-        "summary": "Recent checks of a creator's content",
+        "summary": "Two or three creators side by side (facts, not a recommendation)",
+        "tags": [
+          "creators"
+        ]
+      }
+    },
+    "/creators/{handle}": {
+      "get": {
+        "operationId": "get_creator_creators__handle__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "handle",
+            "required": true,
+            "schema": {
+              "title": "Handle",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatorProfile"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad upload"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid request"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Rate limited"
+          }
+        },
+        "summary": "A creator's profile: track record, Claim Ledger, red-flag timeline",
         "tags": [
           "creators"
         ]
@@ -2109,6 +2713,51 @@
         "summary": "Health",
         "tags": [
           "system"
+        ]
+      }
+    },
+    "/ledger": {
+      "get": {
+        "operationId": "get_ledger_ledger_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LedgerView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "The Claim Ledger: recent stock calls and whether they came true",
+        "tags": [
+          "creators"
         ]
       }
     },

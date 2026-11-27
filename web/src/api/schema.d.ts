@@ -72,6 +72,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/creators/compare": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Two or three creators side by side (facts, not a recommendation) */
+        get: operations["compare_creators_creators_compare_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/creators/{handle}": {
         parameters: {
             query?: never;
@@ -79,7 +96,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Recent checks of a creator's content */
+        /** A creator's profile: track record, Claim Ledger, red-flag timeline */
         get: operations["get_creator_creators__handle__get"];
         put?: never;
         post?: never;
@@ -115,6 +132,23 @@ export interface paths {
         };
         /** Health */
         get: operations["health_health_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ledger": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The Claim Ledger: recent stock calls and whether they came true */
+        get: operations["get_ledger_ledger_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -394,6 +428,21 @@ export interface components {
          * @enum {string}
          */
         ClaimType: "past_performance" | "return_promise" | "stock_call" | "market_fact" | "company_fact" | "credential" | "other";
+        /** CompareView */
+        CompareView: {
+            /** Creators */
+            creators: components["schemas"]["CreatorProfile"][];
+            /**
+             * Missing
+             * @description Handles with no checks yet.
+             */
+            missing: string[];
+            /**
+             * Note
+             * @default Side-by-side facts about checked claims. This is not a recommendation to follow, avoid, buy or sell anything, and creators with more checks are not directly comparable to those with fewer.
+             */
+            note: string;
+        };
         /**
          * CreateCheckRequest
          * @description Submit pasted text or an article link. Use POST /checks/upload for files.
@@ -419,24 +468,48 @@ export interface components {
             /** Url */
             url?: string | null;
         };
-        /** CreatorView */
-        CreatorView: {
+        /** CreatorProfile */
+        CreatorProfile: {
             /** Checks */
             checks: number;
+            /**
+             * First Checked
+             * Format: date
+             */
+            first_checked: string;
             /** Handle */
             handle: string;
             /**
+             * Last Checked
+             * Format: date
+             */
+            last_checked: string;
+            ledger: components["schemas"]["LedgerSummary"];
+            /**
              * Note
-             * @default This summarises checks of individual claims. It is not a judgement of the person. The accountability profile and Claim Ledger arrive in a later version.
+             * @default These are facts about checked claims, not a judgement of the person. Counts depend on which content was checked, so a few checks can't describe a whole channel.
              */
             note: string;
             /** Recent */
             recent: components["schemas"]["CheckSummary"][];
+            /**
+             * Registration
+             * @description SEBI registration status from the latest check.
+             */
+            registration: string;
+            /** Timeline */
+            timeline: components["schemas"]["TimelineItem"][];
             /** Totals */
             totals: {
                 [key: string]: number;
             };
+            track_record: components["schemas"]["TrackRecord"];
         };
+        /**
+         * Direction
+         * @enum {string}
+         */
+        Direction: "up" | "down";
         /** ErrorBody */
         ErrorBody: {
             /** Code */
@@ -515,6 +588,11 @@ export interface components {
             /** Term */
             term: string;
         };
+        /** HTTPValidationError */
+        HTTPValidationError: {
+            /** Detail */
+            detail?: components["schemas"]["ValidationError"][];
+        };
         /** Health */
         Health: {
             /** Llm Provider */
@@ -542,6 +620,124 @@ export interface components {
          * @enum {string}
          */
         Language: "en" | "hi" | "hinglish";
+        /** LedgerEntry */
+        LedgerEntry: {
+            /**
+             * Baseline Price
+             * @description Closing price on (or just after) the day tracking started.
+             */
+            baseline_price: number | null;
+            /**
+             * Best Price
+             * @description Closest the price came to the target while tracking.
+             */
+            best_price: number | null;
+            /** Check Id */
+            check_id: string;
+            /** Claim Id */
+            claim_id: string;
+            /** Claim Text */
+            claim_text: string;
+            /**
+             * Creator
+             * @description Normalised handle, without '@'.
+             */
+            creator: string | null;
+            /**
+             * Deadline Stated
+             * @description False when no deadline was given.
+             */
+            deadline_stated: boolean;
+            /** @default up */
+            direction: components["schemas"]["Direction"];
+            /**
+             * Due On
+             * Format: date
+             * @description The deadline: stated, or a default horizon if none was.
+             */
+            due_on: string;
+            /** Hit On */
+            hit_on: string | null;
+            /**
+             * Id
+             * @description led_ + the claim id, so a call is tracked once.
+             */
+            id: string;
+            /** Last Checked */
+            last_checked: string | null;
+            /** Last Price */
+            last_price: number | null;
+            /**
+             * Made On
+             * Format: date
+             * @description When PaperTrail first saw the call (tracking starts).
+             */
+            made_on: string;
+            /**
+             * Note
+             * @default
+             */
+            note: string;
+            /** Price Source */
+            price_source: string | null;
+            /** Quote */
+            quote: string;
+            /** @default open */
+            status: components["schemas"]["LedgerStatus"];
+            /**
+             * Target Pct
+             * @description Target as a % move from the starting price, if given that way.
+             */
+            target_pct: number | null;
+            /**
+             * Target Price
+             * @description Target in rupees.
+             */
+            target_price: number | null;
+            /** Ticker */
+            ticker: string;
+        };
+        /** LedgerEntryView */
+        LedgerEntryView: {
+            entry: components["schemas"]["LedgerEntry"];
+            /** Status Description */
+            status_description: string;
+            /** Target */
+            target: number | null;
+        };
+        /**
+         * LedgerStatus
+         * @enum {string}
+         */
+        LedgerStatus: "open" | "hit" | "missed" | "no_data";
+        /** LedgerSummary */
+        LedgerSummary: {
+            /** Counts */
+            counts: {
+                [key: string]: number;
+            };
+            /** Entries */
+            entries: components["schemas"]["LedgerEntryView"][];
+            /**
+             * Hit Share
+             * @description Hit / settled, when at least 5 are settled.
+             */
+            hit_share: number | null;
+            /**
+             * Settled
+             * @description Hit + missed: calls that could be checked against prices.
+             */
+            settled: number;
+        };
+        /** LedgerView */
+        LedgerView: {
+            /**
+             * Note
+             * @default Stock calls are tracked from the day PaperTrail first saw them. A call counts as hit if the price reached the target by the deadline; when no deadline was stated, 90 days are used.
+             */
+            note: string;
+            summary: components["schemas"]["LedgerSummary"];
+        };
         /**
          * Provision
          * @description A specific clause, paraphrased in plain language (never invented).
@@ -763,6 +959,65 @@ export interface components {
          * @enum {string}
          */
         Stance: "supports" | "contradicts" | "context";
+        /** TimelineItem */
+        TimelineItem: {
+            /** Check Id */
+            check_id: string;
+            /**
+             * Date
+             * Format: date
+             */
+            date: string;
+            /** Kind */
+            kind: string;
+            /**
+             * Official
+             * @description True: a verified SEBI rule. False: an AI potential concern.
+             */
+            official: boolean;
+            /** Quote */
+            quote: string;
+            /** What */
+            what: string;
+        };
+        /** TrackRecord */
+        TrackRecord: {
+            /**
+             * Assessed
+             * @description Claims that got a verdict other than 'not verifiable'.
+             */
+            assessed: number;
+            /** Claims Checked */
+            claims_checked: number;
+            /** Contradicted */
+            contradicted: number;
+            /** Enough Data */
+            enough_data: boolean;
+            /** Misleading */
+            misleading: number;
+            /** Not Verifiable */
+            not_verifiable: number;
+            /** Supported */
+            supported: number;
+            /**
+             * Supported Share
+             * @description Supported / assessed. Empty below 5 assessed claims.
+             */
+            supported_share: number | null;
+        };
+        /** ValidationError */
+        ValidationError: {
+            /** Context */
+            ctx?: Record<string, never>;
+            /** Input */
+            input?: unknown;
+            /** Location */
+            loc: (string | number)[];
+            /** Message */
+            msg: string;
+            /** Error Type */
+            type: string;
+        };
         /**
          * Verdict
          * @description The assessment of one claim.
@@ -1092,6 +1347,74 @@ export interface operations {
             };
         };
     };
+    compare_creators_creators_compare_get: {
+        parameters: {
+            query: {
+                /** @description 2 or 3 handles */
+                handles: string[];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CompareView"];
+                };
+            };
+            /** @description Bad upload */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too large */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Invalid request */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Rate limited */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     get_creator_creators__handle__get: {
         parameters: {
             query?: never;
@@ -1109,7 +1432,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["CreatorView"];
+                    "application/json": components["schemas"]["CreatorProfile"];
                 };
             };
             /** @description Bad upload */
@@ -1195,6 +1518,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Health"];
+                };
+            };
+        };
+    };
+    get_ledger_ledger_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LedgerView"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

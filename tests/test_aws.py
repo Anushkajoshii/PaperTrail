@@ -11,6 +11,7 @@ from moto import mock_aws
 from papertrail.aws import worker_lambda
 from papertrail.aws.secrets import load_secrets_from_env, load_ssm_secrets
 from papertrail.config import Settings
+from papertrail.ledger.store import DynamoDbLedgerStore
 from papertrail.models import Check, CheckInput, CheckStatus, InputKind
 from papertrail.store import (
     DynamoDbCheckStore,
@@ -55,6 +56,30 @@ def make_table():
                 "KeySchema": [
                     {"AttributeName": "creator", "KeyType": "HASH"},
                     {"AttributeName": "created_at", "KeyType": "RANGE"},
+                ],
+                "Projection": {"ProjectionType": "ALL"},
+            }
+        ],
+    )
+
+
+def make_ledger_table():
+    ddb = boto3.resource("dynamodb", region_name=REGION)
+    return ddb.create_table(
+        TableName="ledger",
+        BillingMode="PAY_PER_REQUEST",
+        KeySchema=[{"AttributeName": "id", "KeyType": "HASH"}],
+        AttributeDefinitions=[
+            {"AttributeName": "id", "AttributeType": "S"},
+            {"AttributeName": "creator", "AttributeType": "S"},
+            {"AttributeName": "made_on", "AttributeType": "S"},
+        ],
+        GlobalSecondaryIndexes=[
+            {
+                "IndexName": "by_creator",
+                "KeySchema": [
+                    {"AttributeName": "creator", "KeyType": "HASH"},
+                    {"AttributeName": "made_on", "KeyType": "RANGE"},
                 ],
                 "Projection": {"ProjectionType": "ALL"},
             }
@@ -182,12 +207,12 @@ def test_worker_lambda_runs_checks_and_reports_failures(monkeypatch):
     store.save(good)
     calls = []
 
-    def fake_process(check_id, store_, make_deps):
+    def fake_process(check_id, store_, make_deps, ledger):
         calls.append(check_id)
         if check_id == "chk_boom":
             raise RuntimeError("model down")
 
-    monkeypatch.setattr(worker_lambda, "_runtime", lambda: (store, None))
+    monkeypatch.setattr(worker_lambda, "_runtime", lambda: (store, None, None))
     monkeypatch.setattr(worker_lambda, "process_check", fake_process)
     event = {
         "Records": [
@@ -204,6 +229,7 @@ def test_worker_lambda_runs_checks_and_reports_failures(monkeypatch):
 def test_worker_lambda_end_to_end_with_mock_llm(monkeypatch):
     monkeypatch.setenv("PAPERTRAIL_STORE_BACKEND", "dynamodb")
     monkeypatch.setenv("PAPERTRAIL_DYNAMODB_TABLE", "checks")
+    monkeypatch.setenv("PAPERTRAIL_LEDGER_TABLE", "ledger")
     monkeypatch.setenv("PAPERTRAIL_AWS_REGION", REGION)
     from papertrail.config import get_settings
 
@@ -211,7 +237,10 @@ def test_worker_lambda_end_to_end_with_mock_llm(monkeypatch):
     worker_lambda._runtime.cache_clear()
     try:
         store = DynamoDbCheckStore(make_table())
-        c = new_check("@demo", "Nifty 50 gave 300% returns in 2023. Guaranteed profit daily!")
+        ledger = DynamoDbLedgerStore(make_ledger_table())
+        c = new_check(
+            "@demo", "Nifty 50 gave 300% returns in 2023. KESTREL ka target ₹1500 hai, March tak."
+        )
         store.save(c)
         out = worker_lambda.handler(
             {"Records": [{"messageId": "1", "body": json.dumps({"check_id": c.id})}]}
@@ -219,6 +248,8 @@ def test_worker_lambda_end_to_end_with_mock_llm(monkeypatch):
         assert out == {"batchItemFailures": []}
         done = store.get(c.id)
         assert done.status is CheckStatus.COMPLETED and done.claims
+        (tracked,) = ledger.list_by_creator("demo")  # the stock call is now in the ledger
+        assert tracked.ticker == "KESTREL" and tracked.target_price == 1500
     finally:
         get_settings.cache_clear()
         worker_lambda._runtime.cache_clear()
@@ -250,3 +281,45 @@ def test_dynamodb_list_recent_reads_all_pages_newest_first():
     for c in checks:
         store.save(c)
     assert [c.id for c in store.list_recent(3)] == [c.id for c in reversed(checks)][:3]
+
+
+def test_dynamodb_ledger_store_and_daily_lambda(monkeypatch):
+    from datetime import date
+
+    from papertrail.aws import ledger_lambda
+    from papertrail.config import get_settings
+    from papertrail.ledger.models import LedgerEntry, LedgerStatus
+
+    ledger = DynamoDbLedgerStore(make_ledger_table())
+    base = dict(
+        check_id="chk_1",
+        claim_id="clm_1",
+        ticker="KESTREL",
+        claim_text="t",
+        quote="q",
+        target_price=1500.0,
+        made_on=date(2026, 7, 1),
+        due_on=date(2027, 3, 31),
+        deadline_stated=True,
+    )
+    ledger.save(LedgerEntry(id="led_a", creator="demo", **base))
+    ledger.save(LedgerEntry(id="led_b", status=LedgerStatus.MISSED, **base))
+    assert ledger.get("led_a").creator == "demo" and ledger.get("led_zz") is None
+    assert [e.id for e in ledger.list_by_creator("demo")] == ["led_a"]
+    assert [e.id for e in ledger.list_active()] == ["led_a"]
+    assert {e.id for e in ledger.list_recent()} == {"led_a", "led_b"}
+
+    for k, v in {
+        "PAPERTRAIL_STORE_BACKEND": "dynamodb",
+        "PAPERTRAIL_DYNAMODB_TABLE": "checks",
+        "PAPERTRAIL_LEDGER_TABLE": "ledger",
+        "PAPERTRAIL_PRICE_PROVIDER": "offline",
+    }.items():
+        monkeypatch.setenv(k, v)
+    get_settings.cache_clear()
+    try:
+        summary = ledger_lambda.handler({}, None)
+    finally:
+        get_settings.cache_clear()
+    assert summary["tickers"] == 1
+    assert ledger.get("led_a").status in (LedgerStatus.OPEN, LedgerStatus.HIT)

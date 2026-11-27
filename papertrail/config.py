@@ -101,6 +101,14 @@ class Settings(BaseSettings):
     # In Lambda, secrets (e.g. the Groq key) are read from SSM Parameter Store under this path,
     # never from Terraform or environment variables.
     ssm_secrets_path: str | None = None
+    # --- Claim Ledger (Part 12) -------------------------------------------------------------
+    # Prices: "none" (calls stay unsettled), "offline" (demo prices, fictional symbols only)
+    # or "alphavantage" (free key, BSE daily prices, 25 requests a day).
+    price_provider: str = "none"
+    alphavantage_api_key: SecretStr | None = None
+    ledger_table: str | None = None
+    ledger_max_tickers_per_run: int = 20
+
     # --- Tracing (Part 11) ----------------------------------------------------------------
     # Langfuse (free cloud tier or self-hosted). Both keys set: every check is traced.
     langfuse_public_key: SecretStr | None = None

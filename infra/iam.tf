@@ -21,11 +21,14 @@ data "aws_iam_policy_document" "common" {
     resources = [local.ssm_arn, "${local.ssm_arn}/*"]
   }
   statement {
-    sid = "ChecksTable"
+    sid = "ChecksAndLedgerTables"
     actions = [
-      "dynamodb:GetItem", "dynamodb:PutItem", "dynamodb:Query",
+      "dynamodb:GetItem", "dynamodb:PutItem", "dynamodb:Query", "dynamodb:Scan",
     ]
-    resources = [aws_dynamodb_table.checks.arn, "${aws_dynamodb_table.checks.arn}/index/*"]
+    resources = [
+      aws_dynamodb_table.checks.arn, "${aws_dynamodb_table.checks.arn}/index/*",
+      aws_dynamodb_table.ledger.arn, "${aws_dynamodb_table.ledger.arn}/index/*",
+    ]
   }
 }
 
@@ -145,9 +148,11 @@ data "aws_iam_policy_document" "github_deploy" {
     resources = [aws_ecr_repository.app.arn]
   }
   statement {
-    sid       = "UpdateFunctions"
-    actions   = ["lambda:UpdateFunctionCode", "lambda:GetFunction"]
-    resources = [aws_lambda_function.api.arn, aws_lambda_function.worker.arn]
+    sid     = "UpdateFunctions"
+    actions = ["lambda:UpdateFunctionCode", "lambda:GetFunction"]
+    resources = [
+      aws_lambda_function.api.arn, aws_lambda_function.worker.arn, aws_lambda_function.ledger.arn,
+    ]
   }
 }
 
