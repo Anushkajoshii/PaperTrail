@@ -39,5 +39,7 @@ Being honest about limits is part of the product. The app shows this list too.
     (Parts 6 and 13).
 18. **The first test set is small and synthetic.** Golden set v1 has 40 claims about fictional
     companies, labelled by one person. Real claims and a second annotator come in v2.
-19. **It is not financial advice.** It never recommends buying or selling anything, and creator
+19. **Hindi covers the interface, not the analysis.** Explanations are in English. Original quotes
+    are always shown as spoken.
+20. **It is not financial advice.** It never recommends buying or selling anything, and creator
    comparisons are not recommendations.

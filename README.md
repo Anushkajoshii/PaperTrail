@@ -8,7 +8,7 @@ and gives a sourced verdict for each claim in plain language. It also checks whe
 registered with SEBI, and it flags statements that official SEBI rules and guidance treat as
 red flags, such as "guaranteed returns".
 
-> **Status:** 🚧 In progress. Parts 1–7 of 14 complete: the full fact-checking pipeline runs locally (claims → evidence → verdicts → SEBI rulebook). See the [roadmap](docs/ROADMAP.md).
+> **Status:** 🚧 In progress. Parts 1–8 of 14 complete: the full fact-checking pipeline runs locally (claims → evidence → verdicts → SEBI rulebook). See the [roadmap](docs/ROADMAP.md).
 > Live demo link: *coming after Part 10*.
 
 > **Not financial advice.** PaperTrail assesses *claims*, never *people*. A verdict of "no
@@ -16,6 +16,8 @@ red flags, such as "guaranteed returns".
 > endorses or guarantees anyone's advice.
 
 ---
+
+![PaperTrail results dashboard](docs/screenshots/results-summary.jpg)
 
 ## What it does, in plain English
 
@@ -77,6 +79,16 @@ docker compose up --build     # API + worker, like the cloud setup
 ```
 
 See [docs/API.md](docs/API.md) for endpoints and examples.
+
+Run the web app (with the API running):
+
+```bash
+cd web && npm install && npm run dev     # http://localhost:5173
+```
+
+| Landing page | Claim with evidence | SEBI rulebook |
+|---|---|---|
+| ![Landing](docs/screenshots/landing.jpg) | ![Claims](docs/screenshots/results-claims.jpg) | ![Rulebook](docs/screenshots/rulebook.jpg) |
 
 By default the AI runs in **mock mode**: deterministic and offline, so tests and CI need no
 API keys. Real providers (Bedrock, Anthropic, OpenAI-compatible, Ollama) are switched on through
