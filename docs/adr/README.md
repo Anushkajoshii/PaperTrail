@@ -21,3 +21,4 @@ New ADRs copy [000-template.md](000-template.md).
 | [014](014-web-frontend.md) | React web app with types generated from the API contract | Accepted |
 | [015](015-reports.md) | Reports as print-ready HTML and Markdown, not server-side PDF | Accepted |
 | [016](016-serverless-aws-on-free-tier.md) | Serverless AWS deployment that costs ~$0, with a free AI provider | Accepted |
+| [017](017-tracing-and-cost.md) | Tracing and cost per check, with a no-op default | Accepted |
