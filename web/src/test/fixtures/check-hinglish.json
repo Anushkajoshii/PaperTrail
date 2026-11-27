@@ -437,7 +437,20 @@
       "judge": "judge-v1",
       "concerns": "concerns-v1"
     },
-    "notes": []
+    "notes": [],
+    "llm_provider": "groq",
+    "models": {
+      "extract": "openai/gpt-oss-20b",
+      "judge": "openai/gpt-oss-120b"
+    },
+    "step_ms": {
+      "ingest": 1.2,
+      "extract": 2100.0,
+      "registration": 0.4,
+      "research": 30.5,
+      "judge": 3900.0,
+      "rulebook": 800.0
+    }
   },
   "error": null
 }

@@ -79,6 +79,9 @@ LANGUAGE_TITLES = {
     Language.HINDI: "Hindi",
     Language.HINGLISH: "Hinglish",
 }
+# Providers whose calls cost nothing (free tier or local), so no misleading cost is shown.
+FREE_PROVIDERS = {"groq", "ollama", "mock"}
+
 LIMITATIONS = (
     "PaperTrail cannot judge intent or honesty; it checks statements against evidence.",
     "It cannot prove a legal violation; only SEBI or a court can decide that.",
@@ -298,8 +301,15 @@ def build_report(check: Check, *, generated_at: datetime | None = None) -> Repor
         notices=STANDARD_NOTICES,
         limitations=LIMITATIONS,
         metrics={
+            "AI": f"{m.llm_provider} ({', '.join(sorted(set(m.models.values())))})"
+            if m.llm_provider and m.models
+            else (m.llm_provider or "not recorded"),
             "AI calls": str(m.llm_calls),
-            "Estimated AI cost": f"${m.cost_usd:.4f}",
+            "Tokens": f"{m.total_tokens:,}",
+            "Estimated AI cost": "$0 (free tier)"
+            if m.llm_provider in FREE_PROVIDERS
+            else f"${m.cost_usd:.4f}",
+            "Time": f"{m.duration_ms / 1000:.1f} s",
             "Search rounds": str(m.search_rounds),
             "Prompt versions": ", ".join(f"{k} {v}" for k, v in sorted(m.prompt_versions.items())),
         },

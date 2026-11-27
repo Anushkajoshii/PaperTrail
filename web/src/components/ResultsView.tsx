@@ -4,6 +4,7 @@ import type { CheckView, SebiRegistration } from "../api/types";
 import { VERDICTS, VERDICT_ORDER, formatDate } from "../lib/verdicts";
 import { ClaimCard } from "./ClaimCard";
 import { FlagCard } from "./FlagCard";
+import { RunDetails } from "./RunDetails";
 import { ShareBar } from "./ShareBar";
 import { Term } from "./Term";
 
@@ -169,10 +170,7 @@ export function ResultsView({ view }: { view: CheckView }) {
         <h2 id="run-title" className="font-semibold text-ink">
           About this check
         </h2>
-        <p className="mt-2">
-          {check.metrics.llm_calls} AI calls · {(check.metrics.duration_ms / 1000).toFixed(1)} s · estimated cost ${check.metrics.cost_usd.toFixed(4)} ·{" "}
-          {check.metrics.search_rounds} search round{check.metrics.search_rounds === 1 ? "" : "s"}
-        </p>
+        <RunDetails metrics={check.metrics} />
         {check.metrics.notes.length > 0 && (
           <ul className="mt-2 list-disc space-y-1 pl-5">
             {check.metrics.notes.map((n) => (
