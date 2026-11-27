@@ -277,3 +277,51 @@ def test_too_large_requests_fail_fast_and_output_is_capped():
     assert len(calls) == 1 and payloads[0]["max_tokens"] == 4000
     groq = get_provider(Settings(_env_file=None, llm_provider=LLMProvider.GROQ, groq_api_key="k"))
     assert groq._max_output_tokens == 4000
+
+
+def daily_limit(model):
+    msg = f"Rate limit reached for model `{model}` on tokens per day (TPD): Limit 200000"
+    return httpx.Response(429, json={"error": {"message": msg}})
+
+
+def test_daily_limit_switches_to_the_fallback_model_without_waiting():
+    seen, waits, now = [], [], [0.0]
+
+    def handler(request):
+        model = json.loads(request.content)["model"]
+        seen.append(model)
+        return daily_limit(model) if model == "big" else ok_body()
+
+    provider = OpenAICompatProvider(
+        http_client(handler),
+        "https://x/v1",
+        {Purpose.EXTRACT: "small", Purpose.JUDGE: "big"},
+        max_rate_retries=6,
+        fallback_models={"big": "small", "small": "big"},
+        sleep=waits.append,
+        clock=lambda: now[0],
+    )
+    assert provider.complete(REQ).data == {"answer": "hi"}
+    assert seen == ["big", "small"] and waits == []
+    provider.complete(REQ)  # the exhausted model is skipped for a while
+    assert seen == ["big", "small", "small"]
+    now[0] = 31 * 60.0  # then tried again
+    provider.complete(REQ)
+    assert seen[-2:] == ["big", "small"]
+
+
+def test_daily_limit_on_every_model_fails_fast():
+    provider = OpenAICompatProvider(
+        http_client(lambda r: daily_limit("m")),
+        "https://x/v1",
+        MODELS,
+        max_rate_retries=6,
+        sleep=lambda s: pytest.fail("should not wait"),
+    )
+    with pytest.raises(LLMError, match="daily limit"):
+        provider.complete(REQ)
+
+
+def test_groq_falls_back_between_its_free_models():
+    s = Settings(_env_file=None, llm_provider=LLMProvider.GROQ, groq_api_key="gsk_test_not_real")
+    assert get_provider(s)._fallbacks["openai/gpt-oss-120b"] == "openai/gpt-oss-20b"
