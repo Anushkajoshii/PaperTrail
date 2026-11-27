@@ -1,0 +1,285 @@
+{
+  "split": "full",
+  "provider": "groq",
+  "models": {
+    "extract": "openai/gpt-oss-20b",
+    "judge": "openai/gpt-oss-20b"
+  },
+  "prompt_versions": {
+    "extract": "extract-v1",
+    "judge": "judge-v1"
+  },
+  "created_at": "2026-11-27T13:55:11+00:00",
+  "verdicts": {
+    "n": 95,
+    "accuracy": 0.768,
+    "macro_f1": 0.729,
+    "per_class": {
+      "supported": {
+        "precision": 0.733,
+        "recall": 0.917,
+        "f1": 0.815,
+        "support": 24
+      },
+      "contradicted": {
+        "precision": 0.697,
+        "recall": 0.958,
+        "f1": 0.807,
+        "support": 24
+      },
+      "misleading": {
+        "precision": 1.0,
+        "recall": 0.261,
+        "f1": 0.414,
+        "support": 23
+      },
+      "not_verifiable": {
+        "precision": 0.846,
+        "recall": 0.917,
+        "f1": 0.88,
+        "support": 24
+      }
+    },
+    "confusion": {
+      "labels": [
+        "supported",
+        "contradicted",
+        "misleading",
+        "not_verifiable"
+      ],
+      "matrix": [
+        [
+          22,
+          0,
+          0,
+          2
+        ],
+        [
+          0,
+          23,
+          0,
+          1
+        ],
+        [
+          8,
+          8,
+          6,
+          1
+        ],
+        [
+          0,
+          2,
+          0,
+          22
+        ]
+      ]
+    },
+    "by_language": {
+      "en": 0.78,
+      "hi": 0.692,
+      "hinglish": 0.783
+    },
+    "ece": 0.189,
+    "brier": 0.229,
+    "stance_accuracy": 0.646,
+    "citation_validity": 0.667,
+    "accusatory_rate": 0.0,
+    "errors": 2,
+    "latency_ms_p50": 6602.5,
+    "latency_ms_p95": 13619.9,
+    "mistakes": [
+      {
+        "id": "v009",
+        "gold": "supported",
+        "pred": "not_verifiable",
+        "confidence": 0.3
+      },
+      {
+        "id": "v015",
+        "gold": "contradicted",
+        "pred": "not_verifiable",
+        "confidence": 0.3
+      },
+      {
+        "id": "v021",
+        "gold": "misleading",
+        "pred": "contradicted",
+        "confidence": 0.82
+      },
+      {
+        "id": "v022",
+        "gold": "misleading",
+        "pred": "supported",
+        "confidence": 0.82
+      },
+      {
+        "id": "v024",
+        "gold": "misleading",
+        "pred": "contradicted",
+        "confidence": 0.71
+      },
+      {
+        "id": "v025",
+        "gold": "misleading",
+        "pred": "contradicted",
+        "confidence": 0.84
+      },
+      {
+        "id": "v027",
+        "gold": "misleading",
+        "pred": "contradicted",
+        "confidence": 0.82
+      },
+      {
+        "id": "v028",
+        "gold": "misleading",
+        "pred": "supported",
+        "confidence": 0.76
+      },
+      {
+        "id": "v032",
+        "gold": "not_verifiable",
+        "pred": "contradicted",
+        "confidence": 0.72
+      },
+      {
+        "id": "v045",
+        "gold": "supported",
+        "pred": "not_verifiable",
+        "confidence": 0.35
+      },
+      {
+        "id": "v069",
+        "gold": "misleading",
+        "pred": "supported",
+        "confidence": 0.85
+      },
+      {
+        "id": "v070",
+        "gold": "misleading",
+        "pred": "contradicted",
+        "confidence": 0.82
+      },
+      {
+        "id": "v071",
+        "gold": "misleading",
+        "pred": "contradicted",
+        "confidence": 0.82
+      },
+      {
+        "id": "v072",
+        "gold": "misleading",
+        "pred": "supported",
+        "confidence": 0.76
+      },
+      {
+        "id": "v074",
+        "gold": "misleading",
+        "pred": "supported",
+        "confidence": 0.73
+      },
+      {
+        "id": "v077",
+        "gold": "misleading",
+        "pred": "supported",
+        "confidence": 0.81
+      },
+      {
+        "id": "v078",
+        "gold": "misleading",
+        "pred": "contradicted",
+        "confidence": 0.82
+      },
+      {
+        "id": "v079",
+        "gold": "misleading",
+        "pred": "contradicted",
+        "confidence": 0.72
+      },
+      {
+        "id": "v080",
+        "gold": "misleading",
+        "pred": "not_verifiable",
+        "confidence": 0.35
+      },
+      {
+        "id": "v081",
+        "gold": "misleading",
+        "pred": "supported",
+        "confidence": 0.77
+      },
+      {
+        "id": "v082",
+        "gold": "misleading",
+        "pred": "supported",
+        "confidence": 0.78
+      },
+      {
+        "id": "v095",
+        "gold": "not_verifiable",
+        "pred": "contradicted",
+        "confidence": 0.82
+      }
+    ]
+  },
+  "extraction": {
+    "transcripts": 20,
+    "gold_claims": 55,
+    "recall": 1.0,
+    "recall_strict": 0.873,
+    "type_accuracy": 0.873,
+    "precision": 0.946,
+    "forbidden_extractions": 1,
+    "misses": []
+  },
+  "rulebook": {
+    "sentences": 52,
+    "micro_precision": 1.0,
+    "micro_recall": 1.0,
+    "micro_f1": 1.0,
+    "per_kind": {
+      "guaranteed_returns": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      },
+      "live_price_education": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      },
+      "misleading_performance": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      },
+      "pressure_tactics": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      },
+      "tip_group_solicitation": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      },
+      "unconfirmed_registration_claim": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      },
+      "unregistered_advice": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      }
+    },
+    "errors": []
+  },
+  "cost": {
+    "llm_calls": 116,
+    "total_tokens": 127658,
+    "total_usd": 0.0,
+    "usd_per_verdict": 0.0
+  }
+}

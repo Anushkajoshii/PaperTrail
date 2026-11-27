@@ -44,6 +44,9 @@ class Settings(BaseSettings):
     # Free tiers (e.g. Groq) answer "429 Too Many Requests" when busy. Each retry waits as long
     # as the server asks (at most 60 s), so 6 retries fit well inside the worker's time limit.
     llm_rate_limit_retries: int = 6
+    # Upper bound on output tokens per call. Free tiers count the requested maximum against a
+    # per-minute token budget, so asking for more than needed can make a request impossible.
+    llm_max_output_tokens: int | None = None
     # Bedrock may need a different region from the rest of the stack if a model is missing there.
     bedrock_region: str | None = None
     openai_compat_base_url: str | None = None

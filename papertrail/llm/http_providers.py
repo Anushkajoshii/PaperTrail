@@ -48,7 +48,8 @@ def _post(
     for attempt in range(max_rate_retries + 1):
         try:
             resp = client.post(url, json=payload)
-            if resp.status_code == 429 and attempt < max_rate_retries:
+            too_large = resp.status_code == 429 and "too large" in resp.text.lower()
+            if resp.status_code == 429 and attempt < max_rate_retries and not too_large:
                 wait = _retry_after(resp, attempt)
                 log.warning("%s rate limited; waiting %.1fs (retry %d)", name, wait, attempt + 1)
                 sleep(wait)
@@ -94,6 +95,7 @@ class OpenAICompatProvider:
         models: dict[Purpose, str],
         *,
         reasoning_effort: str | None = None,
+        max_output_tokens: int | None = None,
         max_rate_retries: int = 3,
         sleep: Callable[[float], None] = time.sleep,
     ) -> None:
@@ -101,6 +103,7 @@ class OpenAICompatProvider:
         self._url = base_url.rstrip("/") + "/chat/completions"
         self._models = models
         self._reasoning_effort = reasoning_effort
+        self._max_output_tokens = max_output_tokens
         self._max_rate_retries = max_rate_retries
         self._sleep = sleep
         self._json_object_models: set[str] = set()
@@ -115,13 +118,20 @@ class OpenAICompatProvider:
     def for_groq(cls, s: Settings) -> OpenAICompatProvider:
         if not s.groq_api_key:
             raise LLMError("Set PAPERTRAIL_GROQ_API_KEY for provider 'groq' (free at groq.com)")
-        provider = cls._build(s, s.groq_base_url, s.groq_api_key, default_effort="low")
+        provider = cls._build(
+            s, s.groq_base_url, s.groq_api_key, default_effort="low", default_max_output=4000
+        )
         provider.name = "groq"
         return provider
 
     @classmethod
     def _build(
-        cls, s: Settings, base_url: str, key, default_effort: str | None = None
+        cls,
+        s: Settings,
+        base_url: str,
+        key,
+        default_effort: str | None = None,
+        default_max_output: int | None = None,
     ) -> OpenAICompatProvider:
         headers = {}
         if key:
@@ -132,6 +142,7 @@ class OpenAICompatProvider:
             base_url,
             {p: model_for(p, s) for p in Purpose},
             reasoning_effort=s.reasoning_effort or default_effort,
+            max_output_tokens=s.llm_max_output_tokens or default_max_output,
             max_rate_retries=s.llm_rate_limit_retries,
         )
 
@@ -141,7 +152,7 @@ class OpenAICompatProvider:
         payload: dict = {
             "model": model,
             "messages": messages,
-            "max_tokens": request.max_tokens,
+            "max_tokens": min(request.max_tokens, self._max_output_tokens or request.max_tokens),
             "temperature": 0,
         }
         if model in self._json_object_models:

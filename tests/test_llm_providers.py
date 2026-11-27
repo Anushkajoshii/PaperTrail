@@ -259,3 +259,21 @@ def test_rate_limit_retries_come_from_settings():
     )
     assert get_provider(s)._max_rate_retries == 6
     assert Settings(_env_file=None).llm_rate_limit_retries == 6
+
+
+def test_too_large_requests_fail_fast_and_output_is_capped():
+    calls, payloads = [], []
+
+    def handler(request):
+        calls.append(1)
+        payloads.append(json.loads(request.content))
+        return httpx.Response(429, text="Request too large for model on output tokens")
+
+    provider = OpenAICompatProvider(
+        http_client(handler), "https://x/v1", MODELS, max_output_tokens=4000, sleep=lambda s: None
+    )
+    with pytest.raises(LLMError, match="too large"):
+        provider.complete(REQ)  # REQ asks for 8000 output tokens
+    assert len(calls) == 1 and payloads[0]["max_tokens"] == 4000
+    groq = get_provider(Settings(_env_file=None, llm_provider=LLMProvider.GROQ, groq_api_key="k"))
+    assert groq._max_output_tokens == 4000

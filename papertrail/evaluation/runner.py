@@ -36,7 +36,7 @@ from papertrail.evaluation.golden import (
     load_rulebook,
     load_verdicts,
 )
-from papertrail.llm import Provider, Purpose, UsageLog, get_provider, model_for
+from papertrail.llm import LLMError, Provider, Purpose, UsageLog, get_provider, model_for
 from papertrail.models import (
     Claim,
     RedFlagKind,
@@ -209,10 +209,16 @@ def score_verdicts(cases: list[VerdictCase]) -> dict:
 
 
 def run_extraction(items: list[ExtractionItem], provider: Provider, usage: UsageLog) -> dict:
-    gold_total = matched = typed = extracted_total = false_pos = forbidden = 0
+    gold_total = matched = typed = extracted_total = false_pos = forbidden = errors = 0
     misses: list[str] = []
     for item in items:
-        result = extract_claims(item.text, provider=provider, language_hint=item.language)
+        try:
+            result = extract_claims(item.text, provider=provider, language_hint=item.language)
+        except LLMError as exc:  # a failed transcript counts as all its claims missed
+            errors += 1
+            gold_total += len(item.claims)
+            misses.extend(f"{item.id}: {g.anchor} (error: {str(exc)[:80]})" for g in item.claims)
+            continue
         usage.calls.extend(result.usage.calls)
         quotes = [(c.quote.lower(), c.claim_type) for c in result.claims]
         extracted_total += len(quotes)
@@ -244,6 +250,7 @@ def run_extraction(items: list[ExtractionItem], provider: Provider, usage: Usage
         "type_accuracy": round(typed / matched, 3) if matched else 0.0,
         "precision": round(precision, 3),
         "forbidden_extractions": forbidden,
+        "errors": errors,
         "misses": misses,
     }
 
