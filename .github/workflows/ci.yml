@@ -86,6 +86,24 @@ jobs:
           curl -sf localhost:8000/health
           docker rm -f pt
 
+  infra:
+    name: Terraform (format and validate)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.17.2
+      - name: Format
+        run: terraform fmt -check -recursive infra
+      - name: Validate (no AWS access needed)
+        run: |
+          for dir in infra/bootstrap infra; do
+            terraform -chdir=$dir init -backend=false -input=false
+            terraform -chdir=$dir validate
+          done
+
   web:
     name: Web app (types, tests, build)
     runs-on: ubuntu-latest

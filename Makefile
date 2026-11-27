@@ -1,4 +1,4 @@
-.PHONY: help install dev worker openapi test lint format eval eval-smoke deploy destroy rulebook-docs demo
+.PHONY: help install dev worker openapi test lint format eval eval-smoke plan deploy destroy rulebook-docs demo
 
 help: ## Show available commands
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-10s\033[0m %s\n", $$1, $$2}'
@@ -30,11 +30,14 @@ eval: ## Full eval with the configured LLM provider; report in evals/reports/
 eval-smoke: ## 15-claim smoke eval + regression gate (what CI runs)
 	uv run python -m papertrail.evaluation --split smoke --baseline evals/baselines/mock-smoke.json
 
-deploy: ## Deploy to AWS with Terraform (Part 8; asks before creating anything)
-	@echo "Deployment arrives in Part 8. Nothing is created without your approval."
+plan: ## Show what a deploy would change in AWS (creates nothing)
+	AWS_PROFILE=$(or $(AWS_PROFILE),portfolio) scripts/deploy.sh plan
 
-destroy: ## Tear down all AWS resources (Part 8)
-	@echo "Teardown arrives in Part 8."
+deploy: ## Build, push and deploy to AWS (Terraform asks you to confirm first)
+	AWS_PROFILE=$(or $(AWS_PROFILE),portfolio) scripts/deploy.sh apply
+
+destroy: ## Remove every AWS resource (Terraform asks you to confirm first)
+	AWS_PROFILE=$(or $(AWS_PROFILE),portfolio) scripts/deploy.sh destroy
 
 rulebook-docs: ## Regenerate docs/SEBI_RULEBOOK.md from the rules and sources
 	uv run python -m papertrail.rulebook.catalog_doc > docs/SEBI_RULEBOOK.md

@@ -222,3 +222,23 @@ def test_worker_lambda_end_to_end_with_mock_llm(monkeypatch):
     finally:
         get_settings.cache_clear()
         worker_lambda._runtime.cache_clear()
+
+
+def test_push_secrets_sends_only_known_names_and_never_prints_values(tmp_path, capsys):
+    from scripts.push_secrets import main
+
+    env = tmp_path / ".env"
+    env.write_text(
+        "PAPERTRAIL_LLM_PROVIDER=groq\nPAPERTRAIL_GROQ_API_KEY='gsk_secret_value'\n"
+        "# comment\nPAPERTRAIL_TAVILY_API_KEY=\nOTHER_SECRET=nope\n"
+    )
+    ssm = boto3.client("ssm", region_name=REGION)
+    assert main(["--env-file", str(env)], ssm=ssm) == 0
+    got = ssm.get_parameter(Name="/papertrail/prod/PAPERTRAIL_GROQ_API_KEY", WithDecryption=True)
+    assert got["Parameter"]["Value"] == "gsk_secret_value"
+    out = capsys.readouterr().out
+    assert "gsk_secret_value" not in out and "16 characters" in out
+    names = [p["Name"] for p in ssm.describe_parameters()["Parameters"]]
+    assert names == ["/papertrail/prod/PAPERTRAIL_GROQ_API_KEY"]
+    env.write_text("NOTHING=here\n")
+    assert main(["--env-file", str(env)], ssm=ssm) == 1
