@@ -1,4 +1,4 @@
-"""A small durable job queue in SQLite: the local stand-in for Amazon SQS.
+"""Job queues: Amazon SQS in AWS, and a small durable SQLite queue as its local stand-in.
 
 Semantics match what the worker will rely on with SQS:
 * at-least-once delivery: a claimed job that is not finished becomes visible again after
@@ -8,10 +8,11 @@ Semantics match what the worker will rely on with SQS:
 
 from __future__ import annotations
 
+import json
 import sqlite3
 import time
 from pathlib import Path
-from typing import Protocol
+from typing import Any, Protocol
 
 
 class JobQueue(Protocol):
@@ -101,3 +102,60 @@ class SqliteJobQueue:
         with self._connect() as db:
             row = db.execute("SELECT state FROM jobs WHERE check_id = ?", (check_id,)).fetchone()
         return row[0] if row else None
+
+
+class SqsJobQueue:
+    """Amazon SQS. In AWS the worker Lambda is triggered by the queue, so the API only enqueues.
+
+    ``claim``/``complete`` exist so the same local worker loop can also drain a real queue.
+    Failed jobs are retried by SQS and then moved to the dead-letter queue (set in Terraform).
+    """
+
+    def __init__(self, sqs_client: Any, queue_url: str) -> None:
+        self._sqs, self._url = sqs_client, queue_url
+        self._receipts: dict[str, str] = {}
+
+    def enqueue(self, check_id: str) -> None:
+        self._sqs.send_message(QueueUrl=self._url, MessageBody=json.dumps({"check_id": check_id}))
+
+    def claim(self) -> str | None:
+        msgs = self._sqs.receive_message(QueueUrl=self._url, MaxNumberOfMessages=1).get(
+            "Messages", []
+        )
+        if not msgs:
+            return None
+        check_id = parse_job(msgs[0]["Body"])
+        self._receipts[check_id] = msgs[0]["ReceiptHandle"]
+        return check_id
+
+    def complete(self, check_id: str) -> None:
+        receipt = self._receipts.pop(check_id, None)
+        if receipt:
+            self._sqs.delete_message(QueueUrl=self._url, ReceiptHandle=receipt)
+
+    def fail(self, check_id: str) -> None:
+        self._receipts.pop(check_id, None)  # SQS redelivers, then dead-letters
+
+
+def parse_job(body: str) -> str:
+    check_id = json.loads(body)["check_id"]
+    if not isinstance(check_id, str) or not check_id.startswith("chk_"):
+        raise ValueError("Malformed job message")
+    return check_id
+
+
+def get_job_queue(settings) -> JobQueue | None:
+    """The queue for the configured mode, or None for inline mode (run in the API process)."""
+    if settings.queue_mode == "sqs":
+        if not settings.sqs_queue_url:
+            raise ValueError("queue_mode 'sqs' needs PAPERTRAIL_SQS_QUEUE_URL")
+        import boto3
+
+        return SqsJobQueue(
+            boto3.client("sqs", region_name=settings.aws_region), settings.sqs_queue_url
+        )
+    if settings.queue_mode == "sqlite":
+        return SqliteJobQueue(settings.sqlite_path)
+    if settings.queue_mode == "inline":
+        return None
+    raise ValueError(f"Unknown queue mode '{settings.queue_mode}'")

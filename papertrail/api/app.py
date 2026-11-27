@@ -52,10 +52,10 @@ from papertrail.rulebook.sources import load_sources
 from papertrail.store import (
     CheckStore,
     JobQueue,
-    LocalUploadStorage,
-    SqliteJobQueue,
     UploadError,
     get_check_store,
+    get_job_queue,
+    get_upload_storage,
 )
 from papertrail.store.checks import normalize_handle
 from papertrail.store.uploads import UploadStorage
@@ -121,9 +121,9 @@ def create_app(
 ) -> FastAPI:
     s = settings or get_settings()
     store = store or get_check_store(s)
-    uploads = uploads or LocalUploadStorage(s.upload_dir, max_bytes=s.max_upload_bytes)
-    if s.queue_mode == "sqlite" and queue is None:
-        queue = SqliteJobQueue(s.sqlite_path)
+    uploads = uploads or get_upload_storage(s)
+    if queue is None:
+        queue = get_job_queue(s)
     make_deps = make_deps or default_deps_factory(s, uploads)
     limiter = RateLimiter(s.rate_limit_per_minute)
 
