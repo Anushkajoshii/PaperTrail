@@ -329,6 +329,26 @@
             "title": "Llm Calls",
             "type": "integer"
           },
+          "llm_provider": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "e.g. groq, anthropic, mock",
+            "title": "Llm Provider"
+          },
+          "models": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Model used per step, e.g. extract / judge.",
+            "title": "Models",
+            "type": "object"
+          },
           "notes": {
             "description": "Non-fatal issues, e.g. a site that blocked us.",
             "items": {
@@ -354,6 +374,14 @@
             "title": "Search Rounds",
             "type": "integer"
           },
+          "step_ms": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "description": "Time spent in each agent step, in milliseconds.",
+            "title": "Step Ms",
+            "type": "object"
+          },
           "total_tokens": {
             "default": 0,
             "title": "Total Tokens",
@@ -368,6 +396,9 @@
           "agent_steps",
           "search_rounds",
           "pages_fetched",
+          "llm_provider",
+          "models",
+          "step_ms",
           "prompt_versions",
           "notes"
         ],

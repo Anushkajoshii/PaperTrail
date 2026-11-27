@@ -12,7 +12,12 @@ import argparse
 import sys
 from pathlib import Path
 
-SECRETS = ("PAPERTRAIL_GROQ_API_KEY", "PAPERTRAIL_TAVILY_API_KEY")
+SECRETS = (
+    "PAPERTRAIL_GROQ_API_KEY",
+    "PAPERTRAIL_TAVILY_API_KEY",
+    "PAPERTRAIL_LANGFUSE_PUBLIC_KEY",
+    "PAPERTRAIL_LANGFUSE_SECRET_KEY",
+)
 
 
 def read_env(path: Path) -> dict[str, str]:

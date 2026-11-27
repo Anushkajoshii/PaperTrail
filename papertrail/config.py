@@ -98,6 +98,12 @@ class Settings(BaseSettings):
     # In Lambda, secrets (e.g. the Groq key) are read from SSM Parameter Store under this path,
     # never from Terraform or environment variables.
     ssm_secrets_path: str | None = None
+    # --- Tracing (Part 11) ----------------------------------------------------------------
+    # Langfuse (free cloud tier or self-hosted). Both keys set: every check is traced.
+    langfuse_public_key: SecretStr | None = None
+    langfuse_secret_key: SecretStr | None = None
+    langfuse_host: str = "https://cloud.langfuse.com"
+
     # Built web app to serve at "/" (the API then lives under /api). Empty: API only.
     web_dist_dir: str | None = None
 

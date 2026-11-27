@@ -2,6 +2,7 @@ import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ConfidenceMeter, ClaimCard } from "../components/ClaimCard";
 import { ProgressView } from "../components/ProgressView";
+import { RunDetails } from "../components/RunDetails";
 import { ResultsView } from "../components/ResultsView";
 import { VerdictBadge } from "../components/VerdictBadge";
 import { fixtureCheck, renderWithProviders, viewOf } from "./utils";
@@ -75,5 +76,21 @@ describe("ShareBar", () => {
     expect(text).toContain("1 misleading");
     expect(text).toContain("Not financial advice");
     expect(text).not.toMatch(/scam|fraud|liar/i);
+  });
+});
+
+describe("RunDetails", () => {
+  it("shows time per step, free-tier cost and the models used", () => {
+    render(<RunDetails metrics={fixtureCheck.metrics} />);
+    expect(screen.getByText("$0 (free tier)")).toBeInTheDocument();
+    const steps = within(screen.getByRole("list", { name: "Time per step" }));
+    expect(steps.getByText("Weighing evidence")).toBeInTheDocument();
+    expect(steps.getByText("3.9 s")).toBeInTheDocument();
+    expect(screen.getByText(/openai\/gpt-oss-120b/)).toBeInTheDocument();
+  });
+
+  it("shows the estimated cost for paid providers", () => {
+    render(<RunDetails metrics={{ ...fixtureCheck.metrics, llm_provider: "anthropic", cost_usd: 0.0123 }} />);
+    expect(screen.getByText("$0.0123")).toBeInTheDocument();
   });
 });

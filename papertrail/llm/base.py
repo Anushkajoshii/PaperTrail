@@ -19,6 +19,7 @@ from typing import Protocol
 from pydantic import BaseModel, ValidationError
 
 from papertrail.llm.pricing import estimate_cost_usd
+from papertrail.observability.tracing import record_generation
 
 log = logging.getLogger(__name__)
 
@@ -58,6 +59,7 @@ class Usage:
     input_tokens: int = 0
     output_tokens: int = 0
     latency_ms: float = 0.0
+    purpose: str = ""
 
     @property
     def cost_usd(self) -> float:
@@ -106,6 +108,10 @@ class UsageLog:
     def total_tokens(self) -> int:
         return sum(u.input_tokens + u.output_tokens for u in self.calls)
 
+    def models_by_purpose(self) -> dict[str, str]:
+        """Which model did each step, e.g. {"extract": "openai/gpt-oss-20b", ...}."""
+        return {u.purpose: u.model for u in self.calls if u.purpose}
+
 
 def generate_structured[T: BaseModel](
     provider: Provider,
@@ -124,10 +130,21 @@ def generate_structured[T: BaseModel](
     last_error: Exception | None = None
     for attempt in range(1, max_attempts + 1):
         started = time.perf_counter()
+        prompt = {"system": request.system, "user": request.user, "feedback": feedback}
         try:
             raw = provider.complete(request, feedback=feedback)
         except InvalidOutputError as exc:
             last_error = exc
+            _trace_call(
+                request,
+                prompt,
+                attempt,
+                started,
+                model="unknown",
+                level="WARNING",
+                status="Output was not valid JSON",
+                output=exc.raw_text,
+            )
             feedback = (
                 "Your previous answer was not valid JSON. Answer again with only the JSON "
                 "object that matches the required schema."
@@ -140,18 +157,62 @@ def generate_structured[T: BaseModel](
             input_tokens=raw.input_tokens,
             output_tokens=raw.output_tokens,
             latency_ms=round((time.perf_counter() - started) * 1000, 1),
+            purpose=request.purpose.value,
         )
         if usage_log is not None:
             usage_log.add(usage)
+        data = raw.data.model_dump() if isinstance(raw.data, BaseModel) else raw.data
         try:
-            data = raw.data.model_dump() if isinstance(raw.data, BaseModel) else raw.data
             output = request.output_model.model_validate(data)
+            _trace_call(request, prompt, attempt, started, usage=usage, output=data)
             return LLMResult(output=output, usage=usage, attempts=attempt)
         except ValidationError as exc:
             last_error = exc
             feedback = _feedback_for(exc)
+            _trace_call(
+                request,
+                prompt,
+                attempt,
+                started,
+                usage=usage,
+                output=data,
+                level="WARNING",
+                status=f"Failed validation: {feedback[:300]}",
+            )
             log.warning("LLM output failed validation (attempt %d): %s", attempt, feedback)
     raise LLMError(f"LLM output did not validate after {max_attempts} attempts: {last_error}")
+
+
+def _trace_call(
+    request: LLMRequest,
+    prompt: dict,
+    attempt: int,
+    started: float,
+    *,
+    usage: Usage | None = None,
+    model: str = "",
+    output: object = None,
+    level: str = "DEFAULT",
+    status: str | None = None,
+) -> None:
+    """Record one AI call in the current trace (a no-op when tracing is off)."""
+    record_generation(
+        f"{request.purpose.value}: {request.output_model.__name__}",
+        model=usage.model if usage else model,
+        input={k: v for k, v in prompt.items() if v},
+        output=output,
+        input_tokens=usage.input_tokens if usage else 0,
+        output_tokens=usage.output_tokens if usage else 0,
+        latency_ms=usage.latency_ms if usage else round((time.perf_counter() - started) * 1000, 1),
+        cost_usd=usage.cost_usd if usage else 0.0,
+        level=level,
+        status=status,
+        metadata={
+            "attempt": attempt,
+            "provider": usage.provider if usage else "",
+            "purpose": request.purpose.value,
+        },
+    )
 
 
 def _feedback_for(exc: ValidationError) -> str:

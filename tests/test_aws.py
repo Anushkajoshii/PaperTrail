@@ -242,3 +242,11 @@ def test_push_secrets_sends_only_known_names_and_never_prints_values(tmp_path, c
     assert names == ["/papertrail/prod/PAPERTRAIL_GROQ_API_KEY"]
     env.write_text("NOTHING=here\n")
     assert main(["--env-file", str(env)], ssm=ssm) == 1
+
+
+def test_dynamodb_list_recent_reads_all_pages_newest_first():
+    store = DynamoDbCheckStore(make_table())
+    checks = [new_check(f"@c{i}") for i in range(5)]
+    for c in checks:
+        store.save(c)
+    assert [c.id for c in store.list_recent(3)] == [c.id for c in reversed(checks)][:3]

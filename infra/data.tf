@@ -119,9 +119,14 @@ resource "aws_s3_bucket_policy" "media_tls_only" {
 # Secrets: Terraform creates placeholders only. Real values are set by hand with the AWS CLI
 # (see docs/DEPLOY.md), so they never appear in Terraform state or in GitHub.
 resource "aws_ssm_parameter" "secret" {
-  for_each = toset(["PAPERTRAIL_GROQ_API_KEY", "PAPERTRAIL_TAVILY_API_KEY"])
-  name     = "${local.ssm_path}/${each.key}"
-  type     = "SecureString"
-  value    = "unset"
+  for_each = toset([
+    "PAPERTRAIL_GROQ_API_KEY",
+    "PAPERTRAIL_TAVILY_API_KEY",
+    "PAPERTRAIL_LANGFUSE_PUBLIC_KEY",
+    "PAPERTRAIL_LANGFUSE_SECRET_KEY",
+  ])
+  name  = "${local.ssm_path}/${each.key}"
+  type  = "SecureString"
+  value = "unset"
   lifecycle { ignore_changes = [value] }
 }

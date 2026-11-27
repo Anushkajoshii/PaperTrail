@@ -265,6 +265,18 @@ export interface components {
              */
             llm_calls: number;
             /**
+             * Llm Provider
+             * @description e.g. groq, anthropic, mock
+             */
+            llm_provider: string | null;
+            /**
+             * Models
+             * @description Model used per step, e.g. extract / judge.
+             */
+            models: {
+                [key: string]: string;
+            };
+            /**
              * Notes
              * @description Non-fatal issues, e.g. a site that blocked us.
              */
@@ -283,6 +295,13 @@ export interface components {
              * @default 0
              */
             search_rounds: number;
+            /**
+             * Step Ms
+             * @description Time spent in each agent step, in milliseconds.
+             */
+            step_ms: {
+                [key: string]: number;
+            };
             /**
              * Total Tokens
              * @default 0

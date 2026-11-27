@@ -15,6 +15,7 @@ from datetime import date
 
 from papertrail.agent.judge import EvidenceCandidate
 from papertrail.models import Claim
+from papertrail.observability.tracing import span
 from papertrail.text import normalize_for_match
 from papertrail.tools.fetch import FetchError, PageFetcher
 from papertrail.tools.search import SearchError, SearchProvider, SearchResult, build_queries
@@ -73,7 +74,8 @@ def _passages_for(
     if deps.fetcher is not None and not demo and budget[0] > 0:
         budget[0] -= 1
         try:
-            page = deps.fetcher.fetch(url)
+            with span("fetch", input={"url": url}):
+                page = deps.fetcher.fetch(url)
             out.pages_fetched += 1
             passages = best_passages(claim, page.text, k=1) or []
             return (
@@ -102,7 +104,10 @@ def research_claim(
     for query in queries_for_round(claim, round_no, creator_name):
         out.queries.append(query)
         try:
-            results = deps.search.search(query, max_results=deps.max_results)
+            with span("search", input={"query": query}, metadata={"round": round_no}) as sp:
+                results = deps.search.search(query, max_results=deps.max_results)
+                if sp is not None:
+                    sp.output = [{"title": r.title, "url": str(r.url)} for r in results]
         except SearchError as exc:
             out.errors.append(f"Search failed for '{query}': {exc}")
             continue
