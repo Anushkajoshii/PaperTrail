@@ -9,7 +9,7 @@ registered with SEBI, and it flags statements that official SEBI rules and guida
 red flags, such as "guaranteed returns".
 
 > **Live demo:** [w5fnwkmfr6.execute-api.ap-southeast-2.amazonaws.com](https://w5fnwkmfr6.execute-api.ap-southeast-2.amazonaws.com/) · API docs: [/api/docs](https://w5fnwkmfr6.execute-api.ap-southeast-2.amazonaws.com/api/docs)
-> **Status:** Parts 1–11 of 14 complete: the full pipeline (claims → evidence → verdicts → SEBI rulebook → report) runs on AWS Lambda with free open models on Groq. See the [roadmap](docs/ROADMAP.md).
+> **Status:** Parts 1–12 of 14 complete: the full pipeline (claims → evidence → verdicts → SEBI rulebook → report) runs on AWS Lambda with free open models on Groq. See the [roadmap](docs/ROADMAP.md).
 > The demo uses a labelled offline evidence set, so web results are illustrative.
 
 > **Not financial advice.** PaperTrail assesses *claims*, never *people*. A verdict of "no
@@ -30,7 +30,7 @@ red flags, such as "guaranteed returns".
 | 4. **Give a verdict** | Each claim is marked **Supported**, **Contradicted**, **Misleading** or **Not verifiable**, with reasons. | You can see *why*, and what couldn't be checked. |
 | 5. **Check the rulebook** | Is the creator SEBI-registered? Do they promise things SEBI rules warn about? | Each flag links to the official SEBI source. |
 | 6. **Download the report** | A source-cited report you can save as PDF, download, or share on WhatsApp. | Keep proof, and share it with family. |
-| 7. **Keep receipts** | Past stock calls are re-checked against real prices over time (the Claim Ledger). | Track records, not hype. |
+| 7. **Keep receipts** | Stock calls are re-checked against real prices after their deadline (the [Claim Ledger](docs/LEDGER.md)). Creator pages show track records and a red-flag timeline, and up to three creators can be compared. | Track records, not hype, and no single score that labels a person. |
 
 A full glossary lives in [docs/PLAIN_ENGLISH.md](docs/PLAIN_ENGLISH.md).
 
@@ -91,6 +91,10 @@ cd web && npm install && npm run dev     # http://localhost:5173
 | Landing page | Claim with evidence | SEBI rulebook | Downloadable report |
 |---|---|---|---|
 | ![Landing](docs/screenshots/landing.jpg) | ![Claims](docs/screenshots/results-claims.jpg) | ![Rulebook](docs/screenshots/rulebook.jpg) | ![Report](docs/screenshots/report.jpg) |
+
+| Claim Ledger on a creator page (demo prices, fictional symbols) | Creators side by side |
+|---|---|
+| ![Claim Ledger](docs/screenshots/ledger.jpg) | ![Compare](docs/screenshots/compare.jpg) |
 
 By default the AI runs in **mock mode**: deterministic and offline, so tests and CI need no
 API keys. Real providers are switched on through `.env` (see [.env.example](.env.example)):

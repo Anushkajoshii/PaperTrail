@@ -12,6 +12,8 @@ flowchart LR
     A -->|queue job| Q[[SQS jobs]]
     Q -->|1 message = 1 check| W[Worker Lambda<br/>LangGraph agent]
     Q -.->|after 3 failures| DLQ[[Dead-letter queue]]
+    EB[EventBridge<br/>weekdays 17:00 IST] --> L[Ledger Lambda<br/>settles stock calls] --> LT[(DynamoDB<br/>ledger)]
+    W -->|stock calls| LT
     W --> D
     W --> LLM[Groq free tier<br/>gpt-oss models]
     W --> T[Amazon Transcribe]
@@ -27,7 +29,8 @@ account can't be billed unless you choose to upgrade. Estimated monthly use for 
 
 | Service | What it does | Expected monthly |
 |---|---|---|
-| Lambda (arm64) | API and worker | ~$0 (well inside the free allowance) |
+| Lambda (arm64) | API, worker and the daily ledger job | ~$0 (well inside the free allowance) |
+| EventBridge | Daily ledger schedule | $0 |
 | API Gateway HTTP API | The public URL | ~$0.01 |
 | DynamoDB on-demand | Stores checks | ~$0.01 |
 | SQS | Job queue | ~$0 |
