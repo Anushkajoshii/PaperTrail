@@ -1,4 +1,6 @@
-# PaperTrail golden set v1: SEBI rulebook flags (32 sentences)
+# PaperTrail golden set v2: SEBI rulebook flags (52 sentences; v1 was r01-r32)
+# Note: v2 sentences r33-r52 were written alongside fixes to the rules, so the rulebook set is
+# no longer a held-out test for the rules (see docs/EVALUATION.md).
 #
 # Each sentence lists the verified-rule flag kinds it SHOULD raise (empty list = none).
 # Registration is assumed "not found" unless `registered: true`.
@@ -44,5 +46,27 @@ sentences:
   - {id: r29, split: full, text: "Check an adviser's registration on SEBI's website before paying.", expect: []}
   - {id: r30, split: full, text: "The company reported revenue of ₹1,200 crore in Q2.", expect: []}
   # known limitations (kept in the set so the numbers stay honest)
-  - {id: r31, split: full, text: "There are no guarantees in the stock market.", expect: [], note: "negated guarantee: known false positive"}
-  - {id: r32, split: full, text: "Markets were in a hurry to price in the rate cut.", expect: [], note: "neutral 'hurry': known false positive"}
+  - {id: r31, split: full, text: "There are no guarantees in the stock market.", expect: [], note: "negated guarantee (fixed in v2: was a false positive)"}
+  - {id: r32, split: full, text: "Markets were in a hurry to price in the rate cut.", expect: [], note: "neutral 'hurry' (fixed in v2: was a false positive)"}
+
+  # ---------------------------------------------------------------- v2 additions (Part 13)
+  - {id: r33, split: full, text: "Har mahine 8% fixed return, koi risk nahi.", expect: [guaranteed_returns]}
+  - {id: r34, split: full, text: "100% safe investment with assured returns.", expect: [guaranteed_returns]}
+  - {id: r35, split: full, text: "Returns are not guaranteed; markets can fall.", expect: [], note: "negated guarantee"}
+  - {id: r36, split: full, text: "Mere students ne ek mahine mein 5 lakh kamaye.", expect: [misleading_performance]}
+  - {id: r37, split: full, text: "My last 10 calls were all profitable.", expect: [misleading_performance]}
+  - {id: r38, split: full, text: "The index returned 11% in 2024 according to the exchange.", expect: []}
+  - {id: r39, split: full, text: "Buy ORIONBANK for a target of ₹1,050.", expect: [unregistered_advice]}
+  - {id: r40, split: full, text: "LOTUSFOOD kharido, target ₹300.", expect: [unregistered_advice]}
+  - {id: r41, split: full, text: "Buy ORIONBANK for a target of ₹1,050.", expect: [], registered: true}
+  - {id: r42, split: full, text: "मैं सेबी रजिस्टर्ड एडवाइज़र हूँ।", expect: [unconfirmed_registration_claim]}
+  - {id: r43, split: full, text: "I'm not a SEBI-registered adviser.", expect: [], note: "negated registration claim"}
+  - {id: r44, split: full, text: "Join my WhatsApp group for daily intraday tips.", expect: [tip_group_solicitation]}
+  - {id: r45, split: full, text: "मेरा टेलीग्राम ग्रुप जॉइन करो।", expect: [tip_group_solicitation]}
+  - {id: r46, split: full, text: "Our family WhatsApp group shared holiday photos.", expect: []}
+  - {id: r47, split: full, text: "Only educational content. Buy KESTREL, target ₹1500.", expect: [live_price_education, unregistered_advice]}
+  - {id: r48, split: full, text: "Hurry, only 10 seats left!", expect: [pressure_tactics]}
+  - {id: r49, split: full, text: "Kal tak late ho jaoge, abhi entry lo.", expect: [pressure_tactics]}
+  - {id: r50, split: full, text: "There is no hurry; invest at your own pace.", expect: [], note: "negated urgency"}
+  - {id: r51, split: full, text: "Check the SEBI register before paying any adviser.", expect: []}
+  - {id: r52, split: full, text: "Expense ratios reduce your returns every year.", expect: []}

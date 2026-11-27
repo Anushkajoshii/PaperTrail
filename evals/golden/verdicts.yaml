@@ -1,5 +1,5 @@
-# PaperTrail golden set v1: verdicts (40 items: 10 supported, 10 contradicted, 9 misleading,
-# 11 not verifiable)
+# PaperTrail golden set v2: verdicts (95 items: 24 supported, 24 contradicted, 23 misleading,
+# 24 not verifiable; 59 English, 23 Hinglish, 13 Hindi). v1 was items v001-v040.
 #
 # WHAT THIS IS
 #   Each item is a claim plus a fixed set of evidence passages, and the verdict a careful human
@@ -8,10 +8,11 @@
 # HONESTY NOTES
 #   - Companies, tickers and passages are FICTIONAL (domains end in .eval.test). They imitate common
 #     finfluencer claims but do not describe real companies, people or prices.
-#   - Labels were assigned by the project author against the rubric in docs/EVALUATION.md.
-#     A second annotator pass is planned for v2 (Part 13), along with real claims from public
-#     SEBI orders.
-#   - split: smoke (15 items, run on every PR) | full (all 40).
+#   - Labels were assigned by one annotator (the project author) against the rubric in
+#     docs/EVALUATION.md. There is no second-annotator agreement score yet.
+#   - Real claims from public SEBI orders were considered and left out on purpose: they name
+#     real people, and PaperTrail's test data should never attach verdicts to real individuals.
+#   - split: smoke (15 items, run on every PR) | full (all 95).
 #
 # FIELDS
 #   claim: text (English restatement), quote (original words), claim_type, tickers
@@ -427,3 +428,568 @@ items:
     gold_label: not_verifiable
     gold_stances: {e1: context}
     why: A future quarter's results are not yet known.
+
+  # ==========================================================================================
+  # GOLDEN SET v2 ADDITIONS (Part 13): 55 items, v041-v095, all in the full split.
+  # Harder cases on purpose: unit confusion (lakh vs crore), segment vs total, net vs gross,
+  # one-off gains, cherry-picked periods, stale or conflicting sources, social posts repeating
+  # a claim, and claims that are only about the future.
+  # ==========================================================================================
+
+  # ---------------------------------------------------------------- SUPPORTED (v2: 14)
+  - id: v041
+    split: full
+    language: en
+    claim: {text: "Indus Cables reported a net profit of ₹310 crore in FY25.", quote: "Indus Cables made ₹310 crore profit in FY25", claim_type: company_fact, tickers: [INDUSCAB]}
+    evidence:
+      - {id: e1, url: "https://filings.eval.test/induscab/fy25", title: "Indus Cables FY25 audited results", source_type: company_filing, published_at: 2025-05-12, snippet: "Indus Cables Ltd reported net profit of ₹310 crore for FY25, up 12% from ₹277 crore in FY24."}
+    gold_label: supported
+    gold_stances: {e1: supports}
+    why: The audited results state the same profit and year.
+
+  - id: v042
+    split: full
+    language: hinglish
+    claim: {text: "The Demo Midcap 150 index returned about 24% in calendar year 2024.", quote: "Demo Midcap 150 ne 2024 mein 24% return diya", claim_type: market_fact, tickers: []}
+    evidence:
+      - {id: e1, url: "https://exchange.eval.test/indices/demo-midcap-150", title: "Demo Midcap 150 annual returns", source_type: exchange, published_at: 2025-01-02, snippet: "Demo Midcap 150 calendar-year price return: 2024: 24.1%, 2023: 43.0%."}
+    gold_label: supported
+    gold_stances: {e1: supports}
+    why: Exchange data shows 24.1%, which matches "24%" after rounding.
+
+  - id: v043
+    split: full
+    language: hi
+    claim: {text: "Vela Software issued one bonus share for every five shares held.", quote: "वेला सॉफ्टवेयर ने हर पाँच शेयर पर एक बोनस शेयर दिया", claim_type: company_fact, tickers: [VELASOFT]}
+    evidence:
+      - {id: e1, url: "https://filings.eval.test/velasoft/bonus-2025", title: "Vela Software bonus issue notice", source_type: company_filing, published_at: 2025-08-01, snippet: "The Board approved a bonus issue of 1 equity share for every 5 equity shares held, record date 22 August 2025."}
+    gold_label: supported
+    gold_stances: {e1: supports}
+    why: The company notice confirms the 1-for-5 bonus.
+
+  - id: v044
+    split: full
+    language: en
+    claim: {text: "The speaker is a SEBI-registered investment adviser with registration INA000000002.", quote: "I'm a SEBI registered investment adviser, INA000000002", claim_type: credential, tickers: []}
+    evidence: []
+    registration: {status: registered_investment_adviser, matched_name: "Demo Advisory", registration_numbers: [INA000000002], match_basis: registration_number}
+    gold_label: supported
+    gold_stances: {}
+    why: The register lookup matched the stated registration number.
+
+  - id: v045
+    split: full
+    language: en
+    claim: {text: "KESTREL shares rose 40% in 2024.", quote: "Kestrel was up 40% in 2024", claim_type: past_performance, tickers: [KESTREL]}
+    evidence:
+      - {id: e1, url: "https://exchange.eval.test/quotes/KESTREL", title: "KESTREL price history", source_type: exchange, published_at: 2025-01-02, snippet: "KESTREL closed 2024 at ₹700, up 40% from ₹500 at the end of 2023."}
+      - {id: e2, url: "https://blog.eval.test/kestrel-review", title: "Is Kestrel a buy?", source_type: blog, published_at: 2024-12-15, snippet: "Kestrel has gained around 25% this year, lagging its peers."}
+    gold_label: supported
+    gold_stances: {e1: supports, e2: contradicts}
+    why: Exchange data confirms 40%; an older blog estimate made before year-end is less reliable.
+
+  - id: v046
+    split: full
+    language: hinglish
+    claim: {text: "Orion Bank's deposits crossed ₹1 lakh crore in Q4 FY25.", quote: "Orion Bank ke deposits Q4 FY25 mein 1 lakh crore paar", claim_type: company_fact, tickers: [ORIONBANK]}
+    evidence:
+      - {id: e1, url: "https://filings.eval.test/orion/q4fy25", title: "Orion Bank Q4 FY25 business update", source_type: company_filing, published_at: 2025-04-05, snippet: "Total deposits stood at ₹1,02,450 crore as of 31 March 2025, up 14% year on year."}
+    gold_label: supported
+    gold_stances: {e1: supports}
+    why: ₹1,02,450 crore is above ₹1 lakh crore at the end of Q4 FY25.
+
+  - id: v047
+    split: full
+    language: en
+    claim: {text: "The Demo Central Bank cut its policy rate to 6.0% on 9 April 2025.", quote: "Central bank cut the repo rate to 6% on 9 April 2025", claim_type: market_fact, tickers: []}
+    evidence:
+      - {id: e1, url: "https://regulator.eval.test/press/monetary-policy-apr-2025", title: "Monetary policy statement, April 2025", source_type: regulator, published_at: 2025-04-09, snippet: "The committee decided to reduce the policy repo rate by 25 basis points to 6.00 per cent with immediate effect."}
+    gold_label: supported
+    gold_stances: {e1: supports}
+    why: The official statement confirms the cut, the level and the date.
+
+  - id: v048
+    split: full
+    language: en
+    claim: {text: "The direct plan of Demo Flexicap has an expense ratio of 0.55%.", quote: "Demo Flexicap direct plan costs just 0.55% a year", claim_type: other, tickers: []}
+    evidence:
+      - {id: e1, url: "https://data.eval.test/funds/demo-flexicap", title: "Demo Flexicap factsheet", source_type: data_provider, published_at: 2025-07-05, snippet: "Total expense ratio: Regular plan 1.65%, Direct plan 0.55%."}
+    gold_label: supported
+    gold_stances: {e1: supports}
+    why: The factsheet lists 0.55% for the direct plan.
+
+  - id: v049
+    split: full
+    language: hi
+    claim: {text: "Sitara Pharma shares were up 18% in 2025 as of 30 June 2025.", quote: "सितारा फार्मा का शेयर 2025 में 30 जून तक 18% ऊपर है", claim_type: past_performance, tickers: [SITARA]}
+    evidence:
+      - {id: e1, url: "https://exchange.eval.test/quotes/SITARA-ytd", title: "SITARA year-to-date", source_type: exchange, published_at: 2025-06-30, snippet: "SITARA year-to-date change as of 30 June 2025: +18.2%."}
+    gold_label: supported
+    gold_stances: {e1: supports}
+    why: Exchange data matches the period and figure.
+
+  - id: v050
+    split: full
+    language: hinglish
+    claim: {text: "Ganga Cement has an installed capacity of 25 million tonnes a year.", quote: "Ganga Cement ki capacity 25 MTPA hai", claim_type: company_fact, tickers: [GANGACEM]}
+    evidence:
+      - {id: e1, url: "https://filings.eval.test/gangacem/annual-report-fy25", title: "Ganga Cement annual report FY25", source_type: company_filing, published_at: 2025-06-20, snippet: "Installed cement capacity reached 25.0 MTPA after commissioning of the Satna line."}
+      - {id: e2, url: "https://news.eval.test/business/ganga-cement-satna", title: "Ganga Cement commissions Satna plant", source_type: reputable_news, published_at: 2025-03-14, snippet: "With the new line, Ganga Cement's capacity rises to 25 million tonnes per annum."}
+    gold_label: supported
+    gold_stances: {e1: supports, e2: supports}
+    why: The annual report and a news report agree on 25 MTPA.
+
+  - id: v051
+    split: full
+    language: en
+    claim: {text: "Lotus Foods had no borrowings as of 31 March 2025.", quote: "Lotus Foods is completely debt-free now", claim_type: company_fact, tickers: [LOTUSFOOD]}
+    evidence:
+      - {id: e1, url: "https://filings.eval.test/lotus/annual-report-fy25", title: "Lotus Foods annual report FY25", source_type: company_filing, published_at: 2025-06-10, snippet: "As of 31 March 2025 the company had no borrowings; long-term debt of ₹400 crore was fully repaid in FY24."}
+      - {id: e2, url: "https://news.eval.test/markets/lotus-debt-2022", title: "Lotus Foods takes on debt for expansion", source_type: reputable_news, published_at: 2022-02-01, snippet: "Lotus Foods borrowed ₹400 crore to fund its new plant."}
+    gold_label: supported
+    gold_stances: {e1: supports, e2: context}
+    why: The latest annual report shows zero borrowings; the 2022 article is outdated background.
+
+  - id: v052
+    split: full
+    language: en
+    claim: {text: "The Demo 100 index fell 2.3% on 7 April 2025.", quote: "Demo 100 crashed 2.3% on 7 April 2025", claim_type: market_fact, tickers: []}
+    evidence:
+      - {id: e1, url: "https://exchange.eval.test/indices/demo100/2025-04-07", title: "Demo 100 daily close, 7 April 2025", source_type: exchange, published_at: 2025-04-07, snippet: "Demo 100 closed at 29,940 on 7 April 2025, down 705 points or 2.3%."}
+    gold_label: supported
+    gold_stances: {e1: supports}
+    why: Exchange data confirms the fall and the date.
+
+  - id: v053
+    split: full
+    language: hinglish
+    claim: {text: "The speaker is a SEBI-registered research analyst with registration INH000000003.", quote: "Mera RA registration INH000000003 hai", claim_type: credential, tickers: []}
+    evidence: []
+    registration: {status: registered_research_analyst, matched_name: "Demo Equity Research", registration_numbers: [INH000000003], match_basis: registration_number}
+    gold_label: supported
+    gold_stances: {}
+    why: The register lookup matched the stated registration number.
+
+  - id: v054
+    split: full
+    language: en
+    claim: {text: "Promoters hold 51% of Monsoon Power.", quote: "Promoters own 51% of Monsoon Power", claim_type: company_fact, tickers: [MONSOONPWR]}
+    evidence:
+      - {id: e1, url: "https://filings.eval.test/monsoonpwr/shareholding-sep-2025", title: "Monsoon Power shareholding pattern, September 2025", source_type: company_filing, published_at: 2025-10-15, snippet: "Promoter and promoter group: 51.02%. Public: 48.98%."}
+      - {id: e2, url: "https://data.eval.test/stocks/monsoonpwr", title: "Monsoon Power ownership", source_type: data_provider, published_at: 2025-10-20, snippet: "Promoter holding 51.0% (unchanged quarter on quarter)."}
+    gold_label: supported
+    gold_stances: {e1: supports, e2: supports}
+    why: The filing and a data provider both show about 51%.
+
+  # ---------------------------------------------------------------- CONTRADICTED (v2: 14)
+  - id: v055
+    split: full
+    language: en
+    claim: {text: "Indus Cables doubled its net profit in FY25.", quote: "Indus Cables profit doubled in FY25", claim_type: company_fact, tickers: [INDUSCAB]}
+    evidence:
+      - {id: e1, url: "https://filings.eval.test/induscab/fy25", title: "Indus Cables FY25 audited results", source_type: company_filing, published_at: 2025-05-12, snippet: "Indus Cables Ltd reported net profit of ₹310 crore for FY25, up 12% from ₹277 crore in FY24."}
+    gold_label: contradicted
+    gold_stances: {e1: contradicts}
+    why: Profit grew 12%, not 100%.
+
+  - id: v056
+    split: full
+    language: hinglish
+    claim: {text: "VELASOFT shares returned 150% over the last year.", quote: "VELASOFT ne 1 saal mein 150% diya", claim_type: past_performance, tickers: [VELASOFT]}
+    evidence:
+      - {id: e1, url: "https://exchange.eval.test/quotes/VELASOFT", title: "VELASOFT 12-month performance", source_type: exchange, published_at: 2025-11-20, snippet: "VELASOFT: 12-month change +15.4% (₹1,040 to ₹1,200)."}
+    gold_label: contradicted
+    gold_stances: {e1: contradicts}
+    why: The 12-month return was about 15%, not 150%.
+
+  - id: v057
+    split: full
+    language: hi
+    claim: {text: "The Demo 100 index returned 40% in 2024.", quote: "डेमो 100 ने 2024 में 40% रिटर्न दिया", claim_type: market_fact, tickers: []}
+    evidence:
+      - {id: e1, url: "https://exchange.eval.test/indices/demo100/annual", title: "Demo 100 annual returns", source_type: exchange, published_at: 2025-01-02, snippet: "Demo 100 calendar-year price return: 2024: 11.2%, 2023: 19.4%."}
+    gold_label: contradicted
+    gold_stances: {e1: contradicts}
+    why: The 2024 return was 11.2%.
+
+  - id: v058
+    split: full
+    language: en
+    claim: {text: "Orion Bank is the largest private bank in India by assets.", quote: "Orion Bank is India's biggest private bank", claim_type: company_fact, tickers: [ORIONBANK]}
+    evidence:
+      - {id: e1, url: "https://data.eval.test/banks/private-by-assets-fy25", title: "Private banks ranked by total assets, FY25", source_type: data_provider, published_at: 2025-06-01, snippet: "Orion Bank ranks 7th among private banks by total assets as of March 2025."}
+    gold_label: contradicted
+    gold_stances: {e1: contradicts}
+    why: Ranked 7th, not 1st.
+
+  - id: v059
+    split: full
+    language: en
+    claim: {text: "Demo Liquid Fund has never had a day with a negative return.", quote: "Demo Liquid Fund has never had a single negative day", claim_type: other, tickers: []}
+    evidence:
+      - {id: e1, url: "https://data.eval.test/funds/demo-liquid", title: "Demo Liquid Fund factsheet", source_type: data_provider, published_at: 2025-04-30, snippet: "The fund recorded a negative daily return of -0.08% on 12 March 2025 due to a credit event."}
+    gold_label: contradicted
+    gold_stances: {e1: contradicts}
+    why: The factsheet records a negative day.
+
+  - id: v060
+    split: full
+    language: hinglish
+    claim: {text: "Lotus Foods' FY25 revenue was ₹2,180 lakh.", quote: "Lotus Foods ka FY25 revenue ₹2,180 lakh hai", claim_type: company_fact, tickers: [LOTUSFOOD]}
+    evidence:
+      - {id: e1, url: "https://filings.eval.test/lotus/fy25", title: "Lotus Foods FY25 results", source_type: company_filing, published_at: 2025-05-20, snippet: "Revenue from operations grew 9% to ₹2,180 crore in FY25 from ₹2,000 crore in FY24."}
+    gold_label: contradicted
+    gold_stances: {e1: contradicts}
+    why: Revenue was ₹2,180 crore, 100 times larger than ₹2,180 lakh.
+
+  - id: v061
+    split: full
+    language: en
+    claim: {text: "KESTREL has tripled since its IPO in 2021.", quote: "Kestrel has tripled since the 2021 IPO", claim_type: past_performance, tickers: [KESTREL]}
+    evidence:
+      - {id: e1, url: "https://exchange.eval.test/quotes/KESTREL-ipo", title: "KESTREL since listing", source_type: exchange, published_at: 2025-11-20, snippet: "KESTREL listed in 2021 at an issue price of ₹400; it last closed at ₹700, up 75% from the issue price."}
+    gold_label: contradicted
+    gold_stances: {e1: contradicts}
+    why: It is up 75%, not 200%.
+
+  - id: v062
+    split: full
+    language: en
+    claim: {text: "Sitara Pharma received US FDA approval for five drugs in 2025.", quote: "Sitara got 5 USFDA approvals this year", claim_type: company_fact, tickers: [SITARA]}
+    evidence:
+      - {id: e1, url: "https://filings.eval.test/sitara/regulatory-2025", title: "Sitara Pharma regulatory update", source_type: company_filing, published_at: 2025-10-01, snippet: "In 2025 so far the company has received final US FDA approval for two products."}
+    gold_label: contradicted
+    gold_stances: {e1: contradicts}
+    why: The company reports two approvals.
+
+  - id: v063
+    split: full
+    language: hi
+    claim: {text: "Ganga Cement has no debt.", quote: "गंगा सीमेंट पर कोई कर्ज़ नहीं है", claim_type: company_fact, tickers: [GANGACEM]}
+    evidence:
+      - {id: e1, url: "https://filings.eval.test/gangacem/annual-report-fy25", title: "Ganga Cement annual report FY25", source_type: company_filing, published_at: 2025-06-20, snippet: "Total borrowings stood at ₹1,150 crore as of 31 March 2025, mainly for the Satna expansion."}
+    gold_label: contradicted
+    gold_stances: {e1: contradicts}
+    why: The annual report shows ₹1,150 crore of borrowings.
+
+  - id: v064
+    split: full
+    language: en
+    claim: {text: "The Demo Central Bank raised interest rates in April 2025.", quote: "The central bank hiked rates in April 2025", claim_type: market_fact, tickers: []}
+    evidence:
+      - {id: e1, url: "https://regulator.eval.test/press/monetary-policy-apr-2025", title: "Monetary policy statement, April 2025", source_type: regulator, published_at: 2025-04-09, snippet: "The committee decided to reduce the policy repo rate by 25 basis points to 6.00 per cent with immediate effect."}
+    gold_label: contradicted
+    gold_stances: {e1: contradicts}
+    why: The rate was cut, not raised.
+
+  - id: v065
+    split: full
+    language: hinglish
+    claim: {text: "Demo Small-Cap Fund charges no expense ratio.", quote: "Is small-cap fund ka expense ratio zero hai", claim_type: other, tickers: []}
+    evidence:
+      - {id: e1, url: "https://data.eval.test/funds/demo-small-cap", title: "Demo Small-Cap Fund factsheet", source_type: data_provider, published_at: 2025-09-05, snippet: "Total expense ratio: Regular 1.80%, Direct 0.70%."}
+    gold_label: contradicted
+    gold_stances: {e1: contradicts}
+    why: Both plans have a non-zero expense ratio.
+
+  - id: v066
+    split: full
+    language: en
+    claim: {text: "Monsoon Power's chairman resigned in June 2025.", quote: "Monsoon Power chairman quit in June", claim_type: company_fact, tickers: [MONSOONPWR]}
+    evidence:
+      - {id: e1, url: "https://filings.eval.test/monsoonpwr/agm-2025", title: "Monsoon Power AGM outcome", source_type: company_filing, published_at: 2025-06-28, snippet: "Shareholders approved the reappointment of the Chairman for a further term of five years."}
+      - {id: e2, url: "https://social.eval.test/post/887", title: "Post claiming a resignation", source_type: social, published_at: 2025-06-20, snippet: "BREAKING: Monsoon Power chairman resigns!! Sell now!!"}
+    gold_label: contradicted
+    gold_stances: {e1: contradicts, e2: irrelevant}
+    why: The chairman was reappointed; a social post repeating the rumour is not evidence.
+
+  - id: v067
+    split: full
+    language: en
+    claim: {text: "Orion Bank shares touched ₹1,000 in 2025.", quote: "Orion Bank hit ₹1,000 this year", claim_type: past_performance, tickers: [ORIONBANK]}
+    evidence:
+      - {id: e1, url: "https://exchange.eval.test/quotes/ORIONBANK", title: "ORIONBANK 52-week range", source_type: exchange, published_at: 2025-11-20, snippet: "52-week high ₹845 (14 August 2025); 2025 year-to-date high ₹845."}
+    gold_label: contradicted
+    gold_stances: {e1: contradicts}
+    why: The 2025 high was ₹845.
+
+  - id: v068
+    split: full
+    language: hinglish
+    claim: {text: "Vela Software laid off 5,000 employees in 2025.", quote: "Vela Software ne 2025 mein 5,000 log nikale", claim_type: company_fact, tickers: [VELASOFT]}
+    evidence:
+      - {id: e1, url: "https://filings.eval.test/velasoft/fy26-h1", title: "Vela Software H1 FY26 update", source_type: company_filing, published_at: 2025-10-18, snippet: "Headcount rose by 800 to 21,300 in the first half; the company did not undertake any layoffs."}
+    gold_label: contradicted
+    gold_stances: {e1: contradicts}
+    why: Headcount grew and the company reports no layoffs.
+
+  # ---------------------------------------------------------------- MISLEADING (v2: 14)
+  - id: v069
+    split: full
+    language: en
+    claim: {text: "KESTREL shares have returned 200%.", quote: "Kestrel has given 200% returns", claim_type: past_performance, tickers: [KESTREL]}
+    evidence:
+      - {id: e1, url: "https://exchange.eval.test/quotes/KESTREL-5y", title: "KESTREL long-term returns", source_type: exchange, published_at: 2025-11-20, snippet: "KESTREL: 5-year return +200% (about 24.6% a year); 1-year return -10%."}
+    gold_label: misleading
+    gold_stances: {e1: context}
+    why: True only over five years, and the stock is down over the last year.
+
+  - id: v070
+    split: full
+    language: hinglish
+    claim: {text: "This investment gives three times the return of a fixed deposit, completely safely.", quote: "FD se 3 guna return milega, bilkul safe", claim_type: return_promise, tickers: []}
+    evidence:
+      - {id: e1, url: "https://regulator.eval.test/investor-awareness/guarantees", title: "Investor awareness: guaranteed returns", source_type: regulator, published_at: 2025-04-11, snippet: "Investments in the securities market are subject to market risk. No one can guarantee fixed returns."}
+    gold_label: misleading
+    gold_stances: {e1: context}
+    why: Presents market returns as safe and certain.
+
+  - id: v071
+    split: full
+    language: hi
+    claim: {text: "Investors will certainly earn 8% every month.", quote: "हर महीने 8% पक्का मिलेगा", claim_type: return_promise, tickers: []}
+    evidence:
+      - {id: e1, url: "https://regulator.eval.test/investor-awareness/guarantees", title: "Investor awareness: guaranteed returns", source_type: regulator, published_at: 2025-04-11, snippet: "Investments in the securities market are subject to market risk. No one can guarantee fixed returns."}
+    gold_label: misleading
+    gold_stances: {e1: context}
+    why: Guaranteed monthly returns are presented as normal.
+
+  - id: v072
+    split: full
+    language: en
+    claim: {text: "Indus Cables' profit jumped 80% in Q1 FY26.", quote: "Indus Cables profit jumped 80% in Q1", claim_type: company_fact, tickers: [INDUSCAB]}
+    evidence:
+      - {id: e1, url: "https://filings.eval.test/induscab/q1fy26", title: "Indus Cables Q1 FY26 results", source_type: company_filing, published_at: 2025-08-10, snippet: "Net profit rose 80% to ₹126 crore, including a one-time gain of ₹60 crore from a land sale. Profit from operations fell 5%."}
+    gold_label: misleading
+    gold_stances: {e1: context}
+    why: The jump comes from a one-time gain; operating profit fell.
+
+  - id: v073
+    split: full
+    language: en
+    claim: {text: "The Demo Smallcap 250 index doubled investors' money in two years.", quote: "Small caps doubled your money in just two years", claim_type: market_fact, tickers: []}
+    evidence:
+      - {id: e1, url: "https://exchange.eval.test/indices/demo-smallcap-250", title: "Demo Smallcap 250 history", source_type: exchange, published_at: 2025-01-02, snippet: "The index doubled from its June 2022 low to December 2024. Measured from its 2021 peak it is up 20%, after falling 25% in 2022."}
+    gold_label: misleading
+    gold_stances: {e1: context}
+    why: True only when measured from a market low; the start date was cherry-picked.
+
+  - id: v074
+    split: full
+    language: hinglish
+    claim: {text: "Orion Bank's bad loans are only 0.5%.", quote: "Orion Bank ka NPA sirf 0.5% hai", claim_type: company_fact, tickers: [ORIONBANK]}
+    evidence:
+      - {id: e1, url: "https://filings.eval.test/orion/q3fy25", title: "Orion Bank Q3 FY25 results", source_type: company_filing, published_at: 2025-01-20, snippet: "Gross NPA ratio 2.1%; net NPA ratio 0.5% after provisions."}
+    gold_label: misleading
+    gold_stances: {e1: context}
+    why: 0.5% is the net figure after provisions; gross bad loans are 2.1%.
+
+  - id: v075
+    split: full
+    language: en
+    claim: {text: "Demo Small-Cap Fund has zero exit load, so it costs nothing to invest and sell.", quote: "Zero exit load, so this fund costs you nothing", claim_type: other, tickers: []}
+    evidence:
+      - {id: e1, url: "https://data.eval.test/funds/demo-small-cap", title: "Demo Small-Cap Fund factsheet", source_type: data_provider, published_at: 2025-09-05, snippet: "Exit load: nil. Total expense ratio: Regular 1.80%, Direct 0.70%."}
+    gold_label: misleading
+    gold_stances: {e1: context}
+    why: There is no exit load, but there is an annual expense ratio.
+
+  - id: v076
+    split: full
+    language: hi
+    claim: {text: "Lotus Foods' sales grew 50%.", quote: "लोटस फूड्स की बिक्री 50% बढ़ी", claim_type: company_fact, tickers: [LOTUSFOOD]}
+    evidence:
+      - {id: e1, url: "https://filings.eval.test/lotus/fy25", title: "Lotus Foods FY25 results", source_type: company_filing, published_at: 2025-05-20, snippet: "Export sales grew 50% to ₹300 crore, while total revenue from operations grew 9% to ₹2,180 crore."}
+    gold_label: misleading
+    gold_stances: {e1: context}
+    why: Only exports grew 50%; total sales grew 9%.
+
+  - id: v077
+    split: full
+    language: en
+    claim: {text: "Sitara Pharma turned ₹1 lakh into ₹10 lakh.", quote: "Sitara turned ₹1 lakh into ₹10 lakh", claim_type: past_performance, tickers: [SITARA]}
+    evidence:
+      - {id: e1, url: "https://exchange.eval.test/quotes/SITARA-10y", title: "SITARA 10-year performance", source_type: exchange, published_at: 2025-11-20, snippet: "SITARA rose about 10 times between November 2015 and November 2025 (around 26% a year); it fell 35% in the last 12 months."}
+    gold_label: misleading
+    gold_stances: {e1: context}
+    why: It took ten years, and recent returns are sharply negative.
+
+  - id: v078
+    split: full
+    language: hinglish
+    claim: {text: "A SIP gives a guaranteed 15% return.", quote: "SIP mein 15% guaranteed return hai", claim_type: return_promise, tickers: []}
+    evidence:
+      - {id: e1, url: "https://regulator.eval.test/investor-awareness/mutual-funds", title: "Investor awareness: mutual funds", source_type: regulator, published_at: 2025-02-01, snippet: "Mutual fund investments are subject to market risks; past performance does not guarantee future returns."}
+    gold_label: misleading
+    gold_stances: {e1: context}
+    why: Mutual fund returns are not guaranteed.
+
+  - id: v079
+    split: full
+    language: en
+    claim: {text: "Ganga Cement is India's fastest-growing cement company.", quote: "Ganga is the fastest growing cement company in India", claim_type: company_fact, tickers: [GANGACEM]}
+    evidence:
+      - {id: e1, url: "https://data.eval.test/sectors/cement-growth", title: "Listed cement companies: volume growth", source_type: data_provider, published_at: 2025-06-15, snippet: "Ganga Cement had the highest volume growth among 8 listed peers in Q2 FY25, but ranked 4th for full-year FY25 growth."}
+    gold_label: misleading
+    gold_stances: {e1: context}
+    why: True for one quarter only, not for the full year.
+
+  - id: v080
+    split: full
+    language: en
+    claim: {text: "Monsoon Power shares are up 300%.", quote: "Monsoon Power is up 300%!", claim_type: past_performance, tickers: [MONSOONPWR]}
+    evidence:
+      - {id: e1, url: "https://exchange.eval.test/quotes/MONSOONPWR", title: "MONSOONPWR performance", source_type: exchange, published_at: 2025-11-20, snippet: "MONSOONPWR is up 300% from its March 2020 low; over the past three years it is up 20%."}
+    gold_label: misleading
+    gold_stances: {e1: context}
+    why: Measured from the 2020 crash low; the three-year gain is 20%.
+
+  - id: v081
+    split: full
+    language: en
+    claim: {text: "Kestrel Motors cut its debt by ₹500 crore in FY25.", quote: "Kestrel reduced debt by ₹500 crore", claim_type: company_fact, tickers: [KESTREL]}
+    evidence:
+      - {id: e1, url: "https://filings.eval.test/kestrel/annual-report-fy25", title: "Kestrel Motors annual report FY25", source_type: company_filing, published_at: 2025-06-25, snippet: "Consolidated debt fell by ₹500 crore because the sale of the finance subsidiary moved its borrowings off the books; standalone debt rose by ₹150 crore."}
+    gold_label: misleading
+    gold_stances: {e1: context}
+    why: The fall came from selling a subsidiary; the core business borrowed more.
+
+  - id: v082
+    split: full
+    language: en
+    claim: {text: "Vela Software has 10 million users.", quote: "Vela has 10 million users", claim_type: company_fact, tickers: [VELASOFT]}
+    evidence:
+      - {id: e1, url: "https://filings.eval.test/velasoft/investor-presentation", title: "Vela Software investor presentation", source_type: company_filing, published_at: 2025-09-01, snippet: "10 million registered accounts, of which 1.2 million were monthly active users in Q1 FY26."}
+    gold_label: misleading
+    gold_stances: {e1: context}
+    why: 10 million is registered accounts; active users are 1.2 million.
+
+  # ---------------------------------------------------------------- NOT VERIFIABLE (v2: 13)
+  - id: v083
+    split: full
+    language: en
+    claim: {text: "Ganga Cement shares will reach ₹900 by June 2026.", quote: "Ganga Cement will hit ₹900 by June 2026", claim_type: stock_call, tickers: [GANGACEM]}
+    evidence:
+      - {id: e1, url: "https://exchange.eval.test/quotes/GANGACEM", title: "GANGACEM quote", source_type: exchange, published_at: 2025-11-20, snippet: "GANGACEM last closed at ₹612."}
+    gold_label: not_verifiable
+    gold_stances: {e1: context}
+    why: A prediction about the future cannot be checked yet.
+
+  - id: v084
+    split: full
+    language: hinglish
+    claim: {text: "VELASOFT shares will double in six months.", quote: "VELASOFT 6 mahine mein double hoga", claim_type: stock_call, tickers: [VELASOFT]}
+    evidence: []
+    gold_label: not_verifiable
+    gold_stances: {}
+    why: A future price prediction with no evidence.
+
+  - id: v085
+    split: full
+    language: hi
+    claim: {text: "The speaker is a SEBI-registered adviser.", quote: "मैं सेबी रजिस्टर्ड एडवाइज़र हूँ", claim_type: credential, tickers: []}
+    evidence: []
+    registration: {status: not_found}
+    gold_label: not_verifiable
+    gold_stances: {}
+    why: Not found in our register copy, which is not proof either way.
+
+  - id: v086
+    split: full
+    language: en
+    claim: {text: "Monsoon Power won a ₹5,000 crore order last month.", quote: "Monsoon Power just won a ₹5,000 crore order", claim_type: company_fact, tickers: [MONSOONPWR]}
+    evidence:
+      - {id: e1, url: "https://blog.eval.test/monsoon-big-order", title: "Monsoon Power's huge order?", source_type: blog, published_at: 2025-10-02, snippet: "Sources say Monsoon Power has bagged a ₹5,000 crore order, though the company has not confirmed it."}
+    gold_label: not_verifiable
+    gold_stances: {e1: supports}
+    why: Only an unconfirmed blog report; no filing or reliable source.
+
+  - id: v087
+    split: full
+    language: en
+    claim: {text: "Sitara Pharma shares rose 20% on Monday.", quote: "Sitara jumped 20% on Monday", claim_type: past_performance, tickers: [SITARA]}
+    evidence:
+      - {id: e1, url: "https://filings.eval.test/sitara/fy25", title: "Sitara Pharma FY25 results", source_type: company_filing, published_at: 2025-05-15, snippet: "Revenue grew 11% to ₹4,050 crore; the board recommended a dividend of ₹4 per share."}
+    gold_label: not_verifiable
+    gold_stances: {e1: irrelevant}
+    why: The only evidence is about annual results, not the price move.
+
+  - id: v088
+    split: full
+    language: hinglish
+    claim: {text: "Kestrel Motors' CEO bought 10 lakh shares.", quote: "Kestrel ke CEO ne 10 lakh shares kharide", claim_type: company_fact, tickers: [KESTREL]}
+    evidence: []
+    gold_label: not_verifiable
+    gold_stances: {}
+    why: No evidence was found either way.
+
+  - id: v089
+    split: full
+    language: en
+    claim: {text: "The Demo 100 index touched 32,000 intraday on 2 September 2025.", quote: "Demo 100 touched 32,000 on 2 September", claim_type: market_fact, tickers: []}
+    evidence:
+      - {id: e1, url: "https://data.eval.test/indices/demo100-intraday-a", title: "Demo 100 intraday data (provider A)", source_type: data_provider, published_at: 2025-09-02, snippet: "Demo 100 intraday high on 2 September 2025: 31,950."}
+      - {id: e2, url: "https://data2.eval.test/indices/demo100-intraday-b", title: "Demo 100 intraday data (provider B)", source_type: data_provider, published_at: 2025-09-02, snippet: "Demo 100 intraday high on 2 September 2025: 32,010."}
+    gold_label: not_verifiable
+    gold_stances: {e1: contradicts, e2: supports}
+    why: Two data providers disagree and no exchange record settles it.
+
+  - id: v090
+    split: full
+    language: hi
+    claim: {text: "This fund beats the market every year.", quote: "यह फंड हर साल बाज़ार को हराता है", claim_type: other, tickers: []}
+    evidence:
+      - {id: e1, url: "https://data.eval.test/funds/demo-flexicap", title: "Demo Flexicap factsheet", source_type: data_provider, published_at: 2025-07-05, snippet: "Calendar 2024: fund +16.1% vs benchmark +13.0%."}
+    gold_label: not_verifiable
+    gold_stances: {e1: context}
+    why: One year of data cannot confirm "every year".
+
+  - id: v091
+    split: full
+    language: en
+    claim: {text: "Orion Bank's CEO is the highest-paid bank CEO in India.", quote: "Orion's CEO earns more than any other bank boss", claim_type: company_fact, tickers: [ORIONBANK]}
+    evidence:
+      - {id: e1, url: "https://filings.eval.test/orion/annual-report-fy25", title: "Orion Bank annual report FY25", source_type: company_filing, published_at: 2025-06-30, snippet: "Remuneration of the MD and CEO for FY25: ₹12.4 crore."}
+    gold_label: not_verifiable
+    gold_stances: {e1: context}
+    why: Orion's pay is known, but there is no comparison with other banks.
+
+  - id: v092
+    split: full
+    language: hinglish
+    claim: {text: "Lotus Foods' new plant will start operations next year.", quote: "Lotus Foods ka naya plant agle saal shuru hoga", claim_type: company_fact, tickers: [LOTUSFOOD]}
+    evidence:
+      - {id: e1, url: "https://news.eval.test/business/lotus-plant", title: "Lotus Foods plans new plant", source_type: reputable_news, published_at: 2025-08-12, snippet: "Lotus Foods said it is evaluating sites for a new plant; no timeline was given."}
+    gold_label: not_verifiable
+    gold_stances: {e1: context}
+    why: A claim about the future, and the company gave no timeline.
+
+  - id: v093
+    split: full
+    language: en
+    claim: {text: "KESTREL shares are up 40% this year.", quote: "Kestrel is up 40% this year", claim_type: past_performance, tickers: [KESTREL]}
+    evidence:
+      - {id: e1, url: "https://exchange.eval.test/quotes/KESTREL", title: "KESTREL price history", source_type: exchange, published_at: 2025-01-02, snippet: "KESTREL closed 2024 at ₹700, up 40% from ₹500 at the end of 2023."}
+    gold_label: not_verifiable
+    gold_stances: {e1: context}
+    why: The evidence covers 2024, not the current year (2026).
+
+  - id: v094
+    split: full
+    language: en
+    claim: {text: "Indus Cables will announce a share buyback soon.", quote: "Indus Cables buyback coming soon", claim_type: company_fact, tickers: [INDUSCAB]}
+    evidence:
+      - {id: e1, url: "https://social.eval.test/post/2290", title: "Post about a buyback", source_type: social, published_at: 2025-11-01, snippet: "Hearing Indus Cables buyback is coming!!"}
+    gold_label: not_verifiable
+    gold_stances: {e1: irrelevant}
+    why: A rumour about the future; a social post is not evidence.
+
+  - id: v095
+    split: full
+    language: hi
+    claim: {text: "The Demo 100 index fell 1,000 points yesterday.", quote: "डेमो 100 कल 1000 अंक गिरा", claim_type: market_fact, tickers: []}
+    evidence:
+      - {id: e1, url: "https://exchange.eval.test/indices/demo100/2025-04-07", title: "Demo 100 daily close, 7 April 2025", source_type: exchange, published_at: 2025-04-07, snippet: "Demo 100 closed at 29,940 on 7 April 2025, down 705 points or 2.3%."}
+    gold_label: not_verifiable
+    gold_stances: {e1: context}
+    why: The claim says "yesterday" with no date, and the only data is for a different day.
