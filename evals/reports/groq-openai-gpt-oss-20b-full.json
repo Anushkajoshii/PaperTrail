@@ -9,34 +9,34 @@
     "extract": "extract-v1",
     "judge": "judge-v1"
   },
-  "created_at": "2026-11-27T13:55:11+00:00",
+  "created_at": "2026-11-27T15:29:46+00:00",
   "verdicts": {
     "n": 95,
-    "accuracy": 0.768,
-    "macro_f1": 0.729,
+    "accuracy": 0.789,
+    "macro_f1": 0.759,
     "per_class": {
       "supported": {
-        "precision": 0.733,
-        "recall": 0.917,
-        "f1": 0.815,
+        "precision": 0.742,
+        "recall": 0.958,
+        "f1": 0.836,
         "support": 24
       },
       "contradicted": {
-        "precision": 0.697,
-        "recall": 0.958,
-        "f1": 0.807,
+        "precision": 0.686,
+        "recall": 1.0,
+        "f1": 0.814,
         "support": 24
       },
       "misleading": {
-        "precision": 1.0,
-        "recall": 0.261,
-        "f1": 0.414,
+        "precision": 0.875,
+        "recall": 0.304,
+        "f1": 0.452,
         "support": 23
       },
       "not_verifiable": {
-        "precision": 0.846,
-        "recall": 0.917,
-        "f1": 0.88,
+        "precision": 1.0,
+        "recall": 0.875,
+        "f1": 0.933,
         "support": 24
       }
     },
@@ -49,57 +49,45 @@
       ],
       "matrix": [
         [
-          22,
-          0,
-          0,
-          2
-        ],
-        [
-          0,
           23,
+          1,
           0,
-          1
+          0
+        ],
+        [
+          0,
+          24,
+          0,
+          0
         ],
         [
           8,
           8,
-          6,
-          1
+          7,
+          0
         ],
         [
           0,
           2,
-          0,
-          22
+          1,
+          21
         ]
       ]
     },
     "by_language": {
-      "en": 0.78,
-      "hi": 0.692,
-      "hinglish": 0.783
+      "en": 0.814,
+      "hi": 0.769,
+      "hinglish": 0.739
     },
-    "ece": 0.189,
-    "brier": 0.229,
-    "stance_accuracy": 0.646,
+    "ece": 0.18,
+    "brier": 0.228,
+    "stance_accuracy": 0.677,
     "citation_validity": 0.667,
     "accusatory_rate": 0.0,
-    "errors": 2,
-    "latency_ms_p50": 6602.5,
-    "latency_ms_p95": 13619.9,
+    "errors": 0,
+    "latency_ms_p50": 4472.0,
+    "latency_ms_p95": 11787.0,
     "mistakes": [
-      {
-        "id": "v009",
-        "gold": "supported",
-        "pred": "not_verifiable",
-        "confidence": 0.3
-      },
-      {
-        "id": "v015",
-        "gold": "contradicted",
-        "pred": "not_verifiable",
-        "confidence": 0.3
-      },
       {
         "id": "v021",
         "gold": "misleading",
@@ -143,10 +131,10 @@
         "confidence": 0.72
       },
       {
-        "id": "v045",
+        "id": "v046",
         "gold": "supported",
-        "pred": "not_verifiable",
-        "confidence": 0.35
+        "pred": "contradicted",
+        "confidence": 0.73
       },
       {
         "id": "v069",
@@ -197,12 +185,6 @@
         "confidence": 0.72
       },
       {
-        "id": "v080",
-        "gold": "misleading",
-        "pred": "not_verifiable",
-        "confidence": 0.35
-      },
-      {
         "id": "v081",
         "gold": "misleading",
         "pred": "supported",
@@ -213,6 +195,12 @@
         "gold": "misleading",
         "pred": "supported",
         "confidence": 0.78
+      },
+      {
+        "id": "v089",
+        "gold": "not_verifiable",
+        "pred": "misleading",
+        "confidence": 0.69
       },
       {
         "id": "v095",
@@ -228,8 +216,9 @@
     "recall": 1.0,
     "recall_strict": 0.873,
     "type_accuracy": 0.873,
-    "precision": 0.946,
-    "forbidden_extractions": 1,
+    "precision": 0.964,
+    "forbidden_extractions": 0,
+    "errors": 0,
     "misses": []
   },
   "rulebook": {
@@ -277,8 +266,8 @@
     "errors": []
   },
   "cost": {
-    "llm_calls": 116,
-    "total_tokens": 127658,
+    "llm_calls": 117,
+    "total_tokens": 129356,
     "total_usd": 0.0,
     "usd_per_verdict": 0.0
   }

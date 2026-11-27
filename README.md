@@ -129,17 +129,21 @@ about $0 when idle. Step by step, with a cost table: [docs/DEPLOY.md](docs/DEPLO
 
 *Numbers appear here only once measured. Speed and cost below come from the live deployment on
 27 Nov 2026 (10 real checks of the sample posts in English, Hinglish and Hindi, two at a time, AI
-from Groq's free tier). Accuracy numbers will follow in Part 13.*
+from Groq's free tier). Accuracy comes from the golden set v2 (95 verdicts, 55 claims in 20
+transcripts, English, Hindi and Hinglish) with `openai/gpt-oss-120b`, the judge used in
+production. It is a small set written by one person, so treat the numbers as indicative.*
 How we evaluate, and what every metric means: [docs/EVALUATION.md](docs/EVALUATION.md). The
 offline regression baseline (rule-based mock, **not** model accuracy) is in
-[evals/reports/mock-full.md](evals/reports/mock-full.md).
+[evals/reports/mock-full.md](evals/reports/mock-full.md). Models side by side:
+[evals/reports/model-comparison.md](evals/reports/model-comparison.md).
 
 | Metric | Value |
 |---|---|
-| Claim-extraction recall | - |
-| Verdict accuracy | - |
-| Citation faithfulness | - |
-| SEBI lookup accuracy | - |
+| Claim-extraction recall | 98% (86% with the right claim type) |
+| Verdict accuracy | 83% (macro-F1 0.80; weakest on "misleading", F1 0.47) |
+| Citation validity | 70% of supported/contradicted verdicts cite only the right kind of passage |
+| SEBI red-flag rules | F1 1.00 on 52 sentences (not a held-out set: the rules were fixed on it) |
+| SEBI registration lookup | Not measured |
 | p50 / p95 time per check | 9.9 s / 37.2 s (the slow tail is free-tier rate limiting) |
 | Cost per check | $0 on Groq's free tier (about 6,000 tokens and 4.6 AI calls per check) |
 

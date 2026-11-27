@@ -23,3 +23,4 @@ New ADRs copy [000-template.md](000-template.md).
 | [016](016-serverless-aws-on-free-tier.md) | Serverless AWS deployment that costs ~$0, with a free AI provider | Accepted |
 | [017](017-tracing-and-cost.md) | Tracing and cost per check, with a no-op default | Accepted |
 | [018](018-ledger-and-profiles-without-a-score.md) | Claim Ledger settled by rules, and creator profiles without a single score | Accepted |
+| [019](019-golden-set-v2-and-model-comparison.md) | Golden set v2 and a model comparison, without tuning on the test set | Accepted |
