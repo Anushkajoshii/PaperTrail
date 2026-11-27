@@ -1,0 +1,443 @@
+{
+  "id": "chk_5340b3399884",
+  "created_at": "2026-11-27T07:29:17.720677Z",
+  "updated_at": "2026-11-27T07:29:17.720678Z",
+  "status": "completed",
+  "status_detail": null,
+  "input": {
+    "kind": "text",
+    "text": "Namaste doston, aaj main aapko ek multibagger stock bataunga.\nMain SEBI registered advisor hoon, toh aap mujh par bharosa kar sakte ho.\nTATAMOTORS ka target ₹1500 hai, March tak pakka jayega.\nPichle saal is stock ne 300% return diya tha.\nMere premium Telegram group mein guaranteed 5% har mahine milega, bilkul risk-free.\nKya aapko lagta hai market girega?\nLike aur subscribe karna mat bhoolna!",
+    "url": null,
+    "upload_key": null,
+    "creator_handle": "@demo_finfluencer",
+    "creator_name": null,
+    "language_hint": null
+  },
+  "detected_language": "hinglish",
+  "transcript": "Namaste doston, aaj main aapko ek multibagger stock bataunga.\nMain SEBI registered advisor hoon, toh aap mujh par bharosa kar sakte ho.\nTATAMOTORS ka target ₹1500 hai, March tak pakka jayega.\nPichle saal is stock ne 300% return diya tha.\nMere premium Telegram group mein guaranteed 5% har mahine milega, bilkul risk-free.\nKya aapko lagta hai market girega?\nLike aur subscribe karna mat bhoolna!",
+  "claims": [
+    {
+      "id": "clm_f86daf0d5f05",
+      "text": "Main SEBI registered advisor hoon, toh aap mujh par bharosa kar sakte ho.",
+      "quote": "Main SEBI registered advisor hoon, toh aap mujh par bharosa kar sakte ho.",
+      "claim_type": "credential",
+      "language": "hinglish",
+      "timestamp_seconds": null,
+      "tickers": [],
+      "why_checkable": "SEBI's public registry can show whether this registration exists."
+    },
+    {
+      "id": "clm_adb9b23c912e",
+      "text": "TATAMOTORS ka target ₹1500 hai, March tak pakka jayega.",
+      "quote": "TATAMOTORS ka target ₹1500 hai, March tak pakka jayega.",
+      "claim_type": "stock_call",
+      "language": "hinglish",
+      "timestamp_seconds": null,
+      "tickers": [
+        "TATAMOTORS"
+      ],
+      "why_checkable": "Actual share prices over the stated period can show if it came true."
+    },
+    {
+      "id": "clm_86c98726accc",
+      "text": "Pichle saal is stock ne 300% return diya tha.",
+      "quote": "Pichle saal is stock ne 300% return diya tha.",
+      "claim_type": "past_performance",
+      "language": "hinglish",
+      "timestamp_seconds": null,
+      "tickers": [],
+      "why_checkable": "Historical prices or reports can confirm the stated performance."
+    },
+    {
+      "id": "clm_1e913651512a",
+      "text": "Mere premium Telegram group mein guaranteed 5% har mahine milega, bilkul risk-free.",
+      "quote": "Mere premium Telegram group mein guaranteed 5% har mahine milega, bilkul risk-free.",
+      "claim_type": "return_promise",
+      "language": "hinglish",
+      "timestamp_seconds": null,
+      "tickers": [],
+      "why_checkable": "Compare the promised return with how market investments behave."
+    }
+  ],
+  "evidence": [
+    {
+      "id": "evd_adb9b23c912e_1",
+      "claim_id": "clm_adb9b23c912e",
+      "url": "https://exchange.demo.test/quotes/TATAMOTORS",
+      "title": "TATAMOTORS share price history (demo exchange data)",
+      "publisher": "Stock exchange (demo data)",
+      "published_at": "2026-11-01",
+      "source_type": "exchange",
+      "snippet": "Demo data: TATAMOTORS traded between ₹650 and ₹1,000 over the last 12 months. The stock has not traded at ₹1500.",
+      "stance": "context",
+      "quality": {
+        "reliability": 0.97,
+        "recency": 0.905,
+        "relevance": 0.5
+      }
+    },
+    {
+      "id": "evd_86c98726accc_1",
+      "claim_id": "clm_86c98726accc",
+      "url": "https://news.demo.test/markets/how-many-stocks-tripled",
+      "title": "How many stocks actually tripled last year? (demo news)",
+      "publisher": "Established financial news outlet (demo data)",
+      "published_at": "2026-01-15",
+      "source_type": "reputable_news",
+      "snippet": "Demo data: only a small number of listed companies returned more than 300% in the last calendar year, mostly small caps with high volatility.",
+      "stance": "context",
+      "quality": {
+        "reliability": 0.8,
+        "recency": 0.819,
+        "relevance": 0.25
+      }
+    },
+    {
+      "id": "evd_1e913651512a_1",
+      "claim_id": "clm_1e913651512a",
+      "url": "https://regulator.demo.test/investor-awareness/guaranteed-returns",
+      "title": "Beware of guaranteed returns (demo regulator notice)",
+      "publisher": "Official regulator or government body (demo data)",
+      "published_at": "2025-06-10",
+      "source_type": "regulator",
+      "snippet": "Demo data: investments in the securities market are subject to market risk. No one can guarantee fixed returns.",
+      "stance": "context",
+      "quality": {
+        "reliability": 0.98,
+        "recency": 0.602,
+        "relevance": 0.6
+      }
+    }
+  ],
+  "verdicts": [
+    {
+      "claim_id": "clm_f86daf0d5f05",
+      "label": "not_verifiable",
+      "confidence": 0.3,
+      "explanation": {
+        "summary": "We could not confirm this registration in our copy of SEBI's register.",
+        "reasoning": [],
+        "could_not_verify": [
+          "Our copy of SEBI's register is not loaded, so registration was not checked."
+        ],
+        "confidence_note": "Low confidence: a failed lookup is not proof either way. Confidence describes how strongly the evidence we found backs our assessment. It is not a guarantee that a claim is true or false."
+      },
+      "supporting_evidence_ids": [],
+      "contradicting_evidence_ids": [],
+      "context_evidence_ids": []
+    },
+    {
+      "claim_id": "clm_adb9b23c912e",
+      "label": "not_verifiable",
+      "confidence": 0.5,
+      "explanation": {
+        "summary": "This is a prediction about the future, so it cannot be checked yet.",
+        "reasoning": [
+          "The claim is a price target, not a past fact."
+        ],
+        "could_not_verify": [
+          "Whether the target is reached: the Claim Ledger will re-check it after the stated deadline."
+        ],
+        "confidence_note": "Medium confidence in this assessment. Based on 1 source; the strongest is high quality (High: Stock exchange (demo data)). Confidence describes how strongly the evidence we found backs our assessment. It is not a guarantee that a claim is true or false."
+      },
+      "supporting_evidence_ids": [],
+      "contradicting_evidence_ids": [],
+      "context_evidence_ids": [
+        "evd_adb9b23c912e_1"
+      ]
+    },
+    {
+      "claim_id": "clm_86c98726accc",
+      "label": "not_verifiable",
+      "confidence": 0.4,
+      "explanation": {
+        "summary": "The sources we found discuss the topic but do not confirm or refute this claim.",
+        "reasoning": [
+          "No passage states the specific figures in the claim."
+        ],
+        "could_not_verify": [
+          "The specific figures in the claim."
+        ],
+        "confidence_note": "Low confidence in this assessment. Based on 1 source; the strongest is medium quality (High: Established financial news outlet (demo data)). Confidence describes how strongly the evidence we found backs our assessment. It is not a guarantee that a claim is true or false."
+      },
+      "supporting_evidence_ids": [],
+      "contradicting_evidence_ids": [],
+      "context_evidence_ids": [
+        "evd_86c98726accc_1"
+      ]
+    },
+    {
+      "claim_id": "clm_1e913651512a",
+      "label": "misleading",
+      "confidence": 0.8,
+      "explanation": {
+        "summary": "Market investments carry risk, so a promise of guaranteed returns leaves out important context.",
+        "reasoning": [
+          "Official guidance (evd_1e913651512a_1) says returns from securities markets cannot be guaranteed."
+        ],
+        "could_not_verify": [],
+        "confidence_note": "High confidence in this assessment. Based on 1 source; the strongest is high quality (High: Official regulator or government body (demo data)). Confidence describes how strongly the evidence we found backs our assessment. It is not a guarantee that a claim is true or false."
+      },
+      "supporting_evidence_ids": [],
+      "contradicting_evidence_ids": [],
+      "context_evidence_ids": [
+        "evd_1e913651512a_1"
+      ]
+    }
+  ],
+  "red_flags": [
+    {
+      "id": "flg_97c8997227bf",
+      "kind": "guaranteed_returns",
+      "basis": "verified_rule",
+      "detected_text": "Mere premium Telegram group mein guaranteed 5% har mahine milega, bilkul risk-free.",
+      "claim_id": "clm_1e913651512a",
+      "what_was_detected": "A promise of guaranteed, assured or risk-free returns.",
+      "why_it_matters": "SEBI's investor guidance says all securities investments carry some risk, and SEBI's caution on social-media frauds lists promises of assured or risk-free returns as a common trick.",
+      "investor_takeaway": "No one can guarantee returns from the stock market. Treat any such promise as a warning sign, whoever makes it.",
+      "rule_source_ids": [
+        "sebi-pr-22-2025-social-media",
+        "sebi-investor-spot-a-scam"
+      ],
+      "relevant_provision": null
+    },
+    {
+      "id": "flg_5958227398b9",
+      "kind": "misleading_performance",
+      "basis": "verified_rule",
+      "detected_text": "Pichle saal is stock ne 300% return diya tha.",
+      "claim_id": "clm_86c98726accc",
+      "what_was_detected": "A claim about returns or performance (for example '300% returns' or '90% accuracy').",
+      "why_it_matters": "Under SEBI's 2024 rules, making claims of returns or performance about securities without SEBI's permission is one of two 'prohibited activities' that SEBI-registered firms may not be associated with. SEBI also warns about misleading testimonials. A single impressive number is easy to cherry-pick.",
+      "investor_takeaway": "Ask for a complete, verifiable track record, not one good number. PaperTrail checks the number itself in the claims section.",
+      "rule_source_ids": [
+        "sebi-circular-2025-11-association",
+        "sebi-pr-22-2025-social-media"
+      ],
+      "relevant_provision": "Regulation 16A, SEBI (Intermediaries) Regulations, 2008"
+    },
+    {
+      "id": "flg_eaee3ab256e5",
+      "kind": "unregistered_advice",
+      "basis": "verified_rule",
+      "detected_text": "TATAMOTORS ka target ₹1500 hai, March tak pakka jayega.",
+      "claim_id": "clm_adb9b23c912e",
+      "what_was_detected": "A specific buy/sell recommendation or price target for a security.",
+      "why_it_matters": "SEBI requires anyone who publishes stock recommendations as a research analyst, including on the internet, to be registered (and anyone giving investment advice to be a registered investment adviser). We have not been able to check this creator's registration yet (no name or registration number was available).",
+      "investor_takeaway": "Before acting on a stock tip, look the person up on SEBI's register (https://www.sebi.gov.in/intermediaries.html). Registered research analysts have a number starting with INH, investment advisers with INA.",
+      "rule_source_ids": [
+        "sebi-ra-regs-2014",
+        "sebi-ia-regs-2013",
+        "sebi-circular-2025-11-association"
+      ],
+      "relevant_provision": "Regulation 3(1), SEBI (Research Analysts) Regulations, 2014"
+    },
+    {
+      "id": "flg_09881d452c87",
+      "kind": "unconfirmed_registration_claim",
+      "basis": "verified_rule",
+      "detected_text": "Main SEBI registered advisor hoon, toh aap mujh par bharosa kar sakte ho.",
+      "claim_id": "clm_f86daf0d5f05",
+      "what_was_detected": "The speaker says they are SEBI-registered, but we could not confirm it.",
+      "why_it_matters": "SEBI has warned that some people falsely claim SEBI registration or show fake SEBI certificates, and advises checking registration on SEBI's website. We have not been able to check this creator's registration yet (no name or registration number was available).",
+      "investor_takeaway": "Search the name and registration number on SEBI's register (https://www.sebi.gov.in/intermediaries.html) and make sure they match the person you are dealing with.",
+      "rule_source_ids": [
+        "sebi-pr-22-2025-social-media",
+        "sebi-pr-112-2016-registered-only"
+      ],
+      "relevant_provision": null
+    },
+    {
+      "id": "flg_79799c254ea6",
+      "kind": "tip_group_solicitation",
+      "basis": "verified_rule",
+      "detected_text": "Mere premium Telegram group mein guaranteed 5% har mahine milega, bilkul risk-free.",
+      "claim_id": "clm_1e913651512a",
+      "what_was_detected": "An invitation to a private Telegram/WhatsApp group or a 'VIP' or premium channel.",
+      "why_it_matters": "SEBI has warned that scamsters lure investors into private WhatsApp and Telegram groups (named things like 'VIP group' or 'Investment Club') through social-media posts.",
+      "investor_takeaway": "Be very careful with tips shared in private groups. If something goes wrong with an unregistered entity, SEBI's investor-protection mechanisms such as SCORES are not available. You can report such groups on SEBI's portal (https://mi.sebi.gov.in/).",
+      "rule_source_ids": [
+        "sebi-pr-22-2025-social-media"
+      ],
+      "relevant_provision": null
+    }
+  ],
+  "regulatory_sources": [
+    {
+      "id": "sebi-pr-22-2025-social-media",
+      "title": "Caution to public against Fraudulent / Manipulative activities on Social Media Platforms (SMPs) related to securities market",
+      "doc_type": "press_release",
+      "url": "https://www.sebi.gov.in/sebi_data/attachdocs/may-2025/1746621138080.pdf",
+      "reference_number": "PR No. 22/2025",
+      "published_on": "2025-04-11",
+      "effective_from": null,
+      "amended_up_to": null,
+      "updated_on": null,
+      "summary": "SEBI warns about securities frauds on YouTube, Instagram, X, WhatsApp, Telegram and app stores, such as trading calls given 'in the name of education', fake claims of SEBI registration, promises of assured or risk-free returns, and invitations to 'VIP' chat groups.",
+      "key_points": [
+        "Scamsters give trading calls in the name of providing education.",
+        "Common tricks include misleading testimonials and promises of assured or risk-free returns.",
+        "Some falsely claim to be SEBI-registered or show fake SEBI certificates.",
+        "Investors are lured into private WhatsApp/Telegram groups ('VIP group', 'Institutional Trading group', 'Investment Club').",
+        "Verify registration at https://www.sebi.gov.in/intermediaries.html and report unregistered entities on SEBI's Market Intelligence portal (https://mi.sebi.gov.in/).",
+        "Disputes with unregistered entities get no SEBI or exchange investor-protection recourse, including SCORES."
+      ],
+      "provisions": [],
+      "verified_on": "2026-11-26",
+      "verification_level": "full_text",
+      "verification_note": null
+    },
+    {
+      "id": "sebi-investor-spot-a-scam",
+      "title": "How to Spot a Scam",
+      "doc_type": "investor_awareness",
+      "url": "https://investor.sebi.gov.in/spot-any-scam.html",
+      "reference_number": null,
+      "published_on": null,
+      "effective_from": null,
+      "amended_up_to": null,
+      "updated_on": null,
+      "summary": "SEBI's investor-education page on warning signs of scams: guaranteed or near-certain returns, unregistered entities, unrealistically high returns, overly complex strategies, missing documents and pressure to decide immediately.",
+      "key_points": [
+        "Be suspicious of anyone who guarantees assured, guaranteed or near-certain returns: all securities investments carry some risk.",
+        "Be wary of pressure to decide immediately.",
+        "Be wary of unrealistically high returns regardless of market conditions."
+      ],
+      "provisions": [],
+      "verified_on": "2026-11-26",
+      "verification_level": "full_text",
+      "verification_note": null
+    },
+    {
+      "id": "sebi-circular-2025-11-association",
+      "title": "Details/clarifications on provisions related to association of persons regulated by the Board, MIIs, and their agents with persons engaged in prohibited activities",
+      "doc_type": "circular",
+      "url": "https://www.sebi.gov.in/legal/circulars/jan-2025/details-clarifications-on-provisions-related-to-association-of-persons-regulated-by-the-board-miis-and-their-agents-with-persons-engaged-in-prohibited-activities_91356.html",
+      "reference_number": "SEBI/HO/MIRSD/MIRSD-PoD-1/P/CIR/2025/11",
+      "published_on": "2025-01-29",
+      "effective_from": null,
+      "amended_up_to": null,
+      "updated_on": "2026-05-08",
+      "summary": "Explains SEBI's 2024 'finfluencer' rules. SEBI-registered firms (brokers, mutual funds, advisers and others) must not associate with anyone who (i) gives advice or recommendations on securities without SEBI registration, or (ii) makes claims of returns or performance on securities without SEBI's permission. Pure investor education is allowed.",
+      "key_points": [
+        "SEBI calls two activities 'prohibited': unregistered advice or recommendations, and unpermitted claims of returns or performance.",
+        "Registered firms may not pay, refer clients to, or share client data with people doing these things.",
+        "A person counts as doing 'education' only if they avoid both prohibited activities.",
+        "Since 8 May 2026, an educator should not use market price data from the preceding 30 days to name a security while indicating its future price, advice or a recommendation. Before that date the period was three months."
+      ],
+      "provisions": [
+        {
+          "ref": "Regulation 16A, SEBI (Intermediaries) Regulations, 2008",
+          "summary": "Inserted by the Intermediaries (Amendment) Regulations, 2024, published in the Gazette on 29 August 2024. Persons regulated by SEBI and their agents shall not have any direct or indirect association with a person who gives securities advice or recommendations without registration, or makes claims of returns or performance without SEBI permission."
+        },
+        {
+          "ref": "Annexure A, FAQ 8 (as modified on 8 May 2026)",
+          "summary": "A person engaged solely in education should not use market price data of the preceding thirty days to name a security in a way that indicates its future price, advice or a recommendation."
+        }
+      ],
+      "verified_on": "2026-11-26",
+      "verification_level": "full_text",
+      "verification_note": "Read from the circular PDF (version updated on 8 May 2026 by circular HO/47/17/12(11)2025-MRD-POD3/I/11107/2026). The underlying rule applies directly to SEBI-regulated entities; PaperTrail uses it to explain which activities SEBI treats as prohibited, not to say that a creator broke it."
+    },
+    {
+      "id": "sebi-ra-regs-2014",
+      "title": "SEBI (Research Analysts) Regulations, 2014",
+      "doc_type": "regulation",
+      "url": "https://www.sebi.gov.in/sebi_data/attachdocs/aug-2026/1785912002778.pdf",
+      "reference_number": "No. LAD-NRO/GN/2014-15/07/1414",
+      "published_on": "2014-09-01",
+      "effective_from": "2014-12-01",
+      "amended_up_to": "2025-11-25",
+      "updated_on": null,
+      "summary": "The rules for anyone who publishes research or buy/sell recommendations on securities, including through public media like YouTube or social media. They must be registered with SEBI as a research analyst.",
+      "key_points": [
+        "Publishing stock recommendations as a research analyst needs SEBI registration.",
+        "The regulations define 'public media' to include internet and web media.",
+        "Registered research analysts get a registration number in the format INH followed by digits."
+      ],
+      "provisions": [
+        {
+          "ref": "Regulation 3(1)",
+          "summary": "No person shall act as a research analyst or research entity, or hold itself out as a research analyst, unless it has obtained a certificate of registration from SEBI."
+        },
+        {
+          "ref": "Regulation 2(1) definition of 'public media'",
+          "summary": "Public media means any media available to the general public, including radio, television, internet, web or print media."
+        }
+      ],
+      "verified_on": "2026-11-26",
+      "verification_level": "full_text",
+      "verification_note": "Read from SEBI's consolidated text (amended up to 25 November 2025). A later amendment (around 10 October 2026) may exist that we have not reviewed yet; re-verify before relying on details beyond Regulation 3(1)."
+    },
+    {
+      "id": "sebi-ia-regs-2013",
+      "title": "SEBI (Investment Advisers) Regulations, 2013",
+      "doc_type": "regulation",
+      "url": "https://www.sebi.gov.in/sebi_data/attachdocs/aug-2026/1785912187595.pdf",
+      "reference_number": "No. LAD-NRO/GN/2012-13/31/1778",
+      "published_on": "2013-01-21",
+      "effective_from": "2013-04-21",
+      "amended_up_to": "2025-11-25",
+      "updated_on": null,
+      "summary": "The rules for anyone who gives investment advice for a fee. To act as, or present yourself as, an investment adviser you need a certificate of registration from SEBI.",
+      "key_points": [
+        "Giving investment advice as a business needs SEBI registration.",
+        "Registered advisers get a registration number in the format INA followed by digits."
+      ],
+      "provisions": [
+        {
+          "ref": "Regulation 3(1)",
+          "summary": "No person shall act as an investment adviser or hold itself out as one unless it has obtained a certificate of registration from SEBI under these regulations."
+        }
+      ],
+      "verified_on": "2026-11-26",
+      "verification_level": "full_text",
+      "verification_note": "Read from SEBI's consolidated text (amended up to 25 November 2025). The original notification is at https://www.sebi.gov.in/legal/regulations/jan-2013/sebi-investment-advisors-regulations-2013_26872.html"
+    },
+    {
+      "id": "sebi-pr-112-2016-registered-only",
+      "title": "SEBI cautions public to deal with only SEBI registered investment advisers and research analysts",
+      "doc_type": "press_release",
+      "url": "https://www.sebi.gov.in/sebi_data/docfiles/34058_t.html",
+      "reference_number": "PR No. 112/2016",
+      "published_on": "2016-06-09",
+      "effective_from": null,
+      "amended_up_to": null,
+      "updated_on": null,
+      "summary": "SEBI advises the public to deal only with SEBI-registered investment advisers and research analysts, to check registration on SEBI's website, and not to be lured by trading tips from unregistered people received by SMS, websites or social media.",
+      "key_points": [
+        "Check an adviser's or analyst's registration on SEBI's website before using their services.",
+        "Don't be lured by trading tips from unregistered persons via SMS, websites or social networks."
+      ],
+      "provisions": [],
+      "verified_on": "2026-11-26",
+      "verification_level": "full_text",
+      "verification_note": null
+    }
+  ],
+  "registration": {
+    "status": "not_checked",
+    "matched_name": null,
+    "registration_numbers": [],
+    "registry_snapshot_date": null,
+    "match_basis": null,
+    "source_url": "https://www.sebi.gov.in/intermediaries.html",
+    "note": "Our copy of SEBI's register is not loaded, so registration was not checked. SEBI registration means a person or firm met SEBI's eligibility requirements. It does not mean SEBI endorses, approves or guarantees their advice or returns."
+  },
+  "metrics": {
+    "llm_calls": 5,
+    "total_tokens": 4136,
+    "cost_usd": 0.0,
+    "duration_ms": 10.4,
+    "agent_steps": 7,
+    "search_rounds": 2,
+    "pages_fetched": 0,
+    "prompt_versions": {
+      "extract": "extract-v1",
+      "judge": "judge-v1",
+      "concerns": "concerns-v1"
+    },
+    "notes": []
+  },
+  "error": null
+}
