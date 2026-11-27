@@ -95,6 +95,11 @@ Terraform.
    GitHub workflow gets short-lived AWS credentials through OIDC and can only push the image
    and update the two functions.
 
+   The deploy role trusts GitHub's **immutable** OIDC subject (owner and repository with their
+   numeric ids, e.g. `repo:owner@123/name@456:ref:refs/heads/main`). If deploys fail with
+   "Not authorized to perform sts:AssumeRoleWithWebIdentity", compare
+   `gh api repos/OWNER/REPO/actions/oidc/customization/sub` with `github_oidc_subject`.
+
 ## Everyday commands
 
 | Command | What it does |
@@ -119,5 +124,7 @@ Terraform.
 - **"Set PAPERTRAIL_GROQ_API_KEY":** the key isn't in SSM yet (step 5).
 - **Uploads over 4 MB are rejected:** Lambda limits request size. Use subtitles (.srt/.vtt) or a
   shorter clip.
+- **Terraform wants to change `image_uri`:** it doesn't. Images are owned by CI after the first
+  deploy (`ignore_changes`), so `make deploy` never rolls back a newer version.
 - **Region:** the Free plan project is fixed to Sydney (`ap-southeast-2`). Everything,
   including the Terraform state, lives there.

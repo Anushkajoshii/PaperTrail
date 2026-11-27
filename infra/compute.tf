@@ -59,6 +59,8 @@ resource "aws_lambda_function" "api" {
   timeout       = 29 # API Gateway waits at most 30 s; long work goes to the worker
   environment { variables = local.common_env }
   depends_on = [aws_cloudwatch_log_group.api]
+  # After the first deploy, GitHub Actions ships new images; Terraform must not roll them back.
+  lifecycle { ignore_changes = [image_uri] }
 }
 
 resource "aws_lambda_function" "worker" {
@@ -72,6 +74,8 @@ resource "aws_lambda_function" "worker" {
   image_config { command = ["papertrail.aws.worker_lambda.handler"] }
   environment { variables = local.common_env }
   depends_on = [aws_cloudwatch_log_group.worker]
+  # After the first deploy, GitHub Actions ships new images; Terraform must not roll them back.
+  lifecycle { ignore_changes = [image_uri] }
 }
 
 resource "aws_lambda_event_source_mapping" "jobs" {
