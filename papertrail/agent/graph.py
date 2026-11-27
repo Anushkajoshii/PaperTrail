@@ -258,7 +258,10 @@ def build_graph(deps: AgentDeps):
         usage = state.get("usage") or UsageLog()
         verdicts, evidence = [], []
         notes = list(state.get("notes", []))
-        for claim in state["claims"]:
+        claims = state["claims"]
+        for i, claim in enumerate(claims, 1):
+            if len(claims) > 1:  # keeps the progress (and last-updated time) moving
+                progress(CheckStatus.JUDGING, f"Weighing the evidence: claim {i} of {len(claims)}")
             res = state.get("research", {}).get(claim.id)
             result = judge_claim(
                 claim,

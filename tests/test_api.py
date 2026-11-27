@@ -283,3 +283,24 @@ def test_creator_profile_ledger_timeline_and_compare(api):
     assert cmp["missing"] == ["@ghost"] and "not a recommendation" in cmp["note"]
     for bad in (["demo"], ["demo", "@DEMO"], ["a", "b", "c", "d"]):
         assert client.get("/creators/compare", params={"handles": bad}).status_code == 422
+
+
+def test_stuck_checks_are_shown_as_failed_with_a_clear_message():
+    from datetime import UTC, datetime, timedelta
+
+    from papertrail.api.schemas import STALE_AFTER, CheckView
+    from papertrail.models import Check, CheckInput, CheckStatus, InputKind
+
+    started = datetime(2026, 11, 27, 12, 0, tzinfo=UTC)
+    running = Check(
+        input=CheckInput(kind=InputKind.TEXT, text="x y z"),
+        status=CheckStatus.JUDGING,
+        updated_at=started,
+    )
+    fresh = CheckView.of(running, now=started + timedelta(minutes=5))
+    assert fresh.check.status is CheckStatus.JUDGING and not fresh.is_finished
+    stuck = CheckView.of(running, now=started + STALE_AFTER + timedelta(seconds=1))
+    assert stuck.check.status is CheckStatus.FAILED and stuck.is_finished
+    assert "free AI service was busy" in stuck.check.error
+    done = running.model_copy(update={"status": CheckStatus.QUEUED})
+    assert CheckView.of(done, now=started + timedelta(minutes=5)).check.status is CheckStatus.QUEUED
