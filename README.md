@@ -37,12 +37,12 @@ A full glossary lives in [docs/PLAIN_ENGLISH.md](docs/PLAIN_ENGLISH.md).
 
 ```mermaid
 flowchart LR
-    U[User / Browser<br/>React app] -->|upload or paste| API[API Gateway + FastAPI on Lambda]
+    U[User / Browser<br/>React app] -->|upload or paste| API[API Gateway + FastAPI on Lambda<br/>also serves the web app]
     API -->|store file| S3[(S3: uploads, transcripts)]
     API -->|queue job| Q[[SQS]]
     Q --> W[Worker Lambda<br/>LangGraph agent]
     W --> T[Amazon Transcribe<br/>hi-IN / en-IN]
-    W --> LLM[LLM provider<br/>Bedrock / mock / others]
+    W --> LLM[LLM provider<br/>Groq free tier / Bedrock / mock]
     W --> S[Search + safe page fetch]
     W --> R[SEBI registry +<br/>Rulebook module]
     W --> DB[(DynamoDB: checks,<br/>claims, ledger)]
@@ -92,25 +92,33 @@ cd web && npm install && npm run dev     # http://localhost:5173
 | ![Landing](docs/screenshots/landing.jpg) | ![Claims](docs/screenshots/results-claims.jpg) | ![Rulebook](docs/screenshots/rulebook.jpg) | ![Report](docs/screenshots/report.jpg) |
 
 By default the AI runs in **mock mode**: deterministic and offline, so tests and CI need no
-API keys. Real providers (Bedrock, Anthropic, OpenAI-compatible, Ollama) are switched on through
-`.env`. See [.env.example](.env.example).
+API keys. Real providers are switched on through `.env` (see [.env.example](.env.example)):
+**Groq** (free tier, no card), Anthropic, Amazon Bedrock, any OpenAI-compatible API, or Ollama
+on your laptop.
+
+## Deploy to AWS
+
+`make plan` previews and `make deploy` ships it: Terraform for Lambda, API Gateway, DynamoDB,
+SQS, S3, ECR and SSM, plus GitHub OIDC deploys with no stored AWS keys. It is designed to cost
+about $0 when idle. Step by step, with a cost table: [docs/DEPLOY.md](docs/DEPLOY.md).
 
 ## Tech stack
 
 | Layer | Tool |
 |---|---|
-| Frontend | React + Vite + Tailwind (Vercel) |
+| Frontend | React + Vite + Tailwind, served by the API Lambda (one URL, no CORS) |
 | API | FastAPI on AWS Lambda (Mangum) behind API Gateway |
 | Jobs | SQS + worker Lambda (container image in ECR) |
 | Agent | LangGraph |
-| LLM | Pluggable: Amazon Bedrock in production, offline mock for development |
+| LLM | Pluggable: Groq free tier (gpt-oss) deployed, Claude via Anthropic or Bedrock, offline mock for tests |
 | Structured output | Pydantic |
 | Speech to text | Amazon Transcribe (hi-IN, en-IN) |
 | Search | Tavily + trafilatura (injection-safe page text) |
 | Regulatory | SEBI registered intermediaries list + curated SEBI rulebook sources |
 | Storage | DynamoDB, S3 |
 | Tracing | Langfuse |
-| Infra / CI | Terraform, GitHub Actions with OIDC (no stored AWS keys) |
+| Secrets | SSM Parameter Store (never in Terraform state or GitHub) |
+| Infra / CI | Terraform (S3 remote state), GitHub Actions with OIDC (no stored AWS keys) |
 
 ## Results
 
