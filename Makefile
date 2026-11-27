@@ -1,4 +1,4 @@
-.PHONY: help install dev worker openapi test lint format eval eval-smoke plan deploy destroy rulebook-docs demo
+.PHONY: help install dev worker openapi test lint format eval eval-smoke plan deploy destroy stats stats-prod rulebook-docs demo
 
 help: ## Show available commands
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-10s\033[0m %s\n", $$1, $$2}'
@@ -44,6 +44,13 @@ rulebook-docs: ## Regenerate docs/SEBI_RULEBOOK.md from the rules and sources
 
 demo: ## Run a full offline check on a sample (FILE=examples/english_post.txt)
 	uv run python -m papertrail.agent.run $(or $(FILE),examples/hinglish_reel.txt)
+
+stats: ## Speed, cost and reliability of recent local checks
+	uv run python -m papertrail.observability.stats
+
+stats-prod: ## Same, for the deployed app (reads DynamoDB; needs aws login)
+	AWS_PROFILE=$(or $(AWS_PROFILE),portfolio) PAPERTRAIL_STORE_BACKEND=dynamodb \
+	  PAPERTRAIL_DYNAMODB_TABLE=papertrail-prod-checks uv run python -m papertrail.observability.stats
 
 openapi: ## Regenerate docs/openapi.json from the API code
 	uv run python scripts/export_openapi.py docs/openapi.json

@@ -18,6 +18,7 @@ class CheckStore(Protocol):
     def get(self, check_id: str) -> Check | None: ...
     def set_status(self, check_id: str, status: CheckStatus, detail: str = "") -> None: ...
     def list_by_creator(self, handle: str, limit: int = 50) -> list[Check]: ...
+    def list_recent(self, limit: int = 500) -> list[Check]: ...
 
 
 def _with_status(check: Check, status: CheckStatus, detail: str) -> Check:
@@ -55,6 +56,9 @@ class MemoryCheckStore:
             if c.input.creator_handle and normalize_handle(c.input.creator_handle) == h
         ]
         return sorted(found, key=lambda c: c.created_at, reverse=True)[:limit]
+
+    def list_recent(self, limit: int = 500) -> list[Check]:
+        return sorted(self._checks.values(), key=lambda c: c.created_at, reverse=True)[:limit]
 
 
 class SqliteCheckStore:
@@ -111,6 +115,13 @@ class SqliteCheckStore:
             rows = db.execute(
                 "SELECT body FROM checks WHERE creator = ? ORDER BY created_at DESC LIMIT ?",
                 (normalize_handle(handle), limit),
+            ).fetchall()
+        return [Check.model_validate_json(r[0]) for r in rows]
+
+    def list_recent(self, limit: int = 500) -> list[Check]:
+        with self._connect() as db:
+            rows = db.execute(
+                "SELECT body FROM checks ORDER BY created_at DESC LIMIT ?", (limit,)
             ).fetchall()
         return [Check.model_validate_json(r[0]) for r in rows]
 
@@ -177,6 +188,19 @@ class DynamoDbCheckStore:
             Limit=limit,
         )
         return [self._check(i) for i in resp.get("Items", [])]
+
+    def list_recent(self, limit: int = 500) -> list[Check]:
+        """Reads the whole (small) table; meant for occasional reports, not for requests."""
+        items: list[dict] = []
+        kwargs: dict = {}
+        while True:
+            page = self._table.scan(**kwargs)
+            items.extend(page.get("Items", []))
+            if "LastEvaluatedKey" not in page:
+                break
+            kwargs["ExclusiveStartKey"] = page["LastEvaluatedKey"]
+        checks = sorted((self._check(i) for i in items), key=lambda c: c.created_at, reverse=True)
+        return checks[:limit]
 
 
 def get_check_store(settings) -> CheckStore:
