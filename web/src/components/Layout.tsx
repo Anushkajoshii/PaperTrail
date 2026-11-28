@@ -107,6 +107,11 @@ export function Layout() {
             </p>
           </div>
         </div>
+        <div className="border-t border-white/10">
+          <p className="mx-auto max-w-6xl px-4 py-4 text-xs text-slate-400 sm:px-6">
+            © {new Date().getFullYear()} Anushka Joshi
+          </p>
+        </div>
       </footer>
     </div>
   );
