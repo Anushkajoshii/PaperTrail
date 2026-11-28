@@ -176,3 +176,5 @@ intent, cannot prove someone broke the law, and depends on the sources it can re
 ## Licence
 
 MIT. See [LICENSE](LICENSE).
+
+© 2026 Anushka Joshi
